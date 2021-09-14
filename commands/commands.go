@@ -10,10 +10,10 @@ import (
 )
 
 type Command struct {
-	Name  string
-	Description  string
-	Usage string
-	Run   func(e *gateway.InteractionCreateEvent, data *discord.CommandInteractionData)
+	Name        string
+	Description string
+	Usage       string
+	Run         func(e *gateway.InteractionCreateEvent, data *discord.CommandInteractionData)
 }
 
 var CommandsMap = make(map[string]Command)
@@ -34,8 +34,8 @@ func AddHandlers() {
 
 var commands = []discord.Command{
 	{
-		Name: "help",
-		Description: "help",
+		Name:                "help",
+		Description:         "help",
 		NoDefaultPermission: false,
 	},
 }
@@ -56,7 +56,7 @@ func init() {
 			logger.Info.Println("Received a help interaction!")
 
 			var res = api.InteractionResponseData{
-				Embeds:
+				Embeds: *[]discord.Embed,
 			}
 
 			return res
