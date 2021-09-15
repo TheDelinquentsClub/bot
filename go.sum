@@ -1,3 +1,5 @@
+github.com/CrowdSurge/banner v0.0.0-20140923200336-8c0e79dc5ff7 h1:O8iBqlhGQ/wRf7t1DPPsAOREXaISuTg757gfuFEI1l0=
+github.com/CrowdSurge/banner v0.0.0-20140923200336-8c0e79dc5ff7/go.mod h1:29J++XOrAqvtNYrJHCnRWYDg/L4ttVMXCSfPdvOS0/c=
 github.com/StackExchange/wmi v1.2.0 h1:noJEYkMQVlFCEAc+2ma5YyRhlfjcWfZqk5sBRYozdyM=
 github.com/StackExchange/wmi v1.2.0/go.mod h1:3eOhrUMpNV+6aFIbp5/iudMxNCF27Vw2OZgy4xEx0Fg=
 github.com/diamondburned/arikawa/v3 v3.0.0-20210711201954-9651328b74d3 h1:pkLTxFSFSgjHd8234CuO6lgb2GOZ8m1vI1sbusx5c8Y=

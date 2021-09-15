@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"github.com/diamondburned/arikawa/v3/discord"
 	"github.com/diamondburned/arikawa/v3/gateway"
@@ -12,31 +11,14 @@ import (
 	"github.com/kingultron99/tdcbot/core"
 	"github.com/kingultron99/tdcbot/logger"
 	"log"
-	"os"
 )
 
-type ConfigStruct struct {
-	Prefix  string `json:"prefix"`
-	Token   string `json:"token"`
-	Owner   string `json:"owner"`
-	APPID   string `json:"appid"`
-	GUILDID string `json:"guildid"`
-	Version string `json:"version"`
-}
-
-var Config *ConfigStruct
+var Config = core.Config
 
 func main() {
 	logger.Info.Println("----------------------------------------------------------------")
 
-	data, err := os.Open("config.json")
-	if err != nil {
-		logger.Error.Println(fmt.Sprintf("Error loading config: %v", err))
-	} else {
-		logger.Info.Println("Successfully loaded config!")
-	}
-
-	err = json.NewDecoder(data).Decode(&Config)
+	core.InitConfig()
 
 	newShard := state.NewShardFunc(func(m *shard.Manager, s *state.State) {
 		// Add the needed Gateway intents.
@@ -46,7 +28,7 @@ func main() {
 		core.State = s
 	})
 
-	m, err := shard.NewManager(fmt.Sprint("Bot ", Config.Token), newShard)
+	m, err := shard.NewManager(fmt.Sprint("Bot ", core.Config.Token), newShard)
 	if err != nil {
 		logger.Error.Println(fmt.Sprintf("failed to create shard manager: %v", err))
 	}
@@ -72,7 +54,7 @@ func main() {
 	})
 
 	commands.AddHandlers()
-	commands.Register(discord.AppID(mustSnowflakeEnv(Config.APPID)), discord.GuildID(mustSnowflakeEnv(Config.GUILDID)))
+	commands.Register(discord.AppID(mustSnowflakeEnv(core.Config.APPID)), discord.GuildID(mustSnowflakeEnv(core.Config.GUILDID)))
 
 	// Block forever.
 	select {}
