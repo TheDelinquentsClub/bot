@@ -8,6 +8,8 @@ import (
 type Command struct {
 	Name        string
 	Description string
+	Group       string
 	Usage       string
+	OwnerOnly   bool
 	Run         func(e *gateway.InteractionCreateEvent, data *discord.CommandInteractionData)
 }

@@ -10,7 +10,7 @@ import (
 	"github.com/kingultron99/tdcbot/commands"
 	"github.com/kingultron99/tdcbot/core"
 	"github.com/kingultron99/tdcbot/logger"
-	"log"
+	"github.com/kingultron99/tdcbot/utils"
 )
 
 var Config = core.Config
@@ -54,16 +54,8 @@ func main() {
 	})
 
 	commands.AddHandlers()
-	commands.Register(discord.AppID(mustSnowflakeEnv(core.Config.APPID)), discord.GuildID(mustSnowflakeEnv(core.Config.GUILDID)))
+	commands.Register(discord.AppID(utils.MustSnowflakeEnv(core.Config.APPID)), discord.GuildID(utils.MustSnowflakeEnv(core.Config.GUILDID)))
 
 	// Block forever.
 	select {}
-}
-
-func mustSnowflakeEnv(env string) discord.Snowflake {
-	s, err := discord.ParseSnowflake(env)
-	if err != nil {
-		log.Fatalf("Invalid snowflake for $%s: %v", env, err)
-	}
-	return s
 }

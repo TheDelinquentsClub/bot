@@ -13,6 +13,7 @@ type configStruct struct {
 	APPID   string `json:"appid"`
 	GUILDID string `json:"guildid"`
 	Version string `json:"version"`
+	OwnerID string `json:"ownerid"`
 }
 
 var Config *configStruct

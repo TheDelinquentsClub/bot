@@ -1,7 +1,6 @@
 package commands
 
 import (
-	"fmt"
 	"github.com/diamondburned/arikawa/v3/api"
 	"github.com/diamondburned/arikawa/v3/discord"
 	"github.com/diamondburned/arikawa/v3/gateway"
@@ -9,18 +8,16 @@ import (
 	"github.com/kingultron99/tdcbot/logger"
 	"github.com/kingultron99/tdcbot/structs"
 	"github.com/kingultron99/tdcbot/utils"
-	"runtime"
-	"strings"
-	"time"
 )
 
 func init() {
 	CommandsMap["help"] = structs.Command{
 		Name:        "help",
 		Description: "Returns a list of available commands",
-		Usage:       "/help [page]",
+		Group:       "info",
+		OwnerOnly:   false,
+		Usage:       "/help",
 		Run: func(e *gateway.InteractionCreateEvent, data *discord.CommandInteractionData) {
-			logger.Info.Println("Received a help interaction!")
 
 			res := api.InteractionResponse{
 				Type: api.MessageInteractionWithSource,
@@ -29,7 +26,13 @@ func init() {
 						{
 							Title:       "Help!",
 							Description: "Here's a list of available commands!",
-							Color:       0x7ECA9C,
+							Color:       utils.DefaultColour,
+							Fields:      GetCommands(),
+							Footer: &discord.EmbedFooter{
+								Text: e.Member.User.Username,
+								Icon: e.Member.User.AvatarURL(),
+							},
+							Timestamp: discord.NowTimestamp(),
 						},
 					},
 				},
@@ -40,48 +43,37 @@ func init() {
 			}
 		},
 	}
-
-	CommandsMap["stats"] = structs.Command{
-		Name:        "stats",
-		Description: "Returns the current statistics and host system information of GoTDC",
+	CommandsMap["info"] = structs.Command{
+		Name:        "info",
+		Description: "Information about GoTDC",
+		Group:       "info",
+		Usage:       "/info",
+		OwnerOnly:   false,
 		Run: func(e *gateway.InteractionCreateEvent, data *discord.CommandInteractionData) {
-			var m runtime.MemStats
-			runtime.ReadMemStats(&m)
 
 			res := api.InteractionResponse{
 				Type: api.MessageInteractionWithSource,
 				Data: &api.InteractionResponseData{
 					Embeds: &[]discord.Embed{
 						{
-							Title:       "GoTDC Stats",
-							Description: "GoTDC is a bot made specifically for \"The Delinquents Club\" discord.",
-							Fields: []discord.EmbedField{
-								{
-									Name:   "GoTDC Version",
-									Value:  core.Config.Version,
-									Inline: true,
-								},
-								{
-									Name:   "GoLang Version",
-									Value:  strings.Trim(runtime.Version(), "go"),
-									Inline: true,
-								},
-								{
-									Name:  "Memory Used",
-									Value: fmt.Sprintf("using %v MB / %v MB\n%v MB garbage collected. next GC cycle at %v MB.\ncurrent number of GC Cycles: %v", utils.BToMb(m.Alloc), utils.BToMb(m.Sys), utils.BToMb(m.GCSys), utils.BToMb(m.NextGC), m.NumGC),
-								},
-								{
-									Name:   "№ of GoRoutines",
-									Value:  fmt.Sprintf("%v", runtime.NumGoroutine()),
-									Inline: true,
-								},
-								{
-									Name:   "Uptime",
-									Value:  utils.GetDurationString(time.Since(core.TimeNow)),
-									Inline: true,
+							Title:       "GoTDC Info",
+							Description: "GoTDC is a bot Developed by king_ultron99 for the sole use in \"the Delinquents Club\" server. GoTDC will be used as a tool for server management and eventually as a discord-based gateway for the associated minecraft server",
+							Footer: &discord.EmbedFooter{
+								Text: e.Member.User.Username,
+								Icon: e.Member.User.AvatarURL(),
+							},
+							Timestamp: discord.NowTimestamp(),
+						},
+					},
+					Components: &[]discord.Component{
+						&discord.ActionRowComponent{
+							Components: []discord.Component{
+								&discord.ButtonComponent{
+									Label: "Source",
+									URL:   "https://github.com/kingultron99/TDC-Bot",
+									Style: discord.LinkButton,
 								},
 							},
-							Color: 0x7ECA9C,
 						},
 					},
 				},
@@ -91,5 +83,4 @@ func init() {
 			}
 		},
 	}
-
 }
