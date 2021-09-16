@@ -2,11 +2,8 @@ package commands
 
 import (
 	"fmt"
-	"github.com/diamondburned/arikawa/v3/api"
 	"github.com/diamondburned/arikawa/v3/discord"
-	"github.com/kingultron99/tdcbot/core"
 	"github.com/kingultron99/tdcbot/structs"
-	"github.com/kingultron99/tdcbot/utils"
 	"strings"
 )
 
@@ -16,46 +13,32 @@ var commands []discord.Command
 
 func init() {
 	for _, command := range CommandsMap {
-		var id int64 = 0
-		for i := 0; i < len(CommandsMap); i++ {
-			id++
-		}
 		commands = append(commands, discord.Command{
 			Name:                command.Name,
 			Description:         command.Description,
+			Options:             command.Options,
 			NoDefaultPermission: command.OwnerOnly,
 		})
-		if command.OwnerOnly == true {
-			core.State.BatchEditCommandPermissions(discord.AppID(utils.MustSnowflakeEnv(core.Config.APPID)), discord.GuildID(utils.MustSnowflakeEnv(core.Config.GUILDID)), []api.BatchEditCommandPermissionsData{
-				{
-					ID: discord.CommandID(discord.id)),
-					Permissions: []discord.CommandPermissions{
-				{
-					ID:utils.MustSnowflakeEnv(core.Config.OwnerID),
-					Type: 2,
-					Permission: true,
-				},
-				},
-				},
-			})
-		}
 	}
 }
 
 // GetCommands returns all available commands that have been mapped for use in /help
 func GetCommands() []discord.EmbedField {
-	var infoGroupString []string
-	var funGroupString []string
-	var debugGroupString []string
+	var infoGroup []string
+	var funGroup []string
+	var debugGroup []string
+	var utilityGroup []string
 
 	for _, command := range CommandsMap {
 		switch command.Group {
 		case "info":
-			infoGroupString = append(infoGroupString, fmt.Sprintf("`%s` - %s\n%s", command.Name, command.Description, command.Usage))
+			infoGroup = append(infoGroup, fmt.Sprintf("`%s` - %s\n%s", command.Name, command.Description, command.Usage))
 		case "fun":
-			funGroupString = append(funGroupString, fmt.Sprintf("`%s` - %s\n%s", command.Name, command.Description, command.Usage))
+			funGroup = append(funGroup, fmt.Sprintf("`%s` - %s\n%s", command.Name, command.Description, command.Usage))
 		case "debug":
-			debugGroupString = append(debugGroupString, fmt.Sprintf("`%s` - %s\n%s", command.Name, command.Description, command.Usage))
+			debugGroup = append(debugGroup, fmt.Sprintf("`%s` - %s\n%s", command.Name, command.Description, command.Usage))
+		case "utility":
+			utilityGroup = append(utilityGroup, fmt.Sprintf("`%s` - %s\n%s", command.Name, command.Description, command.Usage))
 		default:
 			continue // or have a default group
 		}
@@ -63,22 +46,28 @@ func GetCommands() []discord.EmbedField {
 
 	var commandFields []discord.EmbedField
 
-	if infoGroupString != nil {
+	if infoGroup != nil {
 		commandFields = append(commandFields, discord.EmbedField{
 			Name:  "Info",
-			Value: strings.Join(infoGroupString, "\n"),
+			Value: strings.Join(infoGroup, "\n"),
 		})
 	}
-	if funGroupString != nil {
+	if funGroup != nil {
 		commandFields = append(commandFields, discord.EmbedField{
 			Name:  "Fun",
-			Value: strings.Join(funGroupString, "\n"),
+			Value: strings.Join(funGroup, "\n"),
 		})
 	}
-	if debugGroupString != nil {
+	if debugGroup != nil {
 		commandFields = append(commandFields, discord.EmbedField{
 			Name:  "Debug",
-			Value: strings.Join(debugGroupString, "\n"),
+			Value: strings.Join(debugGroup, "\n"),
+		})
+	}
+	if utilityGroup != nil {
+		commandFields = append(commandFields, discord.EmbedField{
+			Name:  "Utility",
+			Value: strings.Join(utilityGroup, "\n"),
 		})
 	}
 

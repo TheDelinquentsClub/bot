@@ -10,6 +10,7 @@ type Command struct {
 	Description string
 	Group       string
 	Usage       string
+	Options     []discord.CommandOption
 	OwnerOnly   bool
 	Run         func(e *gateway.InteractionCreateEvent, data *discord.CommandInteractionData)
 }

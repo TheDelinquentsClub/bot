@@ -46,10 +46,6 @@ func init() {
 									Inline: true,
 								},
 								{
-									Name:  "Memory Used",
-									Value: fmt.Sprintf("using %v MB / %v MB\n%v MB garbage collected. next GC cycle at %v MB.\ncurrent number of GC Cycles: %v", utils.BToMb(m.Alloc), utils.BToMb(m.Sys), utils.BToMb(m.GCSys), utils.BToMb(m.NextGC), m.NumGC),
-								},
-								{
 									Name:   "№ of GoRoutines",
 									Value:  fmt.Sprintf("%v", runtime.NumGoroutine()),
 									Inline: true,
@@ -58,6 +54,15 @@ func init() {
 									Name:   "Uptime",
 									Value:  utils.GetDurationString(time.Since(core.TimeNow)),
 									Inline: true,
+								},
+								{
+									Name:   "OS",
+									Value:  runtime.GOOS,
+									Inline: true,
+								},
+								{
+									Name:  "Memory Used",
+									Value: fmt.Sprintf("using %v MB / %v MB\n%v MB garbage collected. next GC cycle at %v MB.\ncurrent number of GC Cycles: %v", utils.BToMb(m.Alloc), utils.BToMb(m.Sys), utils.BToMb(m.GCSys), utils.BToMb(m.NextGC), m.NumGC),
 								},
 							},
 							Footer: &discord.EmbedFooter{
@@ -89,6 +94,29 @@ func init() {
 				Type: api.MessageInteractionWithSource,
 				Data: &api.InteractionResponseData{
 					Content: option.NewNullableString(":wastebasket: triggered a GC cycle!"),
+				},
+			}
+
+			if err := core.State.RespondInteraction(e.ID, e.Token, res); err != nil {
+				logger.Error.Println(err)
+			}
+		},
+	}
+
+	//utility
+	CommandsMap["ban"] = structs.Command{
+		Name:        "ban",
+		Description: "Bans a user",
+		Usage:       "/ban <user>",
+		Group:       "utility",
+
+		OwnerOnly: true,
+		Run: func(e *gateway.InteractionCreateEvent, data *discord.CommandInteractionData) {
+
+			res := api.InteractionResponse{
+				Type: api.MessageInteractionWithSource,
+				Data: &api.InteractionResponseData{
+					Content: option.NewNullableString(fmt.Sprintf("%v", data.Options)),
 				},
 			}
 

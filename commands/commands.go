@@ -7,6 +7,7 @@ import (
 	"github.com/diamondburned/arikawa/v3/gateway"
 	"github.com/kingultron99/tdcbot/core"
 	"github.com/kingultron99/tdcbot/logger"
+	"github.com/kingultron99/tdcbot/utils"
 )
 
 func AddHandlers() {
@@ -14,18 +15,7 @@ func AddHandlers() {
 		switch data := e.Data.(type) {
 		case *discord.CommandInteractionData:
 			if cmd, ok := CommandsMap[data.Name]; ok {
-				switch cmd.OwnerOnly {
-				case true:
-					if e.Member.User.ID.String() == core.Config.OwnerID {
-						cmd.Run(e, data)
-					} else {
-						noPermission(e)
-					}
-				case false:
-					cmd.Run(e, data)
-				default:
-					cmd.Run(e, data)
-				}
+				cmd.Run(e, data)
 			}
 		case *discord.ComponentInteractionData:
 			break
@@ -38,29 +28,25 @@ func Register(appID discord.AppID, guildID discord.GuildID) {
 	if err != nil {
 		logger.Error.Println(fmt.Sprintf("Failed to overwrite commands in TDC with err: %v", err))
 	}
-}
 
-func noPermission(e *gateway.InteractionCreateEvent) {
-
-	res := api.InteractionResponse{
-		Type: api.MessageInteractionWithSource,
-		Data: &api.InteractionResponseData{
-			Embeds: &[]discord.Embed{
+	var registeredCommands, geterr = core.State.GuildCommands(appID, guildID)
+	if geterr != nil {
+		logger.Error.Println(err)
+	}
+	for _, command := range registeredCommands {
+		if command.NoDefaultPermission == true {
+			core.State.BatchEditCommandPermissions(appID, guildID, []api.BatchEditCommandPermissionsData{
 				{
-					Title:       "Insufficient Permissions!",
-					Description: "You do not have permission to execute this command!",
-					Color:       0xFF0000,
-					Timestamp:   discord.NowTimestamp(),
-					Footer: &discord.EmbedFooter{
-						Text: e.Member.User.Username,
-						Icon: e.Member.User.AvatarURL(),
+					ID: command.ID,
+					Permissions: []discord.CommandPermissions{
+						{
+							ID:         utils.MustSnowflakeEnv(core.Config.OwnerID),
+							Type:       2,
+							Permission: true,
+						},
 					},
 				},
-			},
-		},
-	}
-
-	if err := core.State.RespondInteraction(e.ID, e.Token, res); err != nil {
-		logger.Error.Println(err)
+			})
+		}
 	}
 }
