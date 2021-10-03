@@ -14,25 +14,41 @@ func AddHandlers() {
 	core.State.AddHandler(func(e *gateway.InteractionCreateEvent) {
 		switch data := e.Data.(type) {
 		case *discord.CommandInteractionData:
-			if cmd, ok := CommandsMap[data.Name]; ok {
+			if cmd, ok := MapCommands[data.Name]; ok {
 				cmd.Run(e, data)
 			}
 		case *discord.ComponentInteractionData:
-			break
+			if cmd, ok := MapComponents[data.CustomID]; ok {
+				cmd.Run(e, data)
+			}
 		}
 	})
 }
 
 func Register(appID discord.AppID, guildID discord.GuildID) {
+
+	var commands []discord.Command
+
+	for _, command := range MapCommands {
+		commands = append(commands, discord.Command{
+			Type:                discord.CommandType(1),
+			Name:                command.Name,
+			Description:         command.Description,
+			Options:             command.Options,
+			NoDefaultPermission: command.OwnerOnly,
+		})
+	}
+
 	_, err := core.State.BulkOverwriteGuildCommands(appID, guildID, commands)
 	if err != nil {
 		logger.Error.Println(fmt.Sprintf("Failed to overwrite commands in TDC with err: %v", err))
 	}
 
-	var registeredCommands, geterr = core.State.GuildCommands(appID, guildID)
-	if geterr != nil {
+	registeredCommands, err := core.State.GuildCommands(appID, guildID)
+	if err != nil {
 		logger.Error.Println(err)
 	}
+
 	for _, command := range registeredCommands {
 		if command.NoDefaultPermission == true {
 			core.State.BatchEditCommandPermissions(appID, guildID, []api.BatchEditCommandPermissionsData{
@@ -47,6 +63,7 @@ func Register(appID discord.AppID, guildID discord.GuildID) {
 					},
 				},
 			})
+			logger.Info.Println("Successfully updated", command.Name, "permissions")
 		}
 	}
 }

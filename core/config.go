@@ -8,12 +8,13 @@ import (
 )
 
 type configStruct struct {
-	Token   string `json:"token"`
-	Owner   string `json:"owner"`
-	APPID   string `json:"appid"`
-	GUILDID string `json:"guildid"`
-	Version string `json:"version"`
-	OwnerID string `json:"ownerid"`
+	Token     string `json:"token"`
+	Owner     string `json:"owner"`
+	APPID     string `json:"appid"`
+	GUILDID   string `json:"guildid"`
+	WolframID string `json:"wolframid"`
+	Version   string `json:"version"`
+	OwnerID   string `json:"ownerid"`
 }
 
 var Config *configStruct

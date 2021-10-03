@@ -8,8 +8,8 @@ import (
 )
 
 // BToMb converts byte values to MegaBytes
-func BToMb(b uint64) uint64 {
-	return b / 1024 / 1024
+func BToMb(b uint64) string {
+	return fmt.Sprintf("%.1f", float64(b/1024)/1024)
 }
 
 // GetDurationString returns a time duration for use with uptime or other related uses
@@ -22,8 +22,15 @@ func GetDurationString(duration time.Duration) string {
 	)
 }
 
-// the DefaultColour to use in embeds
-var DefaultColour discord.Color = 0x7ECA9C
+// DefaultColour is the default discord.color to use in embeds
+// DiscordGreen is the colour to be used in signifying a success message, or something good
+// DiscordRed is the colour to be used in signifying an error message, or something bad
+var (
+	DefaultColour discord.Color = 0x7ECA9C
+	DiscordGreen  discord.Color = 0x379A57
+	DiscordBlue   discord.Color = 0x5865F2
+	DiscordRed    discord.Color = 0xDF3E41
+)
 
 func MustSnowflakeEnv(env string) discord.Snowflake {
 	s, err := discord.ParseSnowflake(env)

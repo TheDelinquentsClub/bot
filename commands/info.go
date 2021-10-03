@@ -11,7 +11,7 @@ import (
 )
 
 func init() {
-	CommandsMap["help"] = structs.Command{
+	MapCommands["help"] = structs.Command{
 		Name:        "help",
 		Description: "Returns a list of available commands",
 		Group:       "info",
@@ -25,14 +25,46 @@ func init() {
 					Embeds: &[]discord.Embed{
 						{
 							Title:       "Help!",
-							Description: "Here's a list of available commands!",
+							Description: "Select a category to see available commands!",
 							Color:       utils.DefaultColour,
-							Fields:      GetCommands(),
 							Footer: &discord.EmbedFooter{
 								Text: e.Member.User.Username,
 								Icon: e.Member.User.AvatarURL(),
 							},
 							Timestamp: discord.NowTimestamp(),
+						},
+					},
+					Components: &[]discord.Component{
+						&discord.ActionRowComponent{
+							Components: []discord.Component{
+								&discord.SelectComponent{
+									CustomID: "help_select_category",
+									Options: []discord.SelectComponentOption{
+										{
+											Label:       "Miscellaneous",
+											Value:       "misc",
+											Description: "returns all miscellaneous commands",
+										},
+										{
+											Label:       "Info",
+											Value:       "info",
+											Description: "returns all info commands",
+										},
+										{
+											Label:       "Utility",
+											Value:       "utility",
+											Description: "returns all  utility commands",
+										},
+										{
+											Label:       "Debug",
+											Value:       "debug",
+											Description: "returns all debug commands",
+										},
+									},
+									Placeholder: "Select a command category!",
+									Disabled:    false,
+								},
+							},
 						},
 					},
 				},
@@ -41,9 +73,10 @@ func init() {
 			if err := core.State.RespondInteraction(e.ID, e.Token, res); err != nil {
 				logger.Error.Println(err)
 			}
+
 		},
 	}
-	CommandsMap["info"] = structs.Command{
+	MapCommands["info"] = structs.Command{
 		Name:        "info",
 		Description: "Information about GoTDC",
 		Group:       "info",
@@ -58,6 +91,7 @@ func init() {
 						{
 							Title:       "GoTDC Info",
 							Description: "GoTDC is a bot Developed by king_ultron99 for the sole use in \"the Delinquents Club\" server. GoTDC will be used as a tool for server management and eventually as a discord-based gateway for the associated minecraft server",
+							Color:       utils.DefaultColour,
 							Footer: &discord.EmbedFooter{
 								Text: e.Member.User.Username,
 								Icon: e.Member.User.AvatarURL(),

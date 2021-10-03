@@ -14,3 +14,7 @@ type Command struct {
 	OwnerOnly   bool
 	Run         func(e *gateway.InteractionCreateEvent, data *discord.CommandInteractionData)
 }
+
+type Component struct {
+	Run func(e *gateway.InteractionCreateEvent, data *discord.ComponentInteractionData)
+}

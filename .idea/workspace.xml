@@ -5,12 +5,19 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="43a90286-0bc6-4267-8a52-6493d8afd734" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/commands/components.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/commands/misc.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/commands/utility.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/commands/commands.go" beforeDir="false" afterPath="$PROJECT_DIR$/commands/commands.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/commands/debug.go" beforeDir="false" afterPath="$PROJECT_DIR$/commands/debug.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/commands/info.go" beforeDir="false" afterPath="$PROJECT_DIR$/commands/info.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/commands/maps.go" beforeDir="false" afterPath="$PROJECT_DIR$/commands/maps.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/config.go" beforeDir="false" afterPath="$PROJECT_DIR$/core/config.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/structs/structs.go" beforeDir="false" afterPath="$PROJECT_DIR$/structs/structs.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/utils.go" beforeDir="false" afterPath="$PROJECT_DIR$/utils/utils.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -20,7 +27,6 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="tsconfig.json" />
         <option value="Go File" />
       </list>
     </option>
@@ -65,15 +71,34 @@
     <property name="go.modules.go.list.on.any.changes.was.set" value="true" />
     <property name="go.sdk.automatically.set" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="settings.editor.selected.configurable" value="editor.preferences.fonts.default" />
-  </component>
-  <component name="ReaderModeSettings">
-    <option name="showLigatures" value="true" />
+    <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
+    <property name="settings.editor.selected.configurable" value="configurable.group.editor" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\king_ultron99\GitHub\TDC-Bot\commands" />
+      <recent name="C:\Users\king_ultron99\GitHub\TDC-Bot\commands\categories" />
       <recent name="C:\Users\Lenovo\GitHub\TDC-Bot" />
     </key>
+  </component>
+  <component name="RunManager">
+    <configuration default="true" type="GoApplicationRunConfiguration" factoryName="Go Application">
+      <module name="TDC-Bot" />
+      <working_directory value="$PROJECT_DIR$" />
+      <kind value="FILE" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <method v="2" />
+    </configuration>
+    <configuration default="true" type="GoTestRunConfiguration" factoryName="Go Test">
+      <module name="TDC-Bot" />
+      <working_directory value="$PROJECT_DIR$" />
+      <kind value="DIRECTORY" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <framework value="gotest" />
+      <method v="2" />
+    </configuration>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TypeScriptGeneratedFilesManager">

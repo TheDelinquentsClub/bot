@@ -16,7 +16,7 @@ import (
 )
 
 func init() {
-	CommandsMap["stats"] = structs.Command{
+	MapCommands["stats"] = structs.Command{
 		Name:        "stats",
 		Description: "Returns the current statistics and host system information of GoTDC",
 		Group:       "debug",
@@ -79,7 +79,7 @@ func init() {
 			}
 		},
 	}
-	CommandsMap["gc"] = structs.Command{
+	MapCommands["gc"] = structs.Command{
 		Name:        "gc",
 		Description: "Triggers a garbage collection cycle",
 		Usage:       "/gc",
@@ -102,27 +102,35 @@ func init() {
 			}
 		},
 	}
-
-	//utility
-	CommandsMap["ban"] = structs.Command{
-		Name:        "ban",
-		Description: "Bans a user",
-		Usage:       "/ban <user>",
-		Group:       "utility",
-
-		OwnerOnly: true,
+	MapCommands["kill"] = structs.Command{
+		Name:        "kill",
+		Description: "Kills the bots process.",
+		OwnerOnly:   true,
+		Usage:       "/kill",
+		Group:       "debug",
 		Run: func(e *gateway.InteractionCreateEvent, data *discord.CommandInteractionData) {
-
 			res := api.InteractionResponse{
 				Type: api.MessageInteractionWithSource,
 				Data: &api.InteractionResponseData{
-					Content: option.NewNullableString(fmt.Sprintf("%v", data.Options)),
+					Embeds: &[]discord.Embed{
+						{
+							Title:       "Bye Bye! :wave:",
+							Description: "Killing the process....",
+							Color:       utils.DiscordGreen,
+							Footer: &discord.EmbedFooter{
+								Text: fmt.Sprintf("Killed by %v#%v", e.Member.User.Username, e.Member.User.Discriminator),
+								Icon: e.Member.User.AvatarURL(),
+							},
+							Timestamp: discord.NowTimestamp(),
+						},
+					},
 				},
 			}
-
 			if err := core.State.RespondInteraction(e.ID, e.Token, res); err != nil {
 				logger.Error.Println(err)
 			}
+
+			logger.Info.Fatalln(fmt.Sprintf("User %v#%v killed the process", e.Member.User.Username, e.Member.User.Discriminator))
 		},
 	}
 }
