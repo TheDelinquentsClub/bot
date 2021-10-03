@@ -5,6 +5,7 @@ import (
 	"github.com/diamondburned/arikawa/v3/api"
 	"github.com/diamondburned/arikawa/v3/discord"
 	"github.com/diamondburned/arikawa/v3/gateway"
+	"github.com/kingultron99/tdcbot/commands/pollStuff"
 	"github.com/kingultron99/tdcbot/core"
 	"github.com/kingultron99/tdcbot/logger"
 	"github.com/kingultron99/tdcbot/structs"
@@ -40,4 +41,19 @@ func init() {
 			}
 		},
 	}
+
+	//the next few component interaction functions are purely for the poll command
+	MapComponents["first_option"] = structs.Component{
+		Run: func(e *gateway.InteractionCreateEvent, data *discord.ComponentInteractionData) {
+			if pollStuff.Voted[e.Member.User.ID] != "" {
+				logger.Warn.Println(e.Member.User.Username, "has already voted!")
+				return
+			}
+
+			pollStuff.Voted[e.Member.User.ID] = data.CustomID
+
+			logger.Info.Println(pollStuff.Voted[e.Member.User.ID])
+		},
+	}
+
 }

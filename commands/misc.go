@@ -13,7 +13,9 @@ import (
 	"github.com/kingultron99/tdcbot/utils"
 	"io/ioutil"
 	"net/http"
+	"strconv"
 	"strings"
+	"unicode/utf8"
 )
 
 func init() {
@@ -78,6 +80,12 @@ func init() {
 				logger.Error.Println(fmt.Sprintf("Failed to get answer for query.\nerr: %v", err))
 			}
 
+			if utf8.RuneCountInString(answer) > 1024 {
+				logger.Warn.Println("message over allowed limit")
+				answer = answer[:1020] + "..."
+				logger.Info.Println(answer)
+			}
+
 			resp := api.EditInteractionResponseData{
 				Embeds: &[]discord.Embed{
 					{
@@ -111,20 +119,10 @@ func init() {
 		Usage:       "/randomFact",
 		Options: []discord.CommandOption{
 			{
-				Type:        discord.CommandOptionType(3),
+				Type:        discord.CommandOptionType(5),
 				Name:        "fact_of_the_day",
 				Description: "Get the fact of the day!",
 				Required:    false,
-				Choices: []discord.CommandOptionChoice{
-					{
-						Name:  "Yes",
-						Value: "yes",
-					},
-					{
-						Name:  "No",
-						Value: "no",
-					},
-				},
 			},
 		},
 		OwnerOnly: false,
@@ -149,13 +147,22 @@ func init() {
 			var (
 				fact = new(factStruct)
 				url  string
+				bool bool
 			)
 
+			if len(data.Options) != 0 {
+				b, err := strconv.ParseBool(fmt.Sprint(data.Options[0]))
+				if err != nil {
+					logger.Error.Println(err)
+				}
+				bool = b
+			}
+
 			if len(data.Options) == 1 {
-				switch fmt.Sprint(data.Options[0]) {
-				case "no":
+				switch bool {
+				case true:
 					url = "https://uselessfacts.jsph.pl/random.json?language=en"
-				case "yes":
+				case false:
 					url = "https://uselessfacts.jsph.pl/today.json?language=en"
 				}
 			} else {
@@ -212,6 +219,87 @@ func init() {
 				logger.Error.Println(err)
 			}
 
+		},
+	}
+	MapCommands["pollattempt"] = structs.Command{
+		Name:        "pollattempt",
+		Description: "This is the first attempt at a poll command. planning to add vote visualisation as a ASCII graph",
+		Group:       "misc",
+		Usage:       "/pollattempt <title> <duration> <option1> <option2> [option3] [option4] ",
+		Options: []discord.CommandOption{
+			{
+				Type:        discord.CommandOptionType(3),
+				Name:        "title",
+				Description: "What is this poll about?",
+				Required:    true,
+			},
+			{
+				Type:        discord.CommandOptionType(4),
+				Name:        "duration",
+				Description: "How long (in seconds) should this poll last for?",
+				Required:    true,
+			},
+			{
+				Type:        discord.CommandOptionType(3),
+				Name:        "first_option",
+				Description: " ",
+				Required:    true,
+			},
+			{
+				Type:        discord.CommandOptionType(3),
+				Name:        "second_option",
+				Description: " ",
+				Required:    true,
+			},
+			{
+				Type:        discord.CommandOptionType(3),
+				Name:        "third_option",
+				Description: " ",
+				Required:    false,
+			},
+			{
+				Type:        discord.CommandOptionType(3),
+				Name:        "fourth_option",
+				Description: " ",
+				Required:    false,
+			},
+		},
+		OwnerOnly: false,
+		Run: func(e *gateway.InteractionCreateEvent, data *discord.CommandInteractionData) {
+			var (
+				fields     []discord.EmbedField
+				components []discord.Component
+			)
+
+			for _, option := range data.Options[2:] {
+				fields = append(fields, discord.EmbedField{
+					Name:   strings.Title(strings.ReplaceAll(fmt.Sprint(option.Value), "\"", "")),
+					Value:  "`|||`",
+					Inline: false,
+				})
+
+				components = append(components, utils.GenButtonComponents(option))
+			}
+
+			res := api.InteractionResponse{
+				Type: api.MessageInteractionWithSource,
+				Data: &api.InteractionResponseData{
+					Embeds: &[]discord.Embed{
+						{
+							Title:  fmt.Sprint(data.Options[0]),
+							Fields: fields,
+						},
+					},
+					Components: &[]discord.Component{
+						&discord.ActionRowComponent{
+							Components: components,
+						},
+					},
+				},
+			}
+			if err := core.State.RespondInteraction(e.ID, e.Token, res); err != nil {
+				logger.Error.Println(err)
+			}
 		},
 	}
 }

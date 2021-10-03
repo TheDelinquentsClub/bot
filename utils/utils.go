@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/diamondburned/arikawa/v3/discord"
 	"log"
+	"strings"
 	"time"
 )
 
@@ -38,4 +39,14 @@ func MustSnowflakeEnv(env string) discord.Snowflake {
 		log.Fatalf("Invalid snowflake for $%s: %v", env, err)
 	}
 	return s
+}
+
+func GenButtonComponents(data discord.InteractionOption) *discord.ButtonComponent {
+	component := &discord.ButtonComponent{
+		Label:    strings.ReplaceAll(fmt.Sprint(data.Value), "\"", ""),
+		CustomID: fmt.Sprint(data.Name),
+		Style:    discord.PrimaryButton,
+	}
+
+	return component
 }

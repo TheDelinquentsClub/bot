@@ -7,6 +7,7 @@ import (
 	"time"
 )
 
+//goland:noinspection GoUnusedGlobalVariable
 var (
 	Info  *log.Logger
 	Warn  *log.Logger

@@ -13,8 +13,6 @@ import (
 	"github.com/kingultron99/tdcbot/utils"
 )
 
-var Config = core.Config
-
 func main() {
 	logger.Info.Println("----------------------------------------------------------------")
 
@@ -36,14 +34,18 @@ func main() {
 	if err := m.Open(context.Background()); err != nil {
 		logger.Error.Println(fmt.Sprintf("failed to connect shards: %v", err))
 	}
-	defer m.Close()
+	defer func(m *shard.Manager) {
+		err := m.Close()
+		if err != nil {
+		}
+	}(m)
 
 	var shardNum int
 
 	m.ForEach(func(s shard.Shard) {
-		state := s.(*state.State)
+		botState := s.(*state.State)
 
-		u, err := state.Me()
+		u, err := botState.Me()
 		if err != nil {
 			logger.Error.Println(fmt.Sprintf("failed to get myself: %v", err))
 		}
