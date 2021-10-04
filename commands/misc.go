@@ -50,12 +50,13 @@ func init() {
 			},
 		},
 		Run: func(e *gateway.InteractionCreateEvent, data *discord.CommandInteractionData) {
+			var logger = logger.NewLogger("question command")
 			ack := api.InteractionResponse{
 				Type: api.DeferredMessageInteractionWithSource,
 			}
 
 			if err := core.State.RespondInteraction(e.ID, e.Token, ack); err != nil {
-				logger.Error.Println(err)
+				logger.Error(err)
 			}
 
 			waAPI := &wolfram.Client{AppID: core.Config.WolframID}
@@ -77,13 +78,13 @@ func init() {
 
 			answer, err := waAPI.GetShortAnswerQuery(query, measurement, 10)
 			if err != nil {
-				logger.Error.Println(fmt.Sprintf("Failed to get answer for query.\nerr: %v", err))
+				logger.Error(fmt.Sprintf("Failed to get answer for query.\nerr: %v", err))
 			}
 
 			if utf8.RuneCountInString(answer) > 1024 {
-				logger.Warn.Println("message over allowed limit")
+				logger.Warn("message over allowed limit")
 				answer = answer[:1020] + "..."
-				logger.Info.Println(answer)
+				logger.Info(answer)
 			}
 
 			resp := api.EditInteractionResponseData{
@@ -107,7 +108,7 @@ func init() {
 			}
 
 			if _, err := core.State.EditInteractionResponse(discord.AppID(utils.MustSnowflakeEnv(core.Config.APPID)), e.Token, resp); err != nil {
-				logger.Error.Println(err)
+				logger.Error(err)
 			}
 
 		},
@@ -127,12 +128,13 @@ func init() {
 		},
 		OwnerOnly: false,
 		Run: func(e *gateway.InteractionCreateEvent, data *discord.CommandInteractionData) {
+			var logger = logger.NewLogger("randomfact command")
 			ack := api.InteractionResponse{
 				Type: api.DeferredMessageInteractionWithSource,
 			}
 
 			if err := core.State.RespondInteraction(e.ID, e.Token, ack); err != nil {
-				logger.Error.Println(err)
+				logger.Error(err)
 			}
 
 			type factStruct struct {
@@ -153,7 +155,7 @@ func init() {
 			if len(data.Options) != 0 {
 				b, err := strconv.ParseBool(fmt.Sprint(data.Options[0]))
 				if err != nil {
-					logger.Error.Println(err)
+					logger.Error(err)
 				}
 				bool = b
 			}
@@ -171,12 +173,12 @@ func init() {
 
 			resp, err := http.Get(url)
 			if err != nil {
-				logger.Error.Println(err)
+				logger.Error(err)
 			}
 
 			body, err := ioutil.ReadAll(resp.Body)
 			if err != nil {
-				logger.Error.Println(err)
+				logger.Error(err)
 			}
 
 			err = json.Unmarshal(body, &fact)
@@ -216,7 +218,7 @@ func init() {
 			}
 
 			if _, err := core.State.EditInteractionResponse(discord.AppID(utils.MustSnowflakeEnv(core.Config.APPID)), e.Token, res); err != nil {
-				logger.Error.Println(err)
+				logger.Error(err)
 			}
 
 		},
@@ -266,6 +268,7 @@ func init() {
 		},
 		OwnerOnly: false,
 		Run: func(e *gateway.InteractionCreateEvent, data *discord.CommandInteractionData) {
+			var logger = logger.NewLogger("pollattempt command")
 			var (
 				fields     []discord.EmbedField
 				components []discord.Component
@@ -298,7 +301,7 @@ func init() {
 				},
 			}
 			if err := core.State.RespondInteraction(e.ID, e.Token, res); err != nil {
-				logger.Error.Println(err)
+				logger.Error(err)
 			}
 		},
 	}

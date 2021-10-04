@@ -19,6 +19,8 @@ func init() {
 		Usage:       "/help",
 		Run: func(e *gateway.InteractionCreateEvent, data *discord.CommandInteractionData) {
 
+			var logger = logger.NewLogger("help command")
+
 			res := api.InteractionResponse{
 				Type: api.MessageInteractionWithSource,
 				Data: &api.InteractionResponseData{
@@ -71,7 +73,7 @@ func init() {
 			}
 
 			if err := core.State.RespondInteraction(e.ID, e.Token, res); err != nil {
-				logger.Error.Println(err)
+				logger.Error(err)
 			}
 
 		},
@@ -83,6 +85,8 @@ func init() {
 		Usage:       "/info",
 		OwnerOnly:   false,
 		Run: func(e *gateway.InteractionCreateEvent, data *discord.CommandInteractionData) {
+
+			var logger = logger.NewLogger("info command")
 
 			res := api.InteractionResponse{
 				Type: api.MessageInteractionWithSource,
@@ -113,7 +117,7 @@ func init() {
 				},
 			}
 			if err := core.State.RespondInteraction(e.ID, e.Token, res); err != nil {
-				logger.Error.Println(err)
+				logger.Error(err)
 			}
 		},
 	}

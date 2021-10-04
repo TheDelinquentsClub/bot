@@ -20,11 +20,13 @@ type configStruct struct {
 var Config *configStruct
 
 func InitConfig() {
+	var logger = logger.NewLogger("Config")
+
 	data, err := os.Open("config.json")
 	if err != nil {
-		logger.Error.Println(fmt.Sprintf("Error loading config: %v", err))
+		logger.Error(fmt.Sprintf("Error loading config: %v", err))
 	} else {
-		logger.Info.Println("Successfully loaded config!")
+		logger.Info("Successfully loaded config!")
 	}
 
 	err = json.NewDecoder(data).Decode(&Config)

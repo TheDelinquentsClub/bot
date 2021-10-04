@@ -27,6 +27,8 @@ func AddHandlers() {
 
 func Register(appID discord.AppID, guildID discord.GuildID) {
 
+	var logger = logger.NewLogger("Command Register")
+
 	var commands []discord.Command
 
 	for _, command := range MapCommands {
@@ -41,12 +43,12 @@ func Register(appID discord.AppID, guildID discord.GuildID) {
 
 	_, err := core.State.BulkOverwriteGuildCommands(appID, guildID, commands)
 	if err != nil {
-		logger.Error.Println(fmt.Sprintf("Failed to overwrite commands in TDC with err: %v", err))
+		logger.Error(fmt.Sprintf("Failed to overwrite commands in TDC with err: %v", err))
 	}
 
 	registeredCommands, err := core.State.GuildCommands(appID, guildID)
 	if err != nil {
-		logger.Error.Println(err)
+		logger.Error(err)
 	}
 
 	for _, command := range registeredCommands {
@@ -63,7 +65,7 @@ func Register(appID discord.AppID, guildID discord.GuildID) {
 					},
 				},
 			})
-			logger.Info.Println("Successfully updated", command.Name, "permissions")
+			logger.Info("Successfully updated", command.Name, "permissions")
 		}
 	}
 }

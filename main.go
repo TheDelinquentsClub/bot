@@ -14,7 +14,8 @@ import (
 )
 
 func main() {
-	logger.Info.Println("----------------------------------------------------------------")
+
+	var logger = logger.NewLogger("main")
 
 	core.InitConfig()
 
@@ -28,11 +29,11 @@ func main() {
 
 	m, err := shard.NewManager(fmt.Sprint("Bot ", core.Config.Token), newShard)
 	if err != nil {
-		logger.Error.Println(fmt.Sprintf("failed to create shard manager: %v", err))
+		logger.Error(fmt.Sprintf("failed to create shard manager: %v", err))
 	}
 
 	if err := m.Open(context.Background()); err != nil {
-		logger.Error.Println(fmt.Sprintf("failed to connect shards: %v", err))
+		logger.Error(fmt.Sprintf("failed to connect shards: %v", err))
 	}
 	defer func(m *shard.Manager) {
 		err := m.Close()
@@ -47,10 +48,10 @@ func main() {
 
 		u, err := botState.Me()
 		if err != nil {
-			logger.Error.Println(fmt.Sprintf("failed to get myself: %v", err))
+			logger.Error(fmt.Sprintf("failed to get myself: %v", err))
 		}
 
-		logger.Info.Println(fmt.Sprintf("Shard %d/%d started as %s", shardNum, m.NumShards()-1, u.Tag()))
+		logger.Info(fmt.Sprintf("Shard %d/%d started as %s", shardNum, m.NumShards()-1, u.Tag()))
 
 		shardNum++
 	})

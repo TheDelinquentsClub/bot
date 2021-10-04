@@ -12,9 +12,10 @@ import (
 )
 
 func init() {
+	var logger = logger.NewLogger("components")
+
 	MapComponents["help_select_category"] = structs.Component{
 		Run: func(e *gateway.InteractionCreateEvent, data *discord.ComponentInteractionData) {
-
 			var fields, embedColour = GetCommands(data.Values[0])
 
 			res := api.InteractionResponse{
@@ -37,22 +38,23 @@ func init() {
 			}
 
 			if err := core.State.RespondInteraction(e.ID, e.Token, res); err != nil {
-				logger.Error.Println(err)
+				logger.Error(err)
 			}
 		},
 	}
 
 	//the next few component interaction functions are purely for the poll command
 	MapComponents["first_option"] = structs.Component{
+
 		Run: func(e *gateway.InteractionCreateEvent, data *discord.ComponentInteractionData) {
 			if pollStuff.Voted[e.Member.User.ID] != "" {
-				logger.Warn.Println(e.Member.User.Username, "has already voted!")
+				logger.Warn(e.Member.User.Username, "has already voted!")
 				return
 			}
 
 			pollStuff.Voted[e.Member.User.ID] = data.CustomID
 
-			logger.Info.Println(pollStuff.Voted[e.Member.User.ID])
+			logger.Info(pollStuff.Voted[e.Member.User.ID])
 		},
 	}
 

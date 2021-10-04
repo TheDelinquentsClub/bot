@@ -33,6 +33,7 @@ func init() {
 		},
 		OwnerOnly: true,
 		Run: func(e *gateway.InteractionCreateEvent, data *discord.CommandInteractionData) {
+			var logger = logger.NewLogger("ban command")
 			var snowflake, _ = data.Options[0].Snowflake()
 
 			if snowflake != utils.MustSnowflakeEnv(fmt.Sprint(e.Member.User.ID)) {
@@ -52,7 +53,7 @@ func init() {
 
 				err = core.State.Ban(e.GuildID, user.ID, banData)
 				if err != nil {
-					logger.Error.Println(fmt.Sprintf("Failed to ban user %v\nerror: %v", user.Username, err))
+					logger.Error(fmt.Sprintf("Failed to ban user %v\nerror: %v", user.Username, err))
 				}
 
 				res := api.InteractionResponse{
@@ -84,7 +85,7 @@ func init() {
 				}
 
 				if err := core.State.RespondInteraction(e.ID, e.Token, res); err != nil {
-					logger.Error.Println(err)
+					logger.Error(err)
 				}
 			} else {
 				res := api.InteractionResponse{
@@ -105,7 +106,7 @@ func init() {
 				}
 
 				if err := core.State.RespondInteraction(e.ID, e.Token, res); err != nil {
-					logger.Error.Println(err)
+					logger.Error(err)
 				}
 			}
 		},
