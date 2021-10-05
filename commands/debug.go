@@ -6,6 +6,7 @@ import (
 	"github.com/diamondburned/arikawa/v3/discord"
 	"github.com/diamondburned/arikawa/v3/gateway"
 	"github.com/diamondburned/arikawa/v3/utils/json/option"
+	"github.com/kingultron99/tdcbot/Maps"
 	"github.com/kingultron99/tdcbot/core"
 	"github.com/kingultron99/tdcbot/logger"
 	"github.com/kingultron99/tdcbot/structs"
@@ -16,7 +17,7 @@ import (
 )
 
 func init() {
-	MapCommands["stats"] = structs.Command{
+	Maps.MapCommands["stats"] = structs.Command{
 		Name:        "stats",
 		Description: "Returns the current statistics and host system information of GoTDC",
 		Group:       "debug",
@@ -79,7 +80,7 @@ func init() {
 			}
 		},
 	}
-	MapCommands["gc"] = structs.Command{
+	Maps.MapCommands["gc"] = structs.Command{
 		Name:        "gc",
 		Description: "Triggers a garbage collection cycle",
 		Usage:       "/gc",
@@ -101,7 +102,7 @@ func init() {
 			}
 		},
 	}
-	MapCommands["kill"] = structs.Command{
+	Maps.MapCommands["kill"] = structs.Command{
 		Name:        "kill",
 		Description: "Kills the bots process.",
 		OwnerOnly:   true,

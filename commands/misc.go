@@ -7,6 +7,8 @@ import (
 	"github.com/diamondburned/arikawa/v3/api"
 	"github.com/diamondburned/arikawa/v3/discord"
 	"github.com/diamondburned/arikawa/v3/gateway"
+	"github.com/kingultron99/tdcbot/Maps"
+	"github.com/kingultron99/tdcbot/componentInteractions/pollStuff"
 	"github.com/kingultron99/tdcbot/core"
 	"github.com/kingultron99/tdcbot/logger"
 	"github.com/kingultron99/tdcbot/structs"
@@ -18,8 +20,15 @@ import (
 	"unicode/utf8"
 )
 
+var (
+	Fields        []discord.EmbedField
+	Components    []discord.Component
+	Data          string
+	InteractionID discord.InteractionID
+)
+
 func init() {
-	MapCommands["question"] = structs.Command{
+	Maps.MapCommands["question"] = structs.Command{
 		Name:        "question",
 		Description: "Massive amounts of knowledge at your fingertips",
 		Group:       "misc",
@@ -112,7 +121,7 @@ func init() {
 
 		},
 	}
-	MapCommands["randomfact"] = structs.Command{
+	Maps.MapCommands["randomfact"] = structs.Command{
 		Name:        "randomfact",
 		Description: "Here, have a fact! But not just any old fact! Its a \"Random Fact\"! Just for you!",
 		Group:       "misc",
@@ -221,7 +230,7 @@ func init() {
 
 		},
 	}
-	MapCommands["pollattempt"] = structs.Command{
+	Maps.MapCommands["pollattempt"] = structs.Command{
 		Name:        "pollattempt",
 		Description: "This is the first attempt at a poll command. planning to add vote visualisation as a ASCII graph",
 		Group:       "misc",
@@ -266,33 +275,33 @@ func init() {
 		},
 		OwnerOnly: false,
 		Run: func(e *gateway.InteractionCreateEvent, data *discord.CommandInteractionData) {
-			var (
-				fields     []discord.EmbedField
-				components []discord.Component
-			)
-
 			for _, option := range data.Options[2:] {
-				fields = append(fields, discord.EmbedField{
-					Name:   strings.Title(strings.ReplaceAll(fmt.Sprint(option.Value), "\"", "")),
-					Value:  "`|||`",
+				item := strings.ReplaceAll(fmt.Sprint(option.Name), "\"", "")
+				value := strings.Title(strings.ReplaceAll(fmt.Sprint(option.Value), "\"", ""))
+				Fields = append(Fields, discord.EmbedField{
+					Name:   value,
+					Value:  pollStuff.GetGraph(item),
 					Inline: false,
 				})
 
-				components = append(components, utils.GenButtonComponents(option))
+				Components = append(Components, utils.GenButtonComponents(option))
 			}
+
+			Data = fmt.Sprint(data.Options[0])
+			InteractionID = e.ID
 
 			res := api.InteractionResponse{
 				Type: api.MessageInteractionWithSource,
 				Data: &api.InteractionResponseData{
 					Embeds: &[]discord.Embed{
 						{
-							Title:  fmt.Sprint(data.Options[0]),
-							Fields: fields,
+							Title:  Data,
+							Fields: Fields,
 						},
 					},
 					Components: &[]discord.Component{
 						&discord.ActionRowComponent{
-							Components: components,
+							Components: Components,
 						},
 					},
 				},

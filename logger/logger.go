@@ -20,6 +20,16 @@ func InitLogger() {
 
 	zap.ReplaceGlobals(logg)
 
+	Print(`
+ ::::::::   ::::::::       ::::::::: ::::::::    ::::::::
+:+:    :+: :+:    :+:         :+:    :+:   :+:  :+:    :+:
++:+    +:+ +:+    +:+   (:o   +:+    +:+    +:+ +:+
++#+        +#+    +#+ +#+#+#+ +#+    +#+    +#+ +#+
++#+   #+#+ +#+    +#+         +#+    +#+    +#+ +#+
+#+#    #+# #+#    #+#         #+#    #+#   #+#  #+#    #+#
+ ########   ########          ###    ########    ########
+                                              0.1.9-alpha
+`)
 	Debug("Initialised Logger!")
 
 }
@@ -27,7 +37,7 @@ func InitLogger() {
 func getLogWriter() zapcore.WriteSyncer {
 	path, err := os.Getwd()
 	if err != nil {
-		panic(err)
+		Panic(err)
 	}
 
 	_, err = os.Stat(path + "/logs")
@@ -52,8 +62,15 @@ func getEncoder() zapcore.Encoder {
 	conf.EncodeTime = func(t time.Time, enc zapcore.PrimitiveArrayEncoder) {
 		enc.AppendString(t.Local().Format("02/01/2006 || 15:04:05"))
 	}
+
 	conf.EncodeLevel = zapcore.CapitalColorLevelEncoder
 	return zapcore.NewConsoleEncoder(conf)
+}
+
+func Print(args ...interface{}) {
+	argsfmt := strings.ReplaceAll(fmt.Sprint(args), "[", "")
+	argsfmt = strings.ReplaceAll(argsfmt, "]", "")
+	print(argsfmt)
 }
 
 func Debug(args ...interface{}) {

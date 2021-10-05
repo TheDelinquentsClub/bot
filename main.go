@@ -7,7 +7,7 @@ import (
 	"github.com/diamondburned/arikawa/v3/gateway"
 	"github.com/diamondburned/arikawa/v3/gateway/shard"
 	"github.com/diamondburned/arikawa/v3/state"
-	"github.com/kingultron99/tdcbot/commands"
+	"github.com/kingultron99/tdcbot/Maps"
 	"github.com/kingultron99/tdcbot/core"
 	"github.com/kingultron99/tdcbot/logger"
 	"github.com/kingultron99/tdcbot/utils"
@@ -27,11 +27,11 @@ func main() {
 
 	m, err := shard.NewManager(fmt.Sprint("Bot ", core.Config.Token), newShard)
 	if err != nil {
-		logger.Error(fmt.Sprint("failed to create shard manager: %v", err))
+		logger.Error(fmt.Sprintf("failed to create shard manager: %v", err))
 	}
 
 	if err := m.Open(context.Background()); err != nil {
-		logger.Error(fmt.Sprint("failed to connect shards: %v", err))
+		logger.Error(fmt.Sprintf("failed to connect shards: %v", err))
 	}
 	defer func(m *shard.Manager) {
 		err := m.Close()
@@ -54,8 +54,8 @@ func main() {
 		shardNum++
 	})
 
-	commands.AddHandlers()
-	commands.Register(discord.AppID(utils.MustSnowflakeEnv(core.Config.APPID)), discord.GuildID(utils.MustSnowflakeEnv(core.Config.GUILDID)))
+	Maps.AddHandlers()
+	Maps.Register(discord.AppID(utils.MustSnowflakeEnv(core.Config.APPID)), discord.GuildID(utils.MustSnowflakeEnv(core.Config.GUILDID)))
 
 	// Block forever.
 	select {}

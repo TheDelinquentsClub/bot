@@ -1,4 +1,4 @@
-package commands
+package Maps
 
 import (
 	"fmt"
@@ -50,6 +50,7 @@ func Register(appID discord.AppID, guildID discord.GuildID) {
 	}
 
 	for _, command := range registeredCommands {
+		logger.Debug(command, " Registered!")
 		if command.NoDefaultPermission == true {
 			core.State.BatchEditCommandPermissions(appID, guildID, []api.BatchEditCommandPermissionsData{
 				{

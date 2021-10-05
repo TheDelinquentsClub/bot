@@ -5,6 +5,7 @@ import (
 	"github.com/diamondburned/arikawa/v3/api"
 	"github.com/diamondburned/arikawa/v3/discord"
 	"github.com/diamondburned/arikawa/v3/gateway"
+	"github.com/kingultron99/tdcbot/Maps"
 	"github.com/kingultron99/tdcbot/core"
 	"github.com/kingultron99/tdcbot/logger"
 	"github.com/kingultron99/tdcbot/structs"
@@ -12,7 +13,7 @@ import (
 )
 
 func init() {
-	MapCommands["ban"] = structs.Command{
+	Maps.MapCommands["ban"] = structs.Command{
 		Name:        "ban",
 		Description: "Bans a user",
 		Usage:       "/ban <user>",
