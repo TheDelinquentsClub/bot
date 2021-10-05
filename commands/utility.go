@@ -33,7 +33,6 @@ func init() {
 		},
 		OwnerOnly: true,
 		Run: func(e *gateway.InteractionCreateEvent, data *discord.CommandInteractionData) {
-			var logger = logger.NewLogger("ban command")
 			var snowflake, _ = data.Options[0].Snowflake()
 
 			if snowflake != utils.MustSnowflakeEnv(fmt.Sprint(e.Member.User.ID)) {

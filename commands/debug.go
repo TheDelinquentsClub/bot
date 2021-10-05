@@ -23,7 +23,6 @@ func init() {
 		OwnerOnly:   false,
 		Usage:       "/stats",
 		Run: func(e *gateway.InteractionCreateEvent, data *discord.CommandInteractionData) {
-			var logger = logger.NewLogger("Stats command")
 			var m runtime.MemStats
 			runtime.ReadMemStats(&m)
 
@@ -87,7 +86,6 @@ func init() {
 		Group:       "debug",
 		OwnerOnly:   true,
 		Run: func(e *gateway.InteractionCreateEvent, data *discord.CommandInteractionData) {
-			var logger = logger.NewLogger("GC command")
 			logger.Info(e.Member.User.Username, "triggered a GC cycle!")
 			runtime.GC()
 
@@ -110,7 +108,6 @@ func init() {
 		Usage:       "/kill",
 		Group:       "debug",
 		Run: func(e *gateway.InteractionCreateEvent, data *discord.CommandInteractionData) {
-			var logger = logger.NewLogger("Kill command")
 			res := api.InteractionResponse{
 				Type: api.MessageInteractionWithSource,
 				Data: &api.InteractionResponseData{
@@ -132,7 +129,7 @@ func init() {
 				logger.Error(err)
 			}
 
-			logger.Critical(fmt.Sprintf("User %v#%v killed the process", e.Member.User.Username, e.Member.User.Discriminator))
+			logger.Fatal(fmt.Sprintf("User %v#%v killed the process", e.Member.User.Username, e.Member.User.Discriminator))
 		},
 	}
 }

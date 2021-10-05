@@ -18,9 +18,6 @@ func init() {
 		OwnerOnly:   false,
 		Usage:       "/help",
 		Run: func(e *gateway.InteractionCreateEvent, data *discord.CommandInteractionData) {
-
-			var logger = logger.NewLogger("help command")
-
 			res := api.InteractionResponse{
 				Type: api.MessageInteractionWithSource,
 				Data: &api.InteractionResponseData{
@@ -85,9 +82,6 @@ func init() {
 		Usage:       "/info",
 		OwnerOnly:   false,
 		Run: func(e *gateway.InteractionCreateEvent, data *discord.CommandInteractionData) {
-
-			var logger = logger.NewLogger("info command")
-
 			res := api.InteractionResponse{
 				Type: api.MessageInteractionWithSource,
 				Data: &api.InteractionResponseData{

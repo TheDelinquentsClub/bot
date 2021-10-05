@@ -14,9 +14,7 @@ import (
 )
 
 func main() {
-
-	var logger = logger.NewLogger("main")
-
+	logger.InitLogger()
 	core.InitConfig()
 
 	newShard := state.NewShardFunc(func(m *shard.Manager, s *state.State) {
@@ -29,11 +27,11 @@ func main() {
 
 	m, err := shard.NewManager(fmt.Sprint("Bot ", core.Config.Token), newShard)
 	if err != nil {
-		logger.Error(fmt.Sprintf("failed to create shard manager: %v", err))
+		logger.Error(fmt.Sprint("failed to create shard manager: %v", err))
 	}
 
 	if err := m.Open(context.Background()); err != nil {
-		logger.Error(fmt.Sprintf("failed to connect shards: %v", err))
+		logger.Error(fmt.Sprint("failed to connect shards: %v", err))
 	}
 	defer func(m *shard.Manager) {
 		err := m.Close()

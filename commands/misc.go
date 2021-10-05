@@ -50,7 +50,6 @@ func init() {
 			},
 		},
 		Run: func(e *gateway.InteractionCreateEvent, data *discord.CommandInteractionData) {
-			var logger = logger.NewLogger("question command")
 			ack := api.InteractionResponse{
 				Type: api.DeferredMessageInteractionWithSource,
 			}
@@ -128,7 +127,6 @@ func init() {
 		},
 		OwnerOnly: false,
 		Run: func(e *gateway.InteractionCreateEvent, data *discord.CommandInteractionData) {
-			var logger = logger.NewLogger("randomfact command")
 			ack := api.InteractionResponse{
 				Type: api.DeferredMessageInteractionWithSource,
 			}
@@ -268,7 +266,6 @@ func init() {
 		},
 		OwnerOnly: false,
 		Run: func(e *gateway.InteractionCreateEvent, data *discord.CommandInteractionData) {
-			var logger = logger.NewLogger("pollattempt command")
 			var (
 				fields     []discord.EmbedField
 				components []discord.Component

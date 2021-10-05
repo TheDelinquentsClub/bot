@@ -12,7 +12,6 @@ import (
 )
 
 func init() {
-	var logger = logger.NewLogger("components")
 
 	MapComponents["help_select_category"] = structs.Component{
 		Run: func(e *gateway.InteractionCreateEvent, data *discord.ComponentInteractionData) {

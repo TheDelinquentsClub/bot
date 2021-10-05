@@ -20,7 +20,6 @@ type configStruct struct {
 var Config *configStruct
 
 func InitConfig() {
-	var logger = logger.NewLogger("Config")
 
 	data, err := os.Open("config.json")
 	if err != nil {

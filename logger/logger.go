@@ -2,70 +2,92 @@ package logger
 
 import (
 	"fmt"
-	"io"
-	"log"
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 	"os"
-	"sync"
+	"strings"
 	"time"
 )
 
-//goland:noinspection GoUnusedGlobalVariable
-type logger struct {
-	Module string
-	lock   sync.RWMutex
+func InitLogger() {
+	writerSync := getLogWriter()
+	encoder := getEncoder()
+
+	core := zapcore.NewCore(encoder, writerSync, zapcore.DebugLevel)
+	logg := zap.New(core)
+
+	defer logg.Sync()
+
+	zap.ReplaceGlobals(logg)
+
+	Debug("Initialised Logger!")
+
 }
 
-func init() {
-	var logger = NewLogger("Logger")
-
-	logger.Info("Test!")
-
-}
-
-func NewLogger(name string) *logger {
-	return &logger{
-		Module: name,
+func getLogWriter() zapcore.WriteSyncer {
+	path, err := os.Getwd()
+	if err != nil {
+		panic(err)
 	}
-}
 
-func (l *logger) log(lvl string, args ...interface{}) {
-	l.lock.RLock()
+	_, err = os.Stat(path + "/logs")
+	if os.IsNotExist(err) {
+		_ = os.Mkdir(path+"logs", os.ModePerm)
+	}
 
 	t := time.Now().Format("02-01-2006")
 
-	logFile, err := os.OpenFile(fmt.Sprintf("./logs/logs_%v.txt", t), os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
+	logFile, err := os.OpenFile(fmt.Sprintf("%v/logs/logs_%v.txt", path, t), os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 
-	mv := io.MultiWriter(os.Stdout, logFile)
+	syncs := zapcore.NewMultiWriteSyncer(logFile, os.Stdout)
 
-	log.SetOutput(mv)
-	log.Println(fmt.Sprintf("%v %v: %v", l.Module, lvl, args))
-	l.lock.RUnlock()
+	return syncs
 }
 
-func (l *logger) Info(args ...interface{}) {
-	l.log("Info", args)
+func getEncoder() zapcore.Encoder {
+	conf := zap.NewProductionEncoderConfig()
+	conf.EncodeTime = func(t time.Time, enc zapcore.PrimitiveArrayEncoder) {
+		enc.AppendString(t.Local().Format("02/01/2006 || 15:04:05"))
+	}
+	conf.EncodeLevel = zapcore.CapitalColorLevelEncoder
+	return zapcore.NewConsoleEncoder(conf)
 }
 
-func (l *logger) Warn(args ...interface{}) {
-	l.log("Warn", args)
+func Debug(args ...interface{}) {
+	argsfmt := strings.ReplaceAll(fmt.Sprint(args), "[", "")
+	argsfmt = strings.ReplaceAll(argsfmt, "]", "")
+	zap.S().Debug(argsfmt)
 }
 
-func (l *logger) Error(args ...interface{}) {
-	l.log("Error", args)
+func Info(args ...interface{}) {
+	argsfmt := strings.ReplaceAll(fmt.Sprint(args), "[", "")
+	argsfmt = strings.ReplaceAll(argsfmt, "]", "")
+	zap.S().Info(argsfmt)
 }
 
-func (l *logger) Debug(args ...interface{}) {
-	l.log("Debug", args)
+func Warn(args ...interface{}) {
+	argsfmt := strings.ReplaceAll(fmt.Sprint(args), "[", "")
+	argsfmt = strings.ReplaceAll(argsfmt, "]", "")
+	zap.S().Warn(argsfmt)
 }
 
-func (l *logger) Critical(args ...interface{}) {
-	l.log("Critical", args)
-	os.Exit(1)
+func Error(args ...interface{}) {
+	argsfmt := strings.ReplaceAll(fmt.Sprint(args), "[", "")
+	argsfmt = strings.ReplaceAll(argsfmt, "]", "")
+	zap.S().Error(argsfmt)
 }
 
-func (l *logger) Notice(args ...interface{}) {
-	l.log("Notice", args)
+func Panic(args ...interface{}) {
+	argsfmt := strings.ReplaceAll(fmt.Sprint(args), "[", "")
+	argsfmt = strings.ReplaceAll(argsfmt, "]", "")
+	zap.S().Panic(argsfmt)
+}
+
+func Fatal(args ...interface{}) {
+	argsfmt := strings.ReplaceAll(fmt.Sprint(args), "[", "")
+	argsfmt = strings.ReplaceAll(argsfmt, "]", "")
+	zap.S().Fatal(argsfmt)
 }

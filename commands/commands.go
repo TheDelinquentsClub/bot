@@ -27,8 +27,6 @@ func AddHandlers() {
 
 func Register(appID discord.AppID, guildID discord.GuildID) {
 
-	var logger = logger.NewLogger("Command Register")
-
 	var commands []discord.Command
 
 	for _, command := range MapCommands {
