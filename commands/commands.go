@@ -1,4 +1,4 @@
-package Maps
+package commands
 
 import (
 	"fmt"
@@ -8,7 +8,54 @@ import (
 	"github.com/kingultron99/tdcbot/core"
 	"github.com/kingultron99/tdcbot/logger"
 	"github.com/kingultron99/tdcbot/utils"
+	"strings"
 )
+
+type Command struct {
+	Name        string
+	Description string
+	Group       string
+	Usage       string
+	Options     []discord.CommandOption
+	OwnerOnly   bool
+	Run         func(e *gateway.InteractionCreateEvent, data *discord.CommandInteractionData)
+}
+
+type Component struct {
+	Run func(e *gateway.InteractionCreateEvent, data *discord.ComponentInteractionData)
+}
+
+var MapCommands = make(map[string]Command)
+var MapComponents = make(map[string]Component)
+
+// GetCommands returns all available commands that have been mapped for use in /help
+func GetCommands(category string) ([]discord.EmbedField, discord.Color) {
+
+	var commandFields []discord.EmbedField
+
+	for _, command := range MapCommands {
+		switch command.Group {
+		case category:
+			commandFields = append(commandFields, discord.EmbedField{
+				Name:   strings.Title(command.Name),
+				Value:  fmt.Sprintf("%v\nUsage: `%v`\nOwner Only: %v", command.Description, command.Usage, command.OwnerOnly),
+				Inline: true,
+			})
+		default:
+			continue
+		}
+	}
+
+	if len(commandFields) == 0 {
+		commandFields = append(commandFields, discord.EmbedField{
+			Name:  "There are no commands in this category!",
+			Value: "that, or I wasn't able to grab them correctly :|\nEither way, if you have any command suggestions please enter them in \n<#689763311268397097>!",
+		})
+		return commandFields, utils.DiscordRed
+	} else {
+		return commandFields, utils.DiscordGreen
+	}
+}
 
 func AddHandlers() {
 	core.State.AddHandler(func(e *gateway.InteractionCreateEvent) {
@@ -50,7 +97,7 @@ func Register(appID discord.AppID, guildID discord.GuildID) {
 	}
 
 	for _, command := range registeredCommands {
-		logger.Debug(command, " Registered!")
+		logger.Debug(command.Name, "has been registered!")
 		if command.NoDefaultPermission == true {
 			core.State.BatchEditCommandPermissions(appID, guildID, []api.BatchEditCommandPermissionsData{
 				{

@@ -4,15 +4,13 @@ import (
 	"github.com/diamondburned/arikawa/v3/api"
 	"github.com/diamondburned/arikawa/v3/discord"
 	"github.com/diamondburned/arikawa/v3/gateway"
-	"github.com/kingultron99/tdcbot/Maps"
 	"github.com/kingultron99/tdcbot/core"
 	"github.com/kingultron99/tdcbot/logger"
-	"github.com/kingultron99/tdcbot/structs"
 	"github.com/kingultron99/tdcbot/utils"
 )
 
 func init() {
-	Maps.MapCommands["help"] = structs.Command{
+	MapCommands["help"] = Command{
 		Name:        "help",
 		Description: "Returns a list of available commands",
 		Group:       "info",
@@ -76,7 +74,7 @@ func init() {
 
 		},
 	}
-	Maps.MapCommands["info"] = structs.Command{
+	MapCommands["info"] = Command{
 		Name:        "info",
 		Description: "Information about GoTDC",
 		Group:       "info",

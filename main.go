@@ -7,15 +7,15 @@ import (
 	"github.com/diamondburned/arikawa/v3/gateway"
 	"github.com/diamondburned/arikawa/v3/gateway/shard"
 	"github.com/diamondburned/arikawa/v3/state"
-	"github.com/kingultron99/tdcbot/Maps"
+	"github.com/kingultron99/tdcbot/commands"
 	"github.com/kingultron99/tdcbot/core"
 	"github.com/kingultron99/tdcbot/logger"
 	"github.com/kingultron99/tdcbot/utils"
 )
 
 func main() {
-	logger.InitLogger()
-	core.InitConfig()
+
+	core.Initialise()
 
 	newShard := state.NewShardFunc(func(m *shard.Manager, s *state.State) {
 		// Add the needed Gateway intents.
@@ -54,9 +54,10 @@ func main() {
 		shardNum++
 	})
 
-	Maps.AddHandlers()
-	Maps.Register(discord.AppID(utils.MustSnowflakeEnv(core.Config.APPID)), discord.GuildID(utils.MustSnowflakeEnv(core.Config.GUILDID)))
+	commands.AddHandlers()
+	commands.Register(discord.AppID(utils.MustSnowflakeEnv(core.Config.APPID)), discord.GuildID(utils.MustSnowflakeEnv(core.Config.GUILDID)))
 
-	// Block forever.
+	//block forever
 	select {}
+
 }

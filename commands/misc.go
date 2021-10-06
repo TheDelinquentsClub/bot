@@ -7,11 +7,9 @@ import (
 	"github.com/diamondburned/arikawa/v3/api"
 	"github.com/diamondburned/arikawa/v3/discord"
 	"github.com/diamondburned/arikawa/v3/gateway"
-	"github.com/kingultron99/tdcbot/Maps"
-	"github.com/kingultron99/tdcbot/componentInteractions/pollStuff"
+	"github.com/diamondburned/arikawa/v3/utils/json/option"
 	"github.com/kingultron99/tdcbot/core"
 	"github.com/kingultron99/tdcbot/logger"
-	"github.com/kingultron99/tdcbot/structs"
 	"github.com/kingultron99/tdcbot/utils"
 	"io/ioutil"
 	"net/http"
@@ -23,12 +21,14 @@ import (
 var (
 	Fields        []discord.EmbedField
 	Components    []discord.Component
-	Data          string
-	InteractionID discord.InteractionID
+	Title         string
+	Data          []discord.InteractionOption
+	InteractionID string
+	OptionsMap    map[string]string
 )
 
 func init() {
-	Maps.MapCommands["question"] = structs.Command{
+	MapCommands["question"] = Command{
 		Name:        "question",
 		Description: "Massive amounts of knowledge at your fingertips",
 		Group:       "misc",
@@ -121,7 +121,7 @@ func init() {
 
 		},
 	}
-	Maps.MapCommands["randomfact"] = structs.Command{
+	MapCommands["randomfact"] = Command{
 		Name:        "randomfact",
 		Description: "Here, have a fact! But not just any old fact! Its a \"Random Fact\"! Just for you!",
 		Group:       "misc",
@@ -230,7 +230,7 @@ func init() {
 
 		},
 	}
-	Maps.MapCommands["pollattempt"] = structs.Command{
+	MapCommands["pollattempt"] = Command{
 		Name:        "pollattempt",
 		Description: "This is the first attempt at a poll command. planning to add vote visualisation as a ASCII graph",
 		Group:       "misc",
@@ -275,27 +275,53 @@ func init() {
 		},
 		OwnerOnly: false,
 		Run: func(e *gateway.InteractionCreateEvent, data *discord.CommandInteractionData) {
+
+			oldres := api.EditInteractionResponseData{
+				Content:    option.NewNullableString("**Poll is no-longer valid!**"),
+				Components: &[]discord.Component{},
+			}
+			if _, err := core.State.EditInteractionResponse(discord.AppID(utils.MustSnowflakeEnv(core.Config.APPID)), InteractionID, oldres); err != nil {
+				logger.Error("Failed to invalidate old poll!")
+			}
+
+			for key, _ := range OptionsMap {
+				delete(OptionsMap, key)
+				logger.Debug("deleted", key)
+			}
+			for key, _ := range Voted {
+				delete(Voted, key)
+				logger.Debug("deleted", key)
+			}
+			for key, _ := range Scores {
+				delete(Scores, key)
+				logger.Debug("deleted", key)
+			}
+			Fields = []discord.EmbedField{}
+			Components = []discord.Component{}
+			Title = ""
+			Data = []discord.InteractionOption{}
+			InteractionID = ""
+
+			OptionsMap = make(map[string]string)
+			Data = data.Options[2:]
 			for _, option := range data.Options[2:] {
 				item := strings.ReplaceAll(fmt.Sprint(option.Name), "\"", "")
-				value := strings.Title(strings.ReplaceAll(fmt.Sprint(option.Value), "\"", ""))
-				Fields = append(Fields, discord.EmbedField{
-					Name:   value,
-					Value:  pollStuff.GetGraph(item),
-					Inline: false,
-				})
+				name := strings.Title(strings.ReplaceAll(fmt.Sprint(option.Value), "\"", ""))
+				OptionsMap[item] = name
+				Fields = append(Fields, GenFields(name, item))
 
 				Components = append(Components, utils.GenButtonComponents(option))
 			}
 
-			Data = fmt.Sprint(data.Options[0])
-			InteractionID = e.ID
+			Title = fmt.Sprint(data.Options[0])
+			InteractionID = e.Token
 
 			res := api.InteractionResponse{
 				Type: api.MessageInteractionWithSource,
 				Data: &api.InteractionResponseData{
 					Embeds: &[]discord.Embed{
 						{
-							Title:  Data,
+							Title:  Title,
 							Fields: Fields,
 						},
 					},

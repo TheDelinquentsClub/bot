@@ -9,40 +9,15 @@ import (
 	"time"
 )
 
-func InitLogger() {
-	writerSync := getLogWriter()
-	encoder := getEncoder()
-
-	core := zapcore.NewCore(encoder, writerSync, zapcore.DebugLevel)
-	logg := zap.New(core)
-
-	defer logg.Sync()
-
-	zap.ReplaceGlobals(logg)
-
-	Print(`
- ::::::::   ::::::::       ::::::::: ::::::::    ::::::::
-:+:    :+: :+:    :+:         :+:    :+:   :+:  :+:    :+:
-+:+    +:+ +:+    +:+   (:o   +:+    +:+    +:+ +:+
-+#+        +#+    +#+ +#+#+#+ +#+    +#+    +#+ +#+
-+#+   #+#+ +#+    +#+         +#+    +#+    +#+ +#+
-#+#    #+# #+#    #+#         #+#    #+#   #+#  #+#    #+#
- ########   ########          ###    ########    ########
-                                              0.1.9-alpha
-`)
-	Debug("Initialised Logger!")
-
-}
-
-func getLogWriter() zapcore.WriteSyncer {
+func GetLogWriter() zapcore.WriteSyncer {
 	path, err := os.Getwd()
 	if err != nil {
 		Panic(err)
 	}
 
-	_, err = os.Stat(path + "/logs")
+	_, err = os.Stat("./logs")
 	if os.IsNotExist(err) {
-		_ = os.Mkdir(path+"logs", os.ModePerm)
+		_ = os.Mkdir("./logs", os.ModePerm)
 	}
 
 	t := time.Now().Format("02-01-2006")
@@ -57,7 +32,7 @@ func getLogWriter() zapcore.WriteSyncer {
 	return syncs
 }
 
-func getEncoder() zapcore.Encoder {
+func GetEncoder() zapcore.Encoder {
 	conf := zap.NewProductionEncoderConfig()
 	conf.EncodeTime = func(t time.Time, enc zapcore.PrimitiveArrayEncoder) {
 		enc.AppendString(t.Local().Format("02/01/2006 || 15:04:05"))

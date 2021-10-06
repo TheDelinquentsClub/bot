@@ -1,23 +1,20 @@
-package componentInteractions
+package commands
 
 import (
 	"fmt"
 	"github.com/diamondburned/arikawa/v3/api"
 	"github.com/diamondburned/arikawa/v3/discord"
 	"github.com/diamondburned/arikawa/v3/gateway"
-	"github.com/kingultron99/tdcbot/Maps"
-	"github.com/kingultron99/tdcbot/componentInteractions/pollStuff"
 	"github.com/kingultron99/tdcbot/core"
 	"github.com/kingultron99/tdcbot/logger"
-	"github.com/kingultron99/tdcbot/structs"
-	"strings"
+	"github.com/kingultron99/tdcbot/utils"
 )
 
 func init() {
 
-	Maps.MapComponents["help_select_category"] = structs.Component{
+	MapComponents["help_select_category"] = Component{
 		Run: func(e *gateway.InteractionCreateEvent, data *discord.ComponentInteractionData) {
-			var fields, embedColour = Maps.GetCommands(data.Values[0])
+			var fields, embedColour = GetCommands(data.Values[0])
 
 			res := api.InteractionResponse{
 				Type: api.UpdateMessage,
@@ -45,10 +42,9 @@ func init() {
 	}
 
 	//the next few component interaction functions are purely for the poll command
-	Maps.MapComponents["first_option"] = structs.Component{
-
+	MapComponents["first_option"] = Component{
 		Run: func(e *gateway.InteractionCreateEvent, data *discord.ComponentInteractionData) {
-			if pollStuff.Voted[e.Member.User.ID] != "" {
+			if Voted[e.Member.User.ID] != "" {
 				logger.Warn(e.Member.User.Username, "has already voted!")
 				res := api.InteractionResponse{
 					Type: api.MessageInteractionWithSource,
@@ -57,7 +53,8 @@ func init() {
 						Embeds: &[]discord.Embed{
 							{
 								Title:       "You've already voted!!",
-								Description: fmt.Sprintf("You voted for %v", pollStuff.Voted[e.Member.User.ID]),
+								Description: fmt.Sprintf("You voted for `%v`", Voted[e.Member.User.ID]),
+								Color:       utils.DiscordRed,
 							},
 						},
 					},
@@ -68,18 +65,20 @@ func init() {
 				return
 			}
 
-			pollStuff.Voted[e.Member.User.ID] = strings.ReplaceAll(fmt.Sprint(data.Values), "\"", "")
-			pollStuff.Item1++
+			Voted[e.Member.User.ID] = OptionsMap[data.CustomID]
+			Scores[data.CustomID]++
 
-			logger.Info(pollStuff.Voted[e.Member.User.ID])
+			logger.Debug(Scores[data.CustomID])
 
-			pollStuff.Update()
+			logger.Info(Voted[e.Member.User.ID])
+
+			Update()
 		},
 	}
-	Maps.MapComponents["second_option"] = structs.Component{
+	MapComponents["second_option"] = Component{
 
 		Run: func(e *gateway.InteractionCreateEvent, data *discord.ComponentInteractionData) {
-			if pollStuff.Voted[e.Member.User.ID] != "" {
+			if Voted[e.Member.User.ID] != "" {
 				logger.Warn(e.Member.User.Username, "has already voted!")
 				res := api.InteractionResponse{
 					Type: api.MessageInteractionWithSource,
@@ -88,7 +87,8 @@ func init() {
 						Embeds: &[]discord.Embed{
 							{
 								Title:       "You've already voted!!",
-								Description: fmt.Sprintf("You voted for %v", pollStuff.Voted[e.Member.User.ID]),
+								Description: fmt.Sprintf("You voted for `%v`", Voted[e.Member.User.ID]),
+								Color:       utils.DiscordRed,
 							},
 						},
 					},
@@ -99,18 +99,18 @@ func init() {
 				return
 			}
 
-			pollStuff.Voted[e.Member.User.ID] = strings.ReplaceAll(fmt.Sprint(data.Values), "\"", "")
-			pollStuff.Item2++
+			Voted[e.Member.User.ID] = OptionsMap[data.CustomID]
+			Scores[data.CustomID]++
 
-			logger.Info(pollStuff.Voted[e.Member.User.ID])
+			logger.Info(Voted[e.Member.User.ID])
 
-			pollStuff.Update()
+			Update()
 		},
 	}
-	Maps.MapComponents["third_option"] = structs.Component{
+	MapComponents["third_option"] = Component{
 
 		Run: func(e *gateway.InteractionCreateEvent, data *discord.ComponentInteractionData) {
-			if pollStuff.Voted[e.Member.User.ID] != "" {
+			if Voted[e.Member.User.ID] != "" {
 				logger.Warn(e.Member.User.Username, "has already voted!")
 				res := api.InteractionResponse{
 					Type: api.MessageInteractionWithSource,
@@ -119,7 +119,8 @@ func init() {
 						Embeds: &[]discord.Embed{
 							{
 								Title:       "You've already voted!!",
-								Description: fmt.Sprintf("You voted for %v", pollStuff.Voted[e.Member.User.ID]),
+								Description: fmt.Sprintf("You voted for `%v`", Voted[e.Member.User.ID]),
+								Color:       utils.DiscordRed,
 							},
 						},
 					},
@@ -130,18 +131,18 @@ func init() {
 				return
 			}
 
-			pollStuff.Voted[e.Member.User.ID] = strings.ReplaceAll(fmt.Sprint(data.Values), "\"", "")
-			pollStuff.Item3++
+			Voted[e.Member.User.ID] = OptionsMap[data.CustomID]
+			Scores[data.CustomID]++
 
-			logger.Info(pollStuff.Voted[e.Member.User.ID])
+			logger.Info(Voted[e.Member.User.ID])
 
-			pollStuff.Update()
+			Update()
 		},
 	}
-	Maps.MapComponents["fourth_option"] = structs.Component{
+	MapComponents["fourth_option"] = Component{
 
 		Run: func(e *gateway.InteractionCreateEvent, data *discord.ComponentInteractionData) {
-			if pollStuff.Voted[e.Member.User.ID] != "" {
+			if Voted[e.Member.User.ID] != "" {
 				logger.Warn(e.Member.User.Username, "has already voted!")
 				res := api.InteractionResponse{
 					Type: api.MessageInteractionWithSource,
@@ -150,7 +151,8 @@ func init() {
 						Embeds: &[]discord.Embed{
 							{
 								Title:       "You've already voted!!",
-								Description: fmt.Sprintf("You voted for %v", pollStuff.Voted[e.Member.User.ID]),
+								Description: fmt.Sprintf("You voted for `%v`", Voted[e.Member.User.ID]),
+								Color:       utils.DiscordRed,
 							},
 						},
 					},
@@ -161,12 +163,12 @@ func init() {
 				return
 			}
 
-			pollStuff.Voted[e.Member.User.ID] = strings.ReplaceAll(fmt.Sprint(data.Values), "\"", "")
-			pollStuff.Item4++
+			Voted[e.Member.User.ID] = OptionsMap[data.CustomID]
+			Scores[data.CustomID]++
 
-			logger.Info(pollStuff.Voted[e.Member.User.ID])
+			logger.Info(Voted[e.Member.User.ID])
 
-			pollStuff.Update()
+			Update()
 		},
 	}
 }
