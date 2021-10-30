@@ -62,6 +62,10 @@ func AddHandlers() {
 		switch data := e.Data.(type) {
 		case *discord.CommandInteractionData:
 			if cmd, ok := MapCommands[data.Name]; ok {
+				if cmd.OwnerOnly == true && e.Member.User.ID != discord.UserID(utils.MustSnowflakeEnv(core.Config.OwnerID)) {
+					NoPerms(e, data, cmd)
+					return
+				}
 				cmd.Run(e, data)
 			}
 		case *discord.ComponentInteractionData:
@@ -82,7 +86,7 @@ func Register(appID discord.AppID, guildID discord.GuildID) {
 			Name:                command.Name,
 			Description:         command.Description,
 			Options:             command.Options,
-			NoDefaultPermission: command.OwnerOnly,
+			NoDefaultPermission: false,
 		})
 	}
 
@@ -90,28 +94,22 @@ func Register(appID discord.AppID, guildID discord.GuildID) {
 	if err != nil {
 		logger.Error(fmt.Sprintf("Failed to overwrite commands in TDC with err: %v", err))
 	}
+}
 
-	registeredCommands, err := core.State.GuildCommands(appID, guildID)
-	if err != nil {
-		logger.Error(err)
-	}
-
-	for _, command := range registeredCommands {
-		logger.Debug(command.Name, "has been registered!")
-		if command.NoDefaultPermission == true {
-			core.State.BatchEditCommandPermissions(appID, guildID, []api.BatchEditCommandPermissionsData{
+func NoPerms(e *gateway.InteractionCreateEvent, data *discord.CommandInteractionData, cmd Command) {
+	res := api.InteractionResponse{
+		Type: api.MessageInteractionWithSource,
+		Data: &api.InteractionResponseData{
+			Embeds: &[]discord.Embed{
 				{
-					ID: command.ID,
-					Permissions: []discord.CommandPermissions{
-						{
-							ID:         utils.MustSnowflakeEnv(core.Config.OwnerID),
-							Type:       2,
-							Permission: true,
-						},
-					},
+					Color:       utils.DiscordRed,
+					Title:       "WOAH! You don't have permission to execute this command!",
+					Description: fmt.Sprintf("Sorry, but %v has `Owneronly` set to %v.\n\nIf you believe this is an error please message <@148203660088705025>", cmd.Name, cmd.OwnerOnly),
 				},
-			})
-			logger.Info("Successfully updated", command.Name, "permissions")
-		}
+			},
+		},
+	}
+	if err := core.State.RespondInteraction(e.ID, e.Token, res); err != nil {
+		logger.Error(err)
 	}
 }

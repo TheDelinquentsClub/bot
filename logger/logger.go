@@ -9,6 +9,8 @@ import (
 	"time"
 )
 
+var LogFile *os.File
+
 func GetLogWriter() zapcore.WriteSyncer {
 	path, err := os.Getwd()
 	if err != nil {
@@ -22,12 +24,12 @@ func GetLogWriter() zapcore.WriteSyncer {
 
 	t := time.Now().Format("02-01-2006")
 
-	logFile, err := os.OpenFile(fmt.Sprintf("%v/logs/logs_%v.txt", path, t), os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
+	LogFile, err = os.OpenFile(fmt.Sprintf("%v/logs/logs_%v.txt", path, t), os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
 	if err != nil {
 		panic(err)
 	}
 
-	syncs := zapcore.NewMultiWriteSyncer(logFile, os.Stdout)
+	syncs := zapcore.NewMultiWriteSyncer(LogFile, os.Stdout)
 
 	return syncs
 }

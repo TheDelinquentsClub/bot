@@ -64,14 +64,24 @@ func init() {
 				}
 				return
 			}
+			res := api.InteractionResponse{
+				Type: api.MessageInteractionWithSource,
+				Data: &api.InteractionResponseData{
+					Flags: api.EphemeralResponse,
+					Embeds: &[]discord.Embed{
+						{
+							Title: "Vote successful!",
+							Color: utils.DiscordGreen,
+						},
+					},
+				},
+			}
+			if err := core.State.RespondInteraction(e.ID, e.Token, res); err != nil {
+				logger.Error(err)
+			}
 
 			Voted[e.Member.User.ID] = OptionsMap[data.CustomID]
 			Scores[data.CustomID]++
-
-			logger.Debug(Scores[data.CustomID])
-
-			logger.Info(Voted[e.Member.User.ID])
-
 			Update()
 		},
 	}
@@ -98,11 +108,24 @@ func init() {
 				}
 				return
 			}
+			res := api.InteractionResponse{
+				Type: api.MessageInteractionWithSource,
+				Data: &api.InteractionResponseData{
+					Flags: api.EphemeralResponse,
+					Embeds: &[]discord.Embed{
+						{
+							Title: "Vote successful!",
+							Color: utils.DiscordGreen,
+						},
+					},
+				},
+			}
+			if err := core.State.RespondInteraction(e.ID, e.Token, res); err != nil {
+				logger.Error(err)
+			}
 
 			Voted[e.Member.User.ID] = OptionsMap[data.CustomID]
 			Scores[data.CustomID]++
-
-			logger.Info(Voted[e.Member.User.ID])
 
 			Update()
 		},
@@ -130,11 +153,24 @@ func init() {
 				}
 				return
 			}
+			res := api.InteractionResponse{
+				Type: api.MessageInteractionWithSource,
+				Data: &api.InteractionResponseData{
+					Flags: api.EphemeralResponse,
+					Embeds: &[]discord.Embed{
+						{
+							Title: "Vote successful!",
+							Color: utils.DiscordGreen,
+						},
+					},
+				},
+			}
+			if err := core.State.RespondInteraction(e.ID, e.Token, res); err != nil {
+				logger.Error(err)
+			}
 
 			Voted[e.Member.User.ID] = OptionsMap[data.CustomID]
 			Scores[data.CustomID]++
-
-			logger.Info(Voted[e.Member.User.ID])
 
 			Update()
 		},
@@ -162,11 +198,24 @@ func init() {
 				}
 				return
 			}
+			res := api.InteractionResponse{
+				Type: api.MessageInteractionWithSource,
+				Data: &api.InteractionResponseData{
+					Flags: api.EphemeralResponse,
+					Embeds: &[]discord.Embed{
+						{
+							Title: "Vote successful!",
+							Color: utils.DiscordGreen,
+						},
+					},
+				},
+			}
+			if err := core.State.RespondInteraction(e.ID, e.Token, res); err != nil {
+				logger.Error(err)
+			}
 
 			Voted[e.Member.User.ID] = OptionsMap[data.CustomID]
 			Scores[data.CustomID]++
-
-			logger.Info(Voted[e.Member.User.ID])
 
 			Update()
 		},

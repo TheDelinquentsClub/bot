@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"github.com/Krognol/go-wolfram"
@@ -8,23 +9,29 @@ import (
 	"github.com/diamondburned/arikawa/v3/discord"
 	"github.com/diamondburned/arikawa/v3/gateway"
 	"github.com/diamondburned/arikawa/v3/utils/json/option"
+	"github.com/diamondburned/arikawa/v3/utils/sendpart"
 	"github.com/kingultron99/tdcbot/core"
 	"github.com/kingultron99/tdcbot/logger"
 	"github.com/kingultron99/tdcbot/utils"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"strconv"
 	"strings"
+	time2 "time"
 	"unicode/utf8"
 )
 
 var (
-	Fields        []discord.EmbedField
-	Components    []discord.Component
-	Title         string
-	Data          []discord.InteractionOption
-	InteractionID string
-	OptionsMap    map[string]string
+	Fields           []discord.EmbedField
+	Components       []discord.Component
+	Title            string
+	Data             []discord.InteractionOption
+	Interactiontoken string
+	InteractionID    discord.InteractionID
+	OptionsMap       map[string]string
+	t                int
+	duration         int64
 )
 
 func init() {
@@ -154,9 +161,9 @@ func init() {
 			}
 
 			var (
-				fact = new(factStruct)
-				url  string
-				bool bool
+				fact    = new(factStruct)
+				url     string
+				boolean bool
 			)
 
 			if len(data.Options) != 0 {
@@ -164,11 +171,11 @@ func init() {
 				if err != nil {
 					logger.Error(err)
 				}
-				bool = b
+				boolean = b
 			}
 
 			if len(data.Options) == 1 {
-				switch bool {
+				switch boolean {
 				case true:
 					url = "https://uselessfacts.jsph.pl/random.json?language=en"
 				case false:
@@ -280,49 +287,60 @@ func init() {
 				Content:    option.NewNullableString("**Poll is no-longer valid!**"),
 				Components: &[]discord.Component{},
 			}
-			if _, err := core.State.EditInteractionResponse(discord.AppID(utils.MustSnowflakeEnv(core.Config.APPID)), InteractionID, oldres); err != nil {
+			if _, err := core.State.EditInteractionResponse(discord.AppID(utils.MustSnowflakeEnv(core.Config.APPID)), Interactiontoken, oldres); err != nil {
 				logger.Error("Failed to invalidate old poll!")
 			}
 
-			for key, _ := range OptionsMap {
+			for key := range OptionsMap {
 				delete(OptionsMap, key)
 				logger.Debug("deleted", key)
 			}
-			for key, _ := range Voted {
+			for key := range Voted {
 				delete(Voted, key)
 				logger.Debug("deleted", key)
 			}
-			for key, _ := range Scores {
+			for key := range Scores {
 				delete(Scores, key)
 				logger.Debug("deleted", key)
 			}
+
 			Fields = []discord.EmbedField{}
 			Components = []discord.Component{}
 			Title = ""
 			Data = []discord.InteractionOption{}
-			InteractionID = ""
+			Interactiontoken = ""
+			t = 0
+
+			t, _ = strconv.Atoi(data.Options[1].Value.String())
+			startTimer(t)
+			t2, _ := time2.ParseDuration(fmt.Sprintf("%vs", t))
+			duration = time2.Now().Add(t2).Unix()
 
 			OptionsMap = make(map[string]string)
 			Data = data.Options[2:]
-			for _, option := range data.Options[2:] {
-				item := strings.ReplaceAll(fmt.Sprint(option.Name), "\"", "")
-				name := strings.Title(strings.ReplaceAll(fmt.Sprint(option.Value), "\"", ""))
+			for _, interactionOption := range data.Options[2:] {
+				item := strings.ReplaceAll(fmt.Sprint(interactionOption.Name), "\"", "")
+				name := strings.Title(strings.ReplaceAll(fmt.Sprint(interactionOption.Value), "\"", ""))
 				OptionsMap[item] = name
 				Fields = append(Fields, GenFields(name, item))
 
-				Components = append(Components, utils.GenButtonComponents(option))
+				logger.Info(OptionsMap)
+				Components = append(Components, utils.GenButtonComponents(interactionOption))
 			}
 
 			Title = fmt.Sprint(data.Options[0])
-			InteractionID = e.Token
+			Interactiontoken = e.Token
+			InteractionID = e.ID
 
 			res := api.InteractionResponse{
 				Type: api.MessageInteractionWithSource,
 				Data: &api.InteractionResponseData{
 					Embeds: &[]discord.Embed{
 						{
-							Title:  Title,
-							Fields: Fields,
+							Title:       Title,
+							Description: fmt.Sprintf("This poll will end in <t:%v:R>", duration),
+							Fields:      Fields,
+							Color:       utils.DiscordBlue,
 						},
 					},
 					Components: &[]discord.Component{
@@ -333,6 +351,47 @@ func init() {
 				},
 			}
 			if err := core.State.RespondInteraction(e.ID, e.Token, res); err != nil {
+				logger.Error(err)
+			}
+		},
+	}
+	MapCommands["logs"] = Command{
+		Name:        "logs",
+		Description: "sends the latest log as a file",
+		Group:       "misc",
+		Usage:       "/logs",
+		Options:     nil,
+		OwnerOnly:   false,
+		Run: func(e *gateway.InteractionCreateEvent, data *discord.CommandInteractionData) {
+			logger.Info(fmt.Sprintf("%v#%v requested the latest log file!", e.Member.User.Username, e.Member.User.Discriminator))
+
+			logfile, err := os.ReadFile(logger.LogFile.Name())
+			if err != nil {
+				logger.Error(err)
+			}
+
+			res := api.InteractionResponse{
+				Type: api.MessageInteractionWithSource,
+				Data: &api.InteractionResponseData{
+					Embeds: &[]discord.Embed{
+						{
+							Title: "Here's the latest log file!",
+							Color: utils.DiscordGreen,
+							Footer: &discord.EmbedFooter{
+								Text: fmt.Sprintf("Requested by %v#%v", e.Member.User.Username, e.Member.User.Discriminator),
+								Icon: e.Member.User.AvatarURL(),
+							},
+						},
+					},
+					Files: []sendpart.File{
+						{
+							Name:   logger.LogFile.Name(),
+							Reader: bytes.NewReader(logfile),
+						},
+					},
+				},
+			}
+			if err = core.State.RespondInteraction(e.ID, e.Token, res); err != nil {
 				logger.Error(err)
 			}
 		},

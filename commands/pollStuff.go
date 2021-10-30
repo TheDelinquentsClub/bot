@@ -8,6 +8,7 @@ import (
 	"github.com/kingultron99/tdcbot/logger"
 	"github.com/kingultron99/tdcbot/utils"
 	"strings"
+	time2 "time"
 )
 
 var Voted = make(map[discord.UserID]string)
@@ -32,7 +33,7 @@ func GetGraph(item string) string {
 func GenFields(name string, item string) discord.EmbedField {
 	field := discord.EmbedField{
 		Name:   name,
-		Value:  fmt.Sprintf("%v", GetGraph(item)),
+		Value:  fmt.Sprintf("`%v`", GetGraph(item)),
 		Inline: false,
 	}
 
@@ -50,8 +51,10 @@ func Update() {
 	res := api.EditInteractionResponseData{
 		Embeds: &[]discord.Embed{
 			{
-				Title:  Title,
-				Fields: fields,
+				Title:       Title,
+				Description: fmt.Sprintf("This poll will end in <t:%v:R>", duration),
+				Fields:      fields,
+				Color:       utils.DiscordBlue,
 			},
 		},
 		Components: &[]discord.Component{
@@ -60,7 +63,60 @@ func Update() {
 			},
 		},
 	}
-	if _, err := core.State.EditInteractionResponse(discord.AppID(utils.MustSnowflakeEnv(core.Config.APPID)), InteractionID, res); err != nil {
+	if _, err := core.State.EditInteractionResponse(discord.AppID(utils.MustSnowflakeEnv(core.Config.APPID)), Interactiontoken, res); err != nil {
 		logger.Error(err)
+	}
+}
+
+func startTimer(time int) {
+	logger.Info(time)
+	time2.AfterFunc(time2.Second*time2.Duration(time), func() {
+		logger.Info("Poll timer has ended!")
+		endPoll()
+	})
+}
+
+func endPoll() {
+	var (
+		option       string
+		bignum, temp int
+	)
+
+	for key, keyval := range Scores {
+		if keyval > temp {
+			temp = keyval
+			bignum = temp
+			option = key
+		}
+	}
+
+	if bignum == 0 {
+		end := api.EditInteractionResponseData{
+			Embeds: &[]discord.Embed{
+				{
+					Title:     fmt.Sprintf("There was no winner..."),
+					Timestamp: discord.NowTimestamp(),
+					Color:     utils.DiscordRed,
+				},
+			},
+			Components: &[]discord.Component{},
+		}
+		if _, err := core.State.EditInteractionResponse(discord.AppID(utils.MustSnowflakeEnv(core.Config.APPID)), Interactiontoken, end); err != nil {
+			logger.Error("Failed to end poll: ", err)
+		}
+	} else {
+		end := api.EditInteractionResponseData{
+			Embeds: &[]discord.Embed{
+				{
+					Title:     fmt.Sprintf("%v has won with a total of %v votes!", OptionsMap[option], bignum),
+					Timestamp: discord.NowTimestamp(),
+					Color:     utils.DiscordGreen,
+				},
+			},
+			Components: &[]discord.Component{},
+		}
+		if _, err := core.State.EditInteractionResponse(discord.AppID(utils.MustSnowflakeEnv(core.Config.APPID)), Interactiontoken, end); err != nil {
+			logger.Error("Failed to end poll: ", err)
+		}
 	}
 }
