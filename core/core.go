@@ -3,11 +3,14 @@ package core
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/diamondburned/arikawa/v3/gateway"
 	"github.com/diamondburned/arikawa/v3/state"
 	"github.com/kingultron99/tdcbot/logger"
+	"github.com/lukasl-dev/waterlink"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"os"
+	"os/exec"
 	"os/signal"
 	"syscall"
 	"time"
@@ -28,6 +31,8 @@ var (
 	State   *state.State
 	TimeNow time.Time
 	Logg    *zap.Logger
+	Conn    waterlink.Connection
+	Update  *gateway.VoiceServerUpdateEvent
 )
 
 func init() {
@@ -36,6 +41,10 @@ func init() {
 
 // Initialise sets up the logger and calls for "setupCloseHandler" and "initConfig"
 func Initialise() {
+	cmd := exec.Command("cmd", "/c", "cls")
+	cmd.Stdout = os.Stdout
+	cmd.Run()
+
 	writerSync := logger.GetLogWriter()
 	encoder := logger.GetEncoder()
 

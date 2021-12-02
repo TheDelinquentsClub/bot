@@ -19,8 +19,10 @@ func main() {
 
 	newShard := state.NewShardFunc(func(m *shard.Manager, s *state.State) {
 		// Add the needed Gateway intents.
+		s.AddIntents(gateway.IntentGuilds)
 		s.AddIntents(gateway.IntentGuildMessages)
 		s.AddIntents(gateway.IntentDirectMessages)
+		s.AddIntents(gateway.IntentGuildVoiceStates)
 
 		core.State = s
 	})
@@ -54,6 +56,10 @@ func main() {
 		shardNum++
 	})
 
+	core.State.AddHandler(func(update *gateway.VoiceServerUpdateEvent) {
+		logger.Debug(update.Endpoint)
+		core.Update = update
+	})
 	commands.AddHandlers()
 	commands.Register(discord.AppID(utils.MustSnowflakeEnv(core.Config.APPID)), discord.GuildID(utils.MustSnowflakeEnv(core.Config.GUILDID)))
 

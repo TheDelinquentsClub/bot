@@ -58,6 +58,11 @@ func init() {
 											Value:       "debug",
 											Description: "returns all debug commands",
 										},
+										{
+											Label:       "Music",
+											Value:       "music",
+											Description: "returns all music commands",
+										},
 									},
 									Placeholder: "Select a command category!",
 									Disabled:    false,

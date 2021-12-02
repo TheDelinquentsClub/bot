@@ -8,7 +8,6 @@ import (
 	"github.com/diamondburned/arikawa/v3/api"
 	"github.com/diamondburned/arikawa/v3/discord"
 	"github.com/diamondburned/arikawa/v3/gateway"
-	"github.com/diamondburned/arikawa/v3/utils/json/option"
 	"github.com/diamondburned/arikawa/v3/utils/sendpart"
 	"github.com/kingultron99/tdcbot/core"
 	"github.com/kingultron99/tdcbot/logger"
@@ -18,20 +17,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
-	time2 "time"
 	"unicode/utf8"
-)
-
-var (
-	Fields           []discord.EmbedField
-	Components       []discord.Component
-	Title            string
-	Data             []discord.InteractionOption
-	Interactiontoken string
-	InteractionID    discord.InteractionID
-	OptionsMap       map[string]string
-	t                int
-	duration         int64
 )
 
 func init() {
@@ -237,124 +223,6 @@ func init() {
 
 		},
 	}
-	MapCommands["pollattempt"] = Command{
-		Name:        "pollattempt",
-		Description: "This is the first attempt at a poll command. planning to add vote visualisation as a ASCII graph",
-		Group:       "misc",
-		Usage:       "/pollattempt <title> <duration> <option1> <option2> [option3] [option4] ",
-		Options: []discord.CommandOption{
-			{
-				Type:        discord.CommandOptionType(3),
-				Name:        "title",
-				Description: "What is this poll about?",
-				Required:    true,
-			},
-			{
-				Type:        discord.CommandOptionType(4),
-				Name:        "duration",
-				Description: "How long (in seconds) should this poll last for?",
-				Required:    true,
-			},
-			{
-				Type:        discord.CommandOptionType(3),
-				Name:        "first_option",
-				Description: " ",
-				Required:    true,
-			},
-			{
-				Type:        discord.CommandOptionType(3),
-				Name:        "second_option",
-				Description: " ",
-				Required:    true,
-			},
-			{
-				Type:        discord.CommandOptionType(3),
-				Name:        "third_option",
-				Description: " ",
-				Required:    false,
-			},
-			{
-				Type:        discord.CommandOptionType(3),
-				Name:        "fourth_option",
-				Description: " ",
-				Required:    false,
-			},
-		},
-		OwnerOnly: false,
-		Run: func(e *gateway.InteractionCreateEvent, data *discord.CommandInteractionData) {
-
-			oldres := api.EditInteractionResponseData{
-				Content:    option.NewNullableString("**Poll is no-longer valid!**"),
-				Components: &[]discord.Component{},
-			}
-			if _, err := core.State.EditInteractionResponse(discord.AppID(utils.MustSnowflakeEnv(core.Config.APPID)), Interactiontoken, oldres); err != nil {
-				logger.Error("Failed to invalidate old poll!")
-			}
-
-			for key := range OptionsMap {
-				delete(OptionsMap, key)
-				logger.Debug("deleted", key)
-			}
-			for key := range Voted {
-				delete(Voted, key)
-				logger.Debug("deleted", key)
-			}
-			for key := range Scores {
-				delete(Scores, key)
-				logger.Debug("deleted", key)
-			}
-
-			Fields = []discord.EmbedField{}
-			Components = []discord.Component{}
-			Title = ""
-			Data = []discord.InteractionOption{}
-			Interactiontoken = ""
-			t = 0
-
-			t, _ = strconv.Atoi(data.Options[1].Value.String())
-			startTimer(t)
-			t2, _ := time2.ParseDuration(fmt.Sprintf("%vs", t))
-			duration = time2.Now().Add(t2).Unix()
-
-			OptionsMap = make(map[string]string)
-			Data = data.Options[2:]
-			for _, interactionOption := range data.Options[2:] {
-				item := strings.ReplaceAll(fmt.Sprint(interactionOption.Name), "\"", "")
-				name := strings.Title(strings.ReplaceAll(fmt.Sprint(interactionOption.Value), "\"", ""))
-				OptionsMap[item] = name
-				Fields = append(Fields, GenFields(name, item))
-
-				logger.Info(OptionsMap)
-				Components = append(Components, utils.GenButtonComponents(interactionOption))
-			}
-
-			Title = fmt.Sprint(data.Options[0])
-			Interactiontoken = e.Token
-			InteractionID = e.ID
-
-			res := api.InteractionResponse{
-				Type: api.MessageInteractionWithSource,
-				Data: &api.InteractionResponseData{
-					Embeds: &[]discord.Embed{
-						{
-							Title:       Title,
-							Description: fmt.Sprintf("This poll will end in <t:%v:R>", duration),
-							Fields:      Fields,
-							Color:       utils.DiscordBlue,
-						},
-					},
-					Components: &[]discord.Component{
-						&discord.ActionRowComponent{
-							Components: Components,
-						},
-					},
-				},
-			}
-			if err := core.State.RespondInteraction(e.ID, e.Token, res); err != nil {
-				logger.Error(err)
-			}
-		},
-	}
 	MapCommands["logs"] = Command{
 		Name:        "logs",
 		Description: "sends the latest log as a file",
@@ -393,6 +261,70 @@ func init() {
 			}
 			if err = core.State.RespondInteraction(e.ID, e.Token, res); err != nil {
 				logger.Error(err)
+			}
+		},
+	}
+	MapCommands["minecraft"] = Command{
+		Name:        "minecraft",
+		Description: "Gets information regarding the game or a player from the public minecraft APIs",
+		Group:       "misc",
+		Usage:       "/minecraft [option]",
+		Options: []discord.CommandOption{
+			{
+				Type:        1,
+				Name:        "user",
+				Description: "Gets information about a user, using either a valid username or UUID",
+				Options: []discord.CommandOption{
+					{
+						Type:        3,
+						Name:        "username",
+						Description: "Get user information from a username",
+					},
+					{
+						Type:        3,
+						Name:        "uuid",
+						Description: "Get user information from a UUID",
+					},
+				},
+			},
+			{
+				Type:        1,
+				Name:        "sales",
+				Description: "Gets current sales metrics of minecraft",
+			},
+		},
+		OwnerOnly: false,
+		Exclude:   false,
+		Run: func(e *gateway.InteractionCreateEvent, data *discord.CommandInteractionData) {
+			switch data.Options[0].Name {
+			case "user":
+				res := api.InteractionResponse{
+					Type: api.MessageInteractionWithSource,
+					Data: &api.InteractionResponseData{
+						Embeds: &[]discord.Embed{
+							{
+								Title:       "Player Information",
+								Description: "Showing info for player",
+								Fields: []discord.EmbedField{
+									{
+										Name:  "Username",
+										Value: data.Options[0].Options[0].Value.String(),
+									},
+									{
+										Name:  "UUID",
+										Value: utils.GetUUID(data.Options[0].Options[0].Value.String()).Uuid,
+									},
+								},
+							},
+						},
+					},
+				}
+				if err := core.State.RespondInteraction(e.ID, e.Token, res); err != nil {
+					logger.Error(err)
+				}
+				break
+			case "sales":
+
 			}
 		},
 	}

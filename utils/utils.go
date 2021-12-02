@@ -1,10 +1,13 @@
 package utils
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/diamondburned/arikawa/v3/discord"
+	"github.com/kingultron99/tdcbot/logger"
+	"io/ioutil"
 	"log"
-	"strings"
+	"net/http"
 	"time"
 )
 
@@ -41,12 +44,43 @@ func MustSnowflakeEnv(env string) discord.Snowflake {
 	return s
 }
 
-func GenButtonComponents(data discord.InteractionOption) *discord.ButtonComponent {
-	component := &discord.ButtonComponent{
-		Label:    strings.ReplaceAll(fmt.Sprint(data.Value), "\"", ""),
-		CustomID: fmt.Sprint(data.Name),
-		Style:    discord.PrimaryButton,
+type Player struct {
+	Username string `json:"name"`
+	Uuid     string `json:"id"`
+}
+
+func GetUUID(username string) (player Player) {
+	url := fmt.Sprintf("https://api.mojang.com/users/profiles/minecraft/%v", username)
+	MCClient := http.Client{
+		Timeout: time.Second * 2,
+	}
+	req, err := http.NewRequest(http.MethodGet, url, nil)
+	if err != nil {
+		logger.Error(err)
+	}
+	req.Header.Set("User-Agent", "GoTDC")
+	res, getErr := MCClient.Do(req)
+	if getErr != nil {
+		logger.Error(getErr)
+	}
+	if res.Body != nil {
+		defer res.Body.Close()
 	}
 
-	return component
+	body, readErr := ioutil.ReadAll(res.Body)
+	if readErr != nil {
+		logger.Error(readErr)
+	}
+	user := Player{}
+	jsonErr := json.Unmarshal(body, &user)
+	if jsonErr != nil {
+		logger.Error(jsonErr)
+	}
+	return user
+
+}
+
+type PlayerNames struct {
+	Name    string `json:"name"`
+	Changed int    `json:"changedToAt"`
 }

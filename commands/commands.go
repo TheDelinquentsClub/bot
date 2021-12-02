@@ -18,6 +18,7 @@ type Command struct {
 	Usage       string
 	Options     []discord.CommandOption
 	OwnerOnly   bool
+	Exclude     bool
 	Run         func(e *gateway.InteractionCreateEvent, data *discord.CommandInteractionData)
 }
 
@@ -67,6 +68,8 @@ func AddHandlers() {
 					return
 				}
 				cmd.Run(e, data)
+			} else {
+				doesntExist(e, data)
 			}
 		case *discord.ComponentInteractionData:
 			if cmd, ok := MapComponents[data.CustomID]; ok {
@@ -81,13 +84,15 @@ func Register(appID discord.AppID, guildID discord.GuildID) {
 	var commands []discord.Command
 
 	for _, command := range MapCommands {
-		commands = append(commands, discord.Command{
-			Type:                discord.CommandType(1),
-			Name:                command.Name,
-			Description:         command.Description,
-			Options:             command.Options,
-			NoDefaultPermission: false,
-		})
+		if command.Exclude != true {
+			commands = append(commands, discord.Command{
+				Type:                discord.CommandType(1),
+				Name:                command.Name,
+				Description:         command.Description,
+				Options:             command.Options,
+				NoDefaultPermission: false,
+			})
+		}
 	}
 
 	_, err := core.State.BulkOverwriteGuildCommands(appID, guildID, commands)
@@ -100,11 +105,30 @@ func NoPerms(e *gateway.InteractionCreateEvent, data *discord.CommandInteraction
 	res := api.InteractionResponse{
 		Type: api.MessageInteractionWithSource,
 		Data: &api.InteractionResponseData{
+			Flags: api.EphemeralResponse,
 			Embeds: &[]discord.Embed{
 				{
 					Color:       utils.DiscordRed,
 					Title:       "WOAH! You don't have permission to execute this command!",
 					Description: fmt.Sprintf("Sorry, but %v has `Owneronly` set to %v.\n\nIf you believe this is an error please message <@148203660088705025>", cmd.Name, cmd.OwnerOnly),
+				},
+			},
+		},
+	}
+	if err := core.State.RespondInteraction(e.ID, e.Token, res); err != nil {
+		logger.Error(err)
+	}
+}
+func doesntExist(e *gateway.InteractionCreateEvent, data *discord.CommandInteractionData) {
+	res := api.InteractionResponse{
+		Type: api.MessageInteractionWithSource,
+		Data: &api.InteractionResponseData{
+			Flags: api.EphemeralResponse,
+			Embeds: &[]discord.Embed{
+				{
+					Color:       utils.DiscordRed,
+					Title:       "wait a minute... this command doesnt exist!",
+					Description: fmt.Sprintf("sorry but %v is not a valid command.\n\nIf you believe this is an error please message <@148203660088705025>", e.Message.Content),
 				},
 			},
 		},
