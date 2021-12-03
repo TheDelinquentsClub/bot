@@ -8,6 +8,8 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strconv"
+	"strings"
 	"time"
 )
 
@@ -46,41 +48,125 @@ func MustSnowflakeEnv(env string) discord.Snowflake {
 
 type Player struct {
 	Username string `json:"name"`
-	Uuid     string `json:"id"`
+	UUID     string `json:"id"`
 }
 
-func GetUUID(username string) (player Player) {
+// GetUUID returns the UUID tied with to the username provided
+func GetUUID(username string) string {
+	username = strings.ReplaceAll(username, "\"", "")
 	url := fmt.Sprintf("https://api.mojang.com/users/profiles/minecraft/%v", username)
-	MCClient := http.Client{
-		Timeout: time.Second * 2,
-	}
-	req, err := http.NewRequest(http.MethodGet, url, nil)
+
+	resp, err := http.Get(url)
 	if err != nil {
 		logger.Error(err)
 	}
-	req.Header.Set("User-Agent", "GoTDC")
-	res, getErr := MCClient.Do(req)
-	if getErr != nil {
-		logger.Error(getErr)
-	}
-	if res.Body != nil {
-		defer res.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		logger.Error(err)
 	}
 
-	body, readErr := ioutil.ReadAll(res.Body)
-	if readErr != nil {
-		logger.Error(readErr)
-	}
-	user := Player{}
-	jsonErr := json.Unmarshal(body, &user)
-	if jsonErr != nil {
-		logger.Error(jsonErr)
-	}
-	return user
+	var user = new(Player)
+	err = json.Unmarshal(body, &user)
+	return user.UUID
 
+}
+
+// GetUsername returns the username of a player from the provided UUID
+func GetUsername(UUID string) string {
+	UUID = strings.ReplaceAll(UUID, "\"", "")
+	url := fmt.Sprintf("https://sessionserver.mojang.com/session/minecraft/profile/%v", UUID)
+
+	resp, err := http.Get(url)
+	if err != nil {
+		logger.Error(err)
+	}
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		logger.Error(err)
+	}
+
+	var user = new(Player)
+	err = json.Unmarshal(body, &user)
+	return user.Username
 }
 
 type PlayerNames struct {
 	Name    string `json:"name"`
-	Changed int    `json:"changedToAt"`
+	Changed int64  `json:"changedToAt,omitempty"`
+}
+
+// GetNamesFromUsername returns all the usernames the specified player has had using the provided username
+func GetNamesFromUsername(username string) string {
+	uuid := GetUUID(username)
+	url := fmt.Sprintf("https://api.mojang.com/user/profiles/%v/names", uuid)
+
+	resp, err := http.Get(url)
+	if err != nil {
+		logger.Error(err)
+	}
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		logger.Error(err)
+	}
+
+	var names = new([]PlayerNames)
+	err = json.Unmarshal(body, &names)
+
+	res := strings.Builder{}
+
+	for _, playerNames := range *names {
+		unixstring := strings.TrimSuffix(fmt.Sprint(playerNames.Changed), "000")
+		unixtime, err := strconv.ParseInt(unixstring, 10, 64)
+		if err != nil {
+			logger.Error(err)
+		}
+
+		changed := fmt.Sprintf("Changed on: %v\n\n", time.Unix(unixtime, 0).UTC())
+		if playerNames.Changed == 0 {
+			changed = "Accounts first username!\n\n"
+		}
+		res.WriteString(fmt.Sprintf("Username: %v\n%v", playerNames.Name, changed))
+	}
+
+	return res.String()
+}
+
+// GetNamesFromUUID returns all the usernames the specified player has had using the provided UUID
+func GetNamesFromUUID(uuid string) string {
+	uuid = strings.ReplaceAll(uuid, "\"", "")
+	url := fmt.Sprintf("https://api.mojang.com/user/profiles/%v/names", uuid)
+
+	resp, err := http.Get(url)
+	if err != nil {
+		logger.Error(err)
+	}
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		logger.Error(err)
+	}
+
+	var names = new([]PlayerNames)
+	err = json.Unmarshal(body, &names)
+
+	res := strings.Builder{}
+
+	for _, playerNames := range *names {
+		unixstring := strings.TrimSuffix(fmt.Sprint(playerNames.Changed), "000")
+		unixtime, err := strconv.ParseInt(unixstring, 10, 64)
+		if err != nil {
+			logger.Error(err)
+		}
+
+		changed := fmt.Sprintf("Changed on: %v\n\n", time.Unix(unixtime, 0).UTC())
+		if playerNames.Changed == 0 {
+			changed = "Accounts first username!\n\n"
+		}
+		res.WriteString(fmt.Sprintf("Username: %v\n%v", playerNames.Name, changed))
+	}
+
+	return res.String()
 }
