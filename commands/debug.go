@@ -6,18 +6,17 @@ import (
 	"github.com/diamondburned/arikawa/v3/discord"
 	"github.com/diamondburned/arikawa/v3/gateway"
 	"github.com/diamondburned/arikawa/v3/utils/json/option"
-	"github.com/kingultron99/tdcbot/Maps"
 	"github.com/kingultron99/tdcbot/core"
 	"github.com/kingultron99/tdcbot/logger"
-	"github.com/kingultron99/tdcbot/structs"
 	"github.com/kingultron99/tdcbot/utils"
+	"os"
 	"runtime"
 	"strings"
 	"time"
 )
 
 func init() {
-	Maps.MapCommands["stats"] = structs.Command{
+	MapCommands["stats"] = Command{
 		Name:        "stats",
 		Description: "Returns the current statistics and host system information of GoTDC",
 		Group:       "debug",
@@ -80,7 +79,7 @@ func init() {
 			}
 		},
 	}
-	Maps.MapCommands["gc"] = structs.Command{
+	MapCommands["gc"] = Command{
 		Name:        "gc",
 		Description: "Triggers a garbage collection cycle",
 		Usage:       "/gc",
@@ -102,7 +101,7 @@ func init() {
 			}
 		},
 	}
-	Maps.MapCommands["kill"] = structs.Command{
+	MapCommands["kill"] = Command{
 		Name:        "kill",
 		Description: "Kills the bots process.",
 		OwnerOnly:   true,
@@ -130,7 +129,12 @@ func init() {
 				logger.Error(err)
 			}
 
-			logger.Fatal(fmt.Sprintf("User %v#%v killed the process", e.Member.User.Username, e.Member.User.Discriminator))
+			logger.Info(fmt.Sprintf("User %v#%v triggered bot shutdown", e.Member.User.Username, e.Member.User.Discriminator))
+			core.Logg.Sync()
+			logger.Debug("Flushed log buffer")
+			logger.Info("Goodbye!")
+			os.Exit(0)
+
 		},
 	}
 }

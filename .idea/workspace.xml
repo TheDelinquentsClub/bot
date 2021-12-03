@@ -5,21 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="43a90286-0bc6-4267-8a52-6493d8afd734" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/componentInteractions/components.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/componentInteractions/pollStuff/pollVallues.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/commands.go" beforeDir="false" afterPath="$PROJECT_DIR$/Maps/commands.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/components.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/debug.go" beforeDir="false" afterPath="$PROJECT_DIR$/commands/debug.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/info.go" beforeDir="false" afterPath="$PROJECT_DIR$/commands/info.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/maps.go" beforeDir="false" afterPath="$PROJECT_DIR$/Maps/maps.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/commands/misc.go" beforeDir="false" afterPath="$PROJECT_DIR$/commands/misc.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/pollStuff/pollVallues.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/utility.go" beforeDir="false" afterPath="$PROJECT_DIR$/commands/utility.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/logger/logger.go" beforeDir="false" afterPath="$PROJECT_DIR$/logger/logger.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/utils.go" beforeDir="false" afterPath="$PROJECT_DIR$/utils/utils.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -40,6 +28,11 @@
         <option value="kingultron99 &lt;lochym10@gmail.com&gt;" />
         <option value="kingultron99" />
       </list>
+    </option>
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="main" />
+      </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
     <option name="SIGN_OFF_COMMIT" value="true" />
@@ -75,7 +68,7 @@
     <property name="go.sdk.automatically.set" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
-    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
+    <property name="settings.editor.selected.configurable" value="discord-application" />
   </component>
   <component name="ReaderModeSettings">
     <option name="showLigatures" value="true" />
@@ -113,12 +106,25 @@
     <MESSAGE value="working on command response" />
     <MESSAGE value="rewrote Help command, added question and random fact commands" />
     <MESSAGE value="started Poll commands and associated components" />
-    <option name="LAST_COMMIT_MESSAGE" value="started Poll commands and associated components" />
+    <MESSAGE value="poll kinda working. added a log dump command. reworked permissions" />
+    <MESSAGE value="removed poll and broken experimental music commands. Focusing on a more towards minecraft integration, linking in with the Mojang public APIs and other related APIs, Potentially adding cross integration between my server" />
+    <option name="LAST_COMMIT_MESSAGE" value="removed poll and broken experimental music commands. Focusing on a more towards minecraft integration, linking in with the Mojang public APIs and other related APIs, Potentially adding cross integration between my server" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/commands/debug.go</url>
+          <line>2</line>
+          <option name="timeStamp" value="4" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
