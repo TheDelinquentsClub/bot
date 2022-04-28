@@ -54,54 +54,23 @@ func init() {
 					logger.Error(fmt.Sprintf("Failed to ban user %v\nerror: %v", user.Username, err))
 				}
 
-				res := api.InteractionResponse{
-					Type: api.MessageInteractionWithSource,
-					Data: &api.InteractionResponseData{
-						Embeds: &[]discord.Embed{
-							{
-								Title: "🔨 Banned!",
-								Fields: []discord.EmbedField{
-									{
-										Name:  "User",
-										Value: fmt.Sprintf("<@%v>", user.ID),
-									},
-									{
-										Name:   "Reason",
-										Value:  reason,
-										Inline: true,
-									},
-								},
-								Color:     utils.DiscordRed,
-								Timestamp: discord.NowTimestamp(),
-								Footer: &discord.EmbedFooter{
-									Text: fmt.Sprintf("Ban issued by: %v#%v", e.Member.User.Username, e.Member.User.Discriminator),
-									Icon: e.Member.User.AvatarURL(),
-								},
-							},
-						},
-					},
-				}
+				res := utils.NewEmbed().
+					SetTitle("🔨 Banned!").
+					AddField("User", false, fmt.Sprintf("<@%v>", user.ID)).
+					AddField("Reason", true, reason).
+					SetColor(utils.DiscordRed).
+					SetFooter(fmt.Sprintf("Ban issued by: %v#%v", e.Member.User.Username, e.Member.User.Discriminator), e.Member.User.AvatarURL()).
+					MakeResponse()
 
 				if err := core.State.RespondInteraction(e.ID, e.Token, res); err != nil {
 					logger.Error(err)
 				}
 			} else {
-				res := api.InteractionResponse{
-					Type: api.MessageInteractionWithSource,
-					Data: &api.InteractionResponseData{
-						Embeds: &[]discord.Embed{
-							{
-								Title:     "You can't ban yourself!!",
-								Color:     utils.DiscordRed,
-								Timestamp: discord.NowTimestamp(),
-								Footer: &discord.EmbedFooter{
-									Text: fmt.Sprintf("Ban attempt issued by: %v#%v", e.Member.User.Username, e.Member.User.Discriminator),
-									Icon: e.Member.User.AvatarURL(),
-								},
-							},
-						},
-					},
-				}
+				res := utils.NewEmbed().
+					SetTitle("You can't ban yourself!!").
+					SetColor(utils.DiscordRed).
+					SetFooter(fmt.Sprintf("Ban attempt issued by: %v#%v", e.Member.User.Username, e.Member.User.Discriminator), e.Member.User.AvatarURL()).
+					MakeResponse()
 
 				if err := core.State.RespondInteraction(e.ID, e.Token, res); err != nil {
 					logger.Error(err)

@@ -2,10 +2,8 @@ package commands
 
 import (
 	"fmt"
-	"github.com/diamondburned/arikawa/v3/api"
 	"github.com/diamondburned/arikawa/v3/discord"
 	"github.com/diamondburned/arikawa/v3/gateway"
-	"github.com/diamondburned/arikawa/v3/utils/json/option"
 	"github.com/kingultron99/tdcbot/core"
 	"github.com/kingultron99/tdcbot/logger"
 	"github.com/kingultron99/tdcbot/utils"
@@ -25,55 +23,19 @@ func init() {
 		Run: func(e *gateway.InteractionCreateEvent, data *discord.CommandInteractionData) {
 			var m runtime.MemStats
 			runtime.ReadMemStats(&m)
+			res := utils.NewEmbed().
+				SetTitle("GoTDC Stats").
+				SetDescription("GoTDC is a bot made specifically for \"The Delinquents Club\" discord.").
+				SetColor(discord.DefaultEmbedColor).
+				AddField("GoTDC Version", true, core.Config.Version).
+				AddField("GoLang Version", true, strings.Trim(runtime.Version(), "go")).
+				AddField("№ of GoRoutines", true, fmt.Sprintf("%v", runtime.NumGoroutine())).
+				AddField("Uptime", true, utils.GetDurationString(time.Since(core.TimeNow))).
+				AddField("OS", true, runtime.GOOS).
+				AddField("Memory Used", false, fmt.Sprintf("using %v MB / %v MB\n%v MB garbage collected. next GC cycle at %v MB.\ncurrent number of GC Cycles: %v", utils.BToMb(m.Alloc), utils.BToMb(m.Sys), utils.BToMb(m.GCSys), utils.BToMb(m.NextGC), m.NumGC)).
+				SetFooter(e.Member.User.Username, e.Member.User.AvatarURL()).
+				MakeResponse()
 
-			res := api.InteractionResponse{
-				Type: api.MessageInteractionWithSource,
-				Data: &api.InteractionResponseData{
-					Embeds: &[]discord.Embed{
-						{
-							Title:       "GoTDC Stats",
-							Description: "GoTDC is a bot made specifically for \"The Delinquents Club\" discord.",
-							Color:       utils.DefaultColour,
-							Fields: []discord.EmbedField{
-								{
-									Name:   "GoTDC Version",
-									Value:  core.Config.Version,
-									Inline: true,
-								},
-								{
-									Name:   "GoLang Version",
-									Value:  strings.Trim(runtime.Version(), "go"),
-									Inline: true,
-								},
-								{
-									Name:   "№ of GoRoutines",
-									Value:  fmt.Sprintf("%v", runtime.NumGoroutine()),
-									Inline: true,
-								},
-								{
-									Name:   "Uptime",
-									Value:  utils.GetDurationString(time.Since(core.TimeNow)),
-									Inline: true,
-								},
-								{
-									Name:   "OS",
-									Value:  runtime.GOOS,
-									Inline: true,
-								},
-								{
-									Name:  "Memory Used",
-									Value: fmt.Sprintf("using %v MB / %v MB\n%v MB garbage collected. next GC cycle at %v MB.\ncurrent number of GC Cycles: %v", utils.BToMb(m.Alloc), utils.BToMb(m.Sys), utils.BToMb(m.GCSys), utils.BToMb(m.NextGC), m.NumGC),
-								},
-							},
-							Footer: &discord.EmbedFooter{
-								Text: e.Member.User.Username,
-								Icon: e.Member.User.AvatarURL(),
-							},
-							Timestamp: discord.NowTimestamp(),
-						},
-					},
-				},
-			}
 			if err := core.State.RespondInteraction(e.ID, e.Token, res); err != nil {
 				logger.Error(err)
 			}
@@ -89,12 +51,8 @@ func init() {
 			logger.Info(e.Member.User.Username, "triggered a GC cycle!")
 			runtime.GC()
 
-			res := api.InteractionResponse{
-				Type: api.MessageInteractionWithSource,
-				Data: &api.InteractionResponseData{
-					Content: option.NewNullableString(":wastebasket: triggered a GC cycle!"),
-				},
-			}
+			res := utils.NewEmbed().
+				SetTitle(":wastebasket: triggered a GC cycle!").SetFooter(e.Member.User.Username, e.Member.User.AvatarURL()).MakeResponse()
 
 			if err := core.State.RespondInteraction(e.ID, e.Token, res); err != nil {
 				logger.Error(err)
@@ -108,23 +66,14 @@ func init() {
 		Usage:       "/kill",
 		Group:       "debug",
 		Run: func(e *gateway.InteractionCreateEvent, data *discord.CommandInteractionData) {
-			res := api.InteractionResponse{
-				Type: api.MessageInteractionWithSource,
-				Data: &api.InteractionResponseData{
-					Embeds: &[]discord.Embed{
-						{
-							Title:       "Bye Bye! :wave:",
-							Description: "Killing the process....",
-							Color:       utils.DiscordGreen,
-							Footer: &discord.EmbedFooter{
-								Text: fmt.Sprintf("Killed by %v#%v", e.Member.User.Username, e.Member.User.Discriminator),
-								Icon: e.Member.User.AvatarURL(),
-							},
-							Timestamp: discord.NowTimestamp(),
-						},
-					},
-				},
-			}
+
+			res := utils.NewEmbed().
+				SetTitle("Bye Bye :wave:").
+				SetDescription("Killing the process...").
+				SetColor(utils.DiscordGreen).
+				SetFooter(fmt.Sprintf("Killed by %v#%v", e.Member.User.Username, e.Member.User.Discriminator), e.Member.User.AvatarURL()).
+				MakeResponse()
+
 			if err := core.State.RespondInteraction(e.ID, e.Token, res); err != nil {
 				logger.Error(err)
 			}
