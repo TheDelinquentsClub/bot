@@ -26,7 +26,6 @@ func NewEmbed() Embed {
 }
 
 // General embed configuring
-
 func (e Embed) SetTitle(Title string) Embed {
 	e.title = Title
 	return e
@@ -48,6 +47,12 @@ func (e Embed) AddField(Name string, Inline bool, Value string) Embed {
 	e.fields = append(e.fields, field)
 	return e
 }
+
+// AddFields lets you pass Multiple discord.EmbedField objects through a variable
+func (e Embed) AddFields(Fields []discord.EmbedField) Embed {
+	e.fields = append(e.fields, Fields...)
+	return e
+}
 func (e Embed) SetColor(HexColor discord.Color) Embed {
 	e.color = HexColor
 	return e
@@ -62,6 +67,11 @@ func (e Embed) AddFile(Name string, file []byte) Embed {
 	reader := bytes.NewReader(file)
 	files := sendpart.File{Name: Name, Reader: reader}
 	e.files = append(e.files, files)
+	return e
+}
+
+func (e Embed) RemoveComponents() Embed {
+	e.Components = []discord.Component{}
 	return e
 }
 
@@ -143,6 +153,38 @@ func (e Embed) MakeResponse() api.InteractionResponse {
 
 	res := api.InteractionResponse{
 		Type: api.MessageInteractionWithSource,
+		Data: &api.InteractionResponseData{
+			Flags: api.EphemeralResponse,
+			Embeds: &[]discord.Embed{
+				{
+					Title:       e.title,
+					Description: e.description,
+					Color:       e.color,
+					Fields:      e.fields,
+					Footer:      e.footer,
+					Image:       e.image,
+					Timestamp:   discord.NowTimestamp(),
+				},
+			},
+			Components: components,
+			Files:      e.files,
+		},
+	}
+	return res
+}
+func (e Embed) UpdateResponse() api.InteractionResponse {
+	var components = &[]discord.Component{
+		&discord.ActionRowComponent{
+			Components: e.Components,
+		},
+	}
+
+	if e.Components == nil {
+		components = nil
+	}
+
+	res := api.InteractionResponse{
+		Type: api.UpdateMessage,
 		Data: &api.InteractionResponseData{
 			Flags: api.EphemeralResponse,
 			Embeds: &[]discord.Embed{
