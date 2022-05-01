@@ -107,10 +107,10 @@ func init() {
 		Usage:       "/randomFact",
 		Options: []discord.CommandOption{
 			{
-				Type:        discord.CommandOptionType(5),
+				Type:        discord.BooleanOption,
 				Name:        "fact_of_the_day",
 				Description: "Get the fact of the day!",
-				Required:    false,
+				Required:    true,
 			},
 		},
 		OwnerOnly: false,
@@ -138,22 +138,16 @@ func init() {
 				boolean bool
 			)
 
-			if len(data.Options) != 0 {
-				b, err := strconv.ParseBool(fmt.Sprint(data.Options[0]))
-				if err != nil {
-					logger.Error(err)
-				}
-				boolean = b
+			b, err := strconv.ParseBool(fmt.Sprint(data.Options[0]))
+			if err != nil {
+				logger.Error(err)
 			}
+			boolean = b
 
-			if len(data.Options) == 2 {
-				switch boolean {
-				case true:
-					url = "https://uselessfacts.jsph.pl/today.json?language=en"
-				case false:
-					url = "https://uselessfacts.jsph.pl/random.json?language=en"
-				}
-			} else {
+			switch boolean {
+			case true:
+				url = "https://uselessfacts.jsph.pl/today.json?language=en"
+			case false:
 				url = "https://uselessfacts.jsph.pl/random.json?language=en"
 			}
 
