@@ -30,13 +30,15 @@ type configStruct struct {
 }
 
 var (
-	Config   *configStruct
-	State    *state.State
-	TimeNow  time.Time
-	Logg     *zap.Logger
-	Conn     waterlink.Connection
-	Update   *gateway.VoiceServerUpdateEvent
-	WSServer *socketio.Server
+	Config            *configStruct
+	State             *state.State
+	TimeNow           time.Time
+	Logg              *zap.Logger
+	Conn              waterlink.Connection
+	Update            *gateway.VoiceServerUpdateEvent
+	WSServer          *socketio.Server
+	ServerConn        socketio.Conn
+	IsServerConnected = false
 )
 
 func init() {

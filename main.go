@@ -41,16 +41,6 @@ func main() {
 		}
 	}(m)
 
-	core.State.UpdateStatus(gateway.UpdateStatusData{
-		Activities: []discord.Activity{
-			{
-				Name: "Bridging minecraft and discord",
-				Type: 4,
-			},
-		},
-		Status: "dnd",
-	})
-
 	var shardNum int
 
 	m.ForEach(func(s shard.Shard) {
@@ -71,9 +61,11 @@ func main() {
 		core.Update = update
 	})
 	core.State.AddHandler(func(c *gateway.MessageCreateEvent) {
-		if c.Message.ChannelID.String() == core.Config.BridgeChannelID {
-			if c.Author.Bot == false {
-				core.WSServer.BroadcastToNamespace("/", "discordmessage", c.Message.Content, c.Member.User.Username)
+		if core.IsServerConnected {
+			if c.Message.ChannelID.String() == core.Config.BridgeChannelID {
+				if c.Author.Bot == false {
+					core.WSServer.BroadcastToNamespace("/", "discordmessage", c.Message.Content, c.Member.User.Username)
+				}
 			}
 		}
 

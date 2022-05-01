@@ -5,16 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="43a90286-0bc6-4267-8a52-6493d8afd734" name="Changes" comment="feat(websockets): Added websocket server. moved minecraft related commands to their own file. added *gateway.MessageCreateEvent listener for sending chat messages to the minecraft server">
-      <change afterPath="$PROJECT_DIR$/commands/minecraft.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/websockets/websockets.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/info.go" beforeDir="false" afterPath="$PROJECT_DIR$/commands/info.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/misc.go" beforeDir="false" afterPath="$PROJECT_DIR$/commands/misc.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/utility.go" beforeDir="false" afterPath="$PROJECT_DIR$/commands/utility.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/commands/minecraft.go" beforeDir="false" afterPath="$PROJECT_DIR$/commands/minecraft.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/core/core.go" beforeDir="false" afterPath="$PROJECT_DIR$/core/core.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/embedBuilder.go" beforeDir="false" afterPath="$PROJECT_DIR$/utils/embedBuilder.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/utils.go" beforeDir="false" afterPath="$PROJECT_DIR$/utils/utils.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/websockets/websockets.go" beforeDir="false" afterPath="$PROJECT_DIR$/websockets/websockets.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

@@ -48,6 +48,11 @@ func InitServer() {
 		return nil
 	})
 
+	core.WSServer.OnEvent("/", "serverinstance", func(s socketio.Conn) {
+		core.ServerConn = s
+		core.IsServerConnected = true
+	})
+
 	core.WSServer.OnEvent("/", "playerchat", func(s socketio.Conn, msg string) {
 		var msgObj MsgObj
 		err := json.Unmarshal([]byte(msg), &msgObj)
@@ -102,11 +107,15 @@ func InitServer() {
 	})
 
 	core.WSServer.OnError("/", func(s socketio.Conn, e error) {
-		fmt.Println("meet error:", e)
+		logger.Error("meet error:", e)
 	})
 
 	core.WSServer.OnDisconnect("/", func(s socketio.Conn, reason string) {
-		fmt.Println("closed", reason)
+		logger.Info("closed:", reason)
+		if s.ID() == core.ServerConn.ID() {
+			logger.Info("Server instance disconnected.")
+			core.IsServerConnected = false
+		}
 	})
 
 	go func() {
