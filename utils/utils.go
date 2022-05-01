@@ -46,7 +46,7 @@ func ConvertTickToDuration(ticks int) string {
 // DiscordGreen is the colour to be used in signifying a success message, or something good
 // DiscordRed is the colour to be used in signifying an error message, or something bad
 var (
-	DefaultColour discord.Color = 0x7ECA9C
+	DefaultColour discord.Color = 0x4739B6
 	DiscordGreen  discord.Color = 0x379A57
 	DiscordBlue   discord.Color = 0x5865F2
 	DiscordRed    discord.Color = 0xDF3E41

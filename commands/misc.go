@@ -146,7 +146,7 @@ func init() {
 				boolean = b
 			}
 
-			if len(data.Options) == 1 {
+			if len(data.Options) == 2 {
 				switch boolean {
 				case true:
 					url = "https://uselessfacts.jsph.pl/today.json?language=en"

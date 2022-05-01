@@ -95,7 +95,7 @@ func init() {
 		Name:        "server",
 		Description: "Commands to interact with the minecraft server!",
 		Group:       "minecraft",
-		Usage:       "/server <option>",
+		Usage:       "/server <subcommand> [option]",
 		Options: []discord.CommandOption{
 			{
 				Type:        discord.SubcommandGroupOption,
@@ -135,8 +135,26 @@ func init() {
 							{
 								Type:        discord.StringOption,
 								Name:        "name",
-								Description: "The Name of the command",
+								Description: "The Name of the command (more coming!)",
 								Required:    true,
+								Choices: []discord.CommandOptionChoice{
+									{
+										Name:  "announce",
+										Value: "announce",
+									},
+									{
+										Name:  "kill",
+										Value: "kill",
+									},
+									{
+										Name:  "msg",
+										Value: "msg",
+									},
+									{
+										Name:  "restart",
+										Value: "restart",
+									},
+								},
 							},
 							{
 								Type:        discord.StringOption,
@@ -293,7 +311,53 @@ func init() {
 						})
 
 					}
-
+				case "commands":
+					switch data.Options[0].Options[0].Name {
+					case "command":
+						switch strings.ReplaceAll(data.Options[0].Options[0].Options[0].Value.String(), "\"", "") {
+						case "announce":
+							var res api.EditInteractionResponseData
+							if len(data.Options[0].Options[0].Options) != 2 {
+								res = utils.NewEmbed().
+									SetTitle("You didnt provide a message!").
+									SetDescription("Usage: /server commands command `name: announce` `args: <message>").
+									SetColor(utils.DiscordRed).
+									SetTimestamp().
+									EditInteraction()
+								if _, err := core.State.EditInteractionResponse(discord.AppID(utils.MustSnowflakeEnv(core.Config.APPID)), e.Token, res); err != nil {
+									logger.Error(err)
+								}
+							}
+						case "kill":
+							var res api.EditInteractionResponseData
+							if len(data.Options[0].Options[0].Options) != 2 {
+								res = utils.NewEmbed().
+									SetTitle("You didnt provide a player!!").
+									SetDescription("Usage: /server commands command `name: announce` `args: <player>`").
+									SetColor(utils.DiscordRed).
+									SetTimestamp().
+									EditInteraction()
+								if _, err := core.State.EditInteractionResponse(discord.AppID(utils.MustSnowflakeEnv(core.Config.APPID)), e.Token, res); err != nil {
+									logger.Error(err)
+								}
+							}
+						case "msg":
+							var res api.EditInteractionResponseData
+							if len(data.Options[0].Options[0].Options) != 2 {
+								res = utils.NewEmbed().
+									SetTitle("You didnt provide any args!!").
+									SetDescription("Usage: /server commands command `name: announce` `args: <player> <message>`").
+									SetColor(utils.DiscordRed).
+									SetTimestamp().
+									EditInteraction()
+								if _, err := core.State.EditInteractionResponse(discord.AppID(utils.MustSnowflakeEnv(core.Config.APPID)), e.Token, res); err != nil {
+									logger.Error(err)
+								}
+							}
+						case "restart":
+							logger.Info(data.Options[0].Options[0].Options[0].Value)
+						}
+					}
 				}
 			case false:
 				res := utils.NewEmbed().
