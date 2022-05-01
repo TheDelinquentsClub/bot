@@ -24,8 +24,9 @@ func init() {
 				AddSelectComponent("help_select_category", "Select a command category", false).
 				AddOption("Miscellaneous", "misc", "returns all miscellaneous commands", &discord.ButtonEmoji{}, false).
 				AddOption("Info", "info", "returns all info commands", &discord.ButtonEmoji{}, false).
-				AddOption("Utility", "utility", "returns all  utility commands", &discord.ButtonEmoji{}, false).
+				AddOption("Utility", "utility", "returns all utility commands", &discord.ButtonEmoji{}, false).
 				AddOption("Debug", "debug", "returns all debug commands", &discord.ButtonEmoji{}, false).
+				AddOption("Minecraft", "minecraft", "returns all minecraft commands", &discord.ButtonEmoji{}, false).
 				MakeSelectComponent().
 				MakeResponse()
 
@@ -47,7 +48,6 @@ func init() {
 				SetDescription("GoTDC is a bot Developed by king_ultron99 for the sole use in \"the Delinquents Club\" server. GoTDC will be used as a tool for server management and eventually as a discord-based gateway for the associated minecraft server").
 				SetColor(utils.DefaultColour).
 				SetFooter(e.Member.User.Username, e.Member.User.AvatarURL()).
-				AddURLButton("Source", "https://github.com/kingultron99/TDC-Bot").
 				MakeResponse()
 
 			if err := core.State.RespondInteraction(e.ID, e.Token, res); err != nil {

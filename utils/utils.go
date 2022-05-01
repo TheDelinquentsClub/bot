@@ -28,6 +28,20 @@ func GetDurationString(duration time.Duration) string {
 	)
 }
 
+func ConvertTickToDuration(ticks int) string {
+	var years = ticks / 630720000
+	ticks = ticks % 630720000
+	var days = ticks / 1728000
+	ticks = ticks % 1728000
+	var hours = ticks / 72000
+	ticks = ticks % 72000
+	var minutes = ticks / 1200
+	ticks = ticks % 1200
+	var seconds = ticks / 20
+	ticks = ticks % 20
+	return fmt.Sprintf("%v:%v:%v:%v:%v", years, days, hours, minutes, seconds)
+}
+
 // DefaultColour is the default discord.color to use in embeds
 // DiscordGreen is the colour to be used in signifying a success message, or something good
 // DiscordRed is the colour to be used in signifying an error message, or something bad

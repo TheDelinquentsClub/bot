@@ -11,6 +11,7 @@ import (
 	"github.com/kingultron99/tdcbot/core"
 	"github.com/kingultron99/tdcbot/logger"
 	"github.com/kingultron99/tdcbot/utils"
+	"github.com/kingultron99/tdcbot/websockets"
 )
 
 func main() {
@@ -23,7 +24,6 @@ func main() {
 		s.AddIntents(gateway.IntentGuildMessages)
 		s.AddIntents(gateway.IntentDirectMessages)
 		s.AddIntents(gateway.IntentGuildVoiceStates)
-
 		core.State = s
 	})
 
@@ -40,6 +40,16 @@ func main() {
 		if err != nil {
 		}
 	}(m)
+
+	core.State.UpdateStatus(gateway.UpdateStatusData{
+		Activities: []discord.Activity{
+			{
+				Name: "Bridging minecraft and discord",
+				Type: 4,
+			},
+		},
+		Status: "dnd",
+	})
 
 	var shardNum int
 
@@ -60,9 +70,18 @@ func main() {
 		logger.Debug(update.Endpoint)
 		core.Update = update
 	})
+	core.State.AddHandler(func(c *gateway.MessageCreateEvent) {
+		if c.Message.ChannelID.String() == core.Config.BridgeChannelID {
+			if c.Author.Bot == false {
+				core.WSServer.BroadcastToNamespace("/", "discordmessage", c.Message.Content, c.Member.User.Username)
+			}
+		}
+
+	})
 	commands.AddHandlers()
 	commands.Register(discord.AppID(utils.MustSnowflakeEnv(core.Config.APPID)), discord.GuildID(utils.MustSnowflakeEnv(core.Config.GUILDID)))
 
+	go websockets.InitServer()
 	//block forever
 	select {}
 

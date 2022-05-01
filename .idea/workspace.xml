@@ -4,10 +4,17 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="43a90286-0bc6-4267-8a52-6493d8afd734" name="Changes" comment="refactor,feat(util): added some extra functions and reflected across commands">
+    <list default="true" id="43a90286-0bc6-4267-8a52-6493d8afd734" name="Changes" comment="feat(websockets): Added websocket server. moved minecraft related commands to their own file. added *gateway.MessageCreateEvent listener for sending chat messages to the minecraft server">
+      <change afterPath="$PROJECT_DIR$/commands/minecraft.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/websockets/websockets.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/components.go" beforeDir="false" afterPath="$PROJECT_DIR$/commands/components.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/commands/info.go" beforeDir="false" afterPath="$PROJECT_DIR$/commands/info.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/commands/misc.go" beforeDir="false" afterPath="$PROJECT_DIR$/commands/misc.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/commands/utility.go" beforeDir="false" afterPath="$PROJECT_DIR$/commands/utility.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/core.go" beforeDir="false" afterPath="$PROJECT_DIR$/core/core.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/utils/embedBuilder.go" beforeDir="false" afterPath="$PROJECT_DIR$/utils/embedBuilder.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/utils.go" beforeDir="false" afterPath="$PROJECT_DIR$/utils/utils.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -67,22 +74,23 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "DefaultGoTemplateProperty": "Go File",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.go.format.on.save.advertiser.fired": "true",
-    "RunOnceActivity.go.formatter.settings.were.checked": "true",
-    "RunOnceActivity.go.migrated.go.modules.settings": "true",
-    "RunOnceActivity.go.modules.go.list.on.any.changes.was.set": "true",
-    "RunOnceActivity.go.watchers.conflict.with.on.save.actions.check.performed": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "go.import.settings.migrated": "true",
-    "go.sdk.automatically.set": "true",
-    "last_opened_file_path": "C:/Users/lochy/Documents/GitHub/TDC-Bot"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;DefaultGoTemplateProperty&quot;: &quot;Go File&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.format.on.save.advertiser.fired&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.formatter.settings.were.checked&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.migrated.go.modules.settings&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.modules.go.list.on.any.changes.was.set&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.watchers.conflict.with.on.save.actions.check.performed&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;go.import.settings.migrated&quot;: &quot;true&quot;,
+    &quot;go.sdk.automatically.set&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/lochy/Documents/GitHub/TDC-Bot&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;vcs.Git&quot;
   }
-}]]></component>
+}</component>
   <component name="ReaderModeSettings">
     <option name="showLigatures" value="true" />
   </component>
@@ -94,25 +102,6 @@
       <recent name="C:\Users\king_ultron99\GitHub\TDC-Bot\commands\categories" />
       <recent name="C:\Users\Lenovo\GitHub\TDC-Bot" />
     </key>
-  </component>
-  <component name="RunManager">
-    <configuration default="true" type="GoApplicationRunConfiguration" factoryName="Go Application">
-      <module name="TDC-Bot" />
-      <working_directory value="$PROJECT_DIR$" />
-      <kind value="FILE" />
-      <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$" />
-      <method v="2" />
-    </configuration>
-    <configuration default="true" type="GoTestRunConfiguration" factoryName="Go Test">
-      <module name="TDC-Bot" />
-      <working_directory value="$PROJECT_DIR$" />
-      <kind value="DIRECTORY" />
-      <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$" />
-      <framework value="gotest" />
-      <method v="2" />
-    </configuration>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TypeScriptGeneratedFilesManager">
@@ -141,7 +130,9 @@
     <MESSAGE value="removed poll and broken experimental music commands. Focusing on a more towards minecraft integration, linking in with the Mojang public APIs and other related APIs, Potentially adding cross integration between my server" />
     <MESSAGE value="added a sales stats command and player information command. sales stats, seems to be outdated and will be removed" />
     <MESSAGE value="refactor,feat(util): added some extra functions and reflected across commands" />
-    <option name="LAST_COMMIT_MESSAGE" value="refactor,feat(util): added some extra functions and reflected across commands" />
+    <MESSAGE value="refactor,feat(util): Updated components, added UpdateResponse method to utils.Embed to allow for changing message content using the embed builder, also added RemoveComponents method to allow for the removal of all components on a message when updating content" />
+    <MESSAGE value="feat(websockets): Added websocket server. moved minecraft related commands to their own file. added *gateway.MessageCreateEvent listener for sending chat messages to the minecraft server" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat(websockets): Added websocket server. moved minecraft related commands to their own file. added *gateway.MessageCreateEvent listener for sending chat messages to the minecraft server" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/diamondburned/arikawa/v3/gateway"
 	"github.com/diamondburned/arikawa/v3/state"
+	socketio "github.com/googollee/go-socket.io"
 	"github.com/kingultron99/tdcbot/logger"
 	"github.com/lukasl-dev/waterlink"
 	"go.uber.org/zap"
@@ -17,22 +18,25 @@ import (
 )
 
 type configStruct struct {
-	Token     string `json:"token"`
-	Owner     string `json:"owner"`
-	APPID     string `json:"appid"`
-	GUILDID   string `json:"guildid"`
-	WolframID string `json:"wolframid"`
-	Version   string `json:"version"`
-	OwnerID   string `json:"ownerid"`
+	Token           string `json:"token"`
+	Owner           string `json:"owner"`
+	APPID           string `json:"appid"`
+	GUILDID         string `json:"guildid"`
+	WolframID       string `json:"wolframid"`
+	Version         string `json:"version"`
+	OwnerID         string `json:"ownerid"`
+	Webhook         string `json:"webhook"`
+	BridgeChannelID string `json:"bridgeChannelId"`
 }
 
 var (
-	Config  *configStruct
-	State   *state.State
-	TimeNow time.Time
-	Logg    *zap.Logger
-	Conn    waterlink.Connection
-	Update  *gateway.VoiceServerUpdateEvent
+	Config   *configStruct
+	State    *state.State
+	TimeNow  time.Time
+	Logg     *zap.Logger
+	Conn     waterlink.Connection
+	Update   *gateway.VoiceServerUpdateEvent
+	WSServer *socketio.Server
 )
 
 func init() {

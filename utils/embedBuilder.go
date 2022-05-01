@@ -2,12 +2,15 @@ package utils
 
 import (
 	"bytes"
+	"encoding/json"
 	"github.com/diamondburned/arikawa/v3/api"
 	"github.com/diamondburned/arikawa/v3/discord"
+	"github.com/diamondburned/arikawa/v3/utils/json/option"
 	"github.com/diamondburned/arikawa/v3/utils/sendpart"
 )
 
 type Embed struct {
+	content     string
 	title       string
 	description string
 	author      discord.EmbedAuthor
@@ -45,6 +48,14 @@ func (e Embed) SetDescription(Description string) Embed {
 func (e Embed) AddField(Name string, Inline bool, Value string) Embed {
 	field := discord.EmbedField{Name: Name, Inline: Inline, Value: Value}
 	e.fields = append(e.fields, field)
+	return e
+}
+func (e Embed) SetText(Text string) Embed {
+	e.content = Text
+	return e
+}
+func (e Embed) SetTimestamp() Embed {
+	e.timestamp = discord.NowTimestamp()
 	return e
 }
 
@@ -154,7 +165,8 @@ func (e Embed) MakeResponse() api.InteractionResponse {
 	res := api.InteractionResponse{
 		Type: api.MessageInteractionWithSource,
 		Data: &api.InteractionResponseData{
-			Flags: api.EphemeralResponse,
+			Flags:   api.EphemeralResponse,
+			Content: option.NewNullableString(e.content),
 			Embeds: &[]discord.Embed{
 				{
 					Title:       e.title,
@@ -163,7 +175,7 @@ func (e Embed) MakeResponse() api.InteractionResponse {
 					Fields:      e.fields,
 					Footer:      e.footer,
 					Image:       e.image,
-					Timestamp:   discord.NowTimestamp(),
+					Timestamp:   e.timestamp,
 				},
 			},
 			Components: components,
@@ -186,7 +198,8 @@ func (e Embed) UpdateResponse() api.InteractionResponse {
 	res := api.InteractionResponse{
 		Type: api.UpdateMessage,
 		Data: &api.InteractionResponseData{
-			Flags: api.EphemeralResponse,
+			Flags:   api.EphemeralResponse,
+			Content: option.NewNullableString(e.content),
 			Embeds: &[]discord.Embed{
 				{
 					Title:       e.title,
@@ -195,7 +208,7 @@ func (e Embed) UpdateResponse() api.InteractionResponse {
 					Fields:      e.fields,
 					Footer:      e.footer,
 					Image:       e.image,
-					Timestamp:   discord.NowTimestamp(),
+					Timestamp:   e.timestamp,
 				},
 			},
 			Components: components,
@@ -203,6 +216,73 @@ func (e Embed) UpdateResponse() api.InteractionResponse {
 		},
 	}
 	return res
+}
+
+type Message struct {
+	Username   string              `json:"username,omitempty"`
+	Avatar     string              `json:"avatar_url,omitempty"`
+	Content    string              `json:"content,omitempty"`
+	Embeds     *[]discord.Embed    `json:"embeds,omitempty"`
+	Components []discord.Component `json:"components,omitempty"`
+	Files      []sendpart.File     `json:"files,omitempty"`
+}
+
+func (e Embed) MakeWebhookEmbed(Username string, Avatar string) ([]byte, error) {
+	var (
+		components = []discord.Component{
+			&discord.ActionRowComponent{
+				Components: e.Components,
+			},
+		}
+	)
+
+	if e.Components == nil {
+		components = []discord.Component{}
+	}
+
+	body, err := json.Marshal(Message{
+		Username: Username,
+		Avatar:   Avatar,
+		Content:  e.content,
+		Embeds: &[]discord.Embed{
+			{
+				Title:       e.title,
+				Description: e.description,
+				Color:       e.color,
+				Fields:      e.fields,
+				Footer:      e.footer,
+				Image:       e.image,
+				Timestamp:   e.timestamp,
+			},
+		},
+		Components: components,
+		Files:      e.files,
+	})
+	return body, err
+}
+
+// MakeWebhookText Returns a JSON object with no embed element
+func (e Embed) MakeWebhookText(Username string, Avatar string) ([]byte, error) {
+	var (
+		components = []discord.Component{
+			&discord.ActionRowComponent{
+				Components: e.Components,
+			},
+		}
+	)
+
+	if e.Components == nil {
+		components = []discord.Component{}
+	}
+
+	body, err := json.Marshal(Message{
+		Username:   Username,
+		Avatar:     Avatar,
+		Content:    e.content,
+		Components: components,
+		Files:      e.files,
+	})
+	return body, err
 }
 
 // EditInteraction generates an api.EditInteractionResponseData object
@@ -226,7 +306,7 @@ func (e Embed) EditInteraction() api.EditInteractionResponseData {
 				Fields:      e.fields,
 				Footer:      e.footer,
 				Image:       e.image,
-				Timestamp:   discord.NowTimestamp(),
+				Timestamp:   e.timestamp,
 			},
 		},
 		Components: components,
@@ -249,6 +329,7 @@ func (e Embed) MakeMessage() api.SendMessageData {
 	}
 
 	res := api.SendMessageData{
+		Content: e.content,
 		Embeds: []discord.Embed{
 			{
 				Title:       e.title,
@@ -257,7 +338,7 @@ func (e Embed) MakeMessage() api.SendMessageData {
 				Fields:      e.fields,
 				Footer:      e.footer,
 				Image:       e.image,
-				Timestamp:   discord.NowTimestamp(),
+				Timestamp:   e.timestamp,
 			},
 		},
 		Components: components,

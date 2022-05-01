@@ -91,6 +91,7 @@ func init() {
 				AddField("Answer", false, answer).
 				SetColor(utils.DiscordGreen).
 				SetFooter(fmt.Sprintf("Quesition submitted by %v#%v", e.Member.User.Username, e.Member.User.Discriminator), e.Member.User.AvatarURL()).
+				SetTimestamp().
 				EditInteraction()
 
 			if _, err := core.State.EditInteractionResponse(discord.AppID(utils.MustSnowflakeEnv(core.Config.APPID)), e.Token, res); err != nil {
@@ -178,6 +179,7 @@ func init() {
 				SetFooter(fmt.Sprintf("Requested by %v#%v", e.Member.User.Username, e.Member.User.Discriminator), e.Member.User.AvatarURL()).
 				AddURLButton("Source", fact.SourceURL).
 				AddURLButton("Permalink", fact.Permalink).
+				SetTimestamp().
 				EditInteraction()
 
 			if _, err := core.State.EditInteractionResponse(discord.AppID(utils.MustSnowflakeEnv(core.Config.APPID)), e.Token, res); err != nil {
@@ -206,112 +208,10 @@ func init() {
 				SetColor(utils.DiscordGreen).
 				SetFooter(fmt.Sprintf("Requested by %v#%v", e.Member.User.Username, e.Member.User.Discriminator), e.Member.User.AvatarURL()).
 				AddFile(logger.LogFile.Name(), logfile).
+				SetTimestamp().
 				MakeResponse()
 
 			if err = core.State.RespondInteraction(e.ID, e.Token, res); err != nil {
-				logger.Error(err)
-			}
-		},
-	}
-	MapCommands["minecraft"] = Command{
-		Name:        "minecraft",
-		Description: "Gets information regarding the game or a player from the public minecraft APIs",
-		Group:       "misc",
-		Usage:       "/minecraft [option]",
-		Options: []discord.CommandOption{
-			{
-				Type:        1,
-				Name:        "user",
-				Description: "Gets information about a user, using either a valid username or UUID",
-				Options: []discord.CommandOption{
-					{
-						Type:        3,
-						Name:        "username",
-						Description: "Get user information from a username",
-					},
-					{
-						Type:        3,
-						Name:        "uuid",
-						Description: "Get user information from a UUID",
-					},
-				},
-			},
-		},
-		OwnerOnly: false,
-		Exclude:   false,
-		Run: func(e *gateway.InteractionCreateEvent, data *discord.CommandInteractionData) {
-			ack := api.InteractionResponse{
-				Type: api.DeferredMessageInteractionWithSource,
-			}
-
-			if err := core.State.RespondInteraction(e.ID, e.Token, ack); err != nil {
-				logger.Error(err)
-			}
-
-			switch data.Options[0].Name {
-			case "user":
-				switch data.Options[0].Options[0].Name {
-				case "username":
-					res := utils.NewEmbed().SetColor(utils.DiscordBlue).
-						SetAuthor(strings.ReplaceAll(data.Options[0].Options[0].Value.String(), "\"", ""), fmt.Sprintf("https://crafatar.com/avatars/%v?size=100", utils.GetUUID(data.Options[0].Options[0].Value.String()))).
-						SetTitle("Player Information").
-						SetDescription("Showing infor for player by username").
-						SetImage(fmt.Sprintf("https://crafatar.com/renders/body/%v", utils.GetUUID(data.Options[0].Options[0].Value.String()))).
-						AddField("Username", true, strings.ReplaceAll(data.Options[0].Options[0].Value.String(), "\"", "")).
-						AddField("UUID", true, utils.GetUUID(data.Options[0].Options[0].Value.String())).
-						AddField("Names", false, utils.GetNamesFromUsername(data.Options[0].Options[0].Value.String())).
-						AddURLButton("Cape", fmt.Sprintf("https://crafatar.com/capes/%v", utils.GetUUID(data.Options[0].Options[0].Value.String()))).
-						AddURLButton("Skin", fmt.Sprintf("https://crafatar.com/skins/%v", utils.GetUUID(data.Options[0].Options[0].Value.String()))).
-						EditInteraction()
-
-					if _, err := core.State.EditInteractionResponse(discord.AppID(utils.MustSnowflakeEnv(core.Config.APPID)), e.Token, res); err != nil {
-						logger.Error(err)
-					}
-				case "uuid":
-					res := utils.NewEmbed().SetColor(utils.DiscordBlue).
-						SetAuthor(strings.ReplaceAll(data.Options[0].Options[0].Value.String(), "\"", ""), fmt.Sprintf("https://crafatar.com/avatars/%v?size=100", utils.GetUUID(data.Options[0].Options[0].Value.String()))).
-						SetTitle("Player Information").
-						SetDescription("Showing infor for player by UUID").
-						SetImage(fmt.Sprintf("https://crafatar.com/renders/body/%v", strings.ReplaceAll(data.Options[0].Options[0].Value.String(), "\"", ""))).
-						AddField("Username", true, utils.GetUsername(data.Options[0].Options[0].Value.String())).
-						AddField("UUID", true, strings.ReplaceAll(data.Options[0].Options[0].Value.String(), "\"", "")).
-						AddField("Names", false, utils.GetNamesFromUUID(data.Options[0].Options[0].Value.String())).
-						AddURLButton("Cape", fmt.Sprintf("https://crafatar.com/capes/%v", strings.ReplaceAll(data.Options[0].Options[0].Value.String(), "\"", ""))).
-						AddURLButton("Skin", fmt.Sprintf("https://crafatar.com/skins/%v", strings.ReplaceAll(data.Options[0].Options[0].Value.String(), "\"", ""))).
-						EditInteraction()
-
-					if _, err := core.State.EditInteractionResponse(discord.AppID(utils.MustSnowflakeEnv(core.Config.APPID)), e.Token, res); err != nil {
-						logger.Error(err)
-					}
-				}
-			}
-		},
-	}
-	MapCommands["test"] = Command{
-		Name:        "test",
-		Description: "Used for testing functions and other dev stuff",
-		Group:       "misc",
-		Usage:       "",
-		Options:     nil,
-		OwnerOnly:   true,
-		Exclude:     false,
-		Run: func(e *gateway.InteractionCreateEvent, data *discord.CommandInteractionData) {
-			res1 := utils.NewEmbed().
-				SetTitle("Testing programmatically generated Select component").
-				SetColor(discord.DefaultEmbedColor).
-				AddSelectComponent("test_component", "placeholder", false).
-				AddOption("Test", "test", "test", &discord.ButtonEmoji{}, true).
-				AddOption("Yeet", "yeet", "Yeet", &discord.ButtonEmoji{}, false).
-				AddOption("Death", "death", "Yeet", &discord.ButtonEmoji{}, false).
-				MakeSelectComponent().
-				MakeResponse()
-
-			logger.Debug(res1)
-
-			//res := utils.NewEmbed().
-			//	SetTitle("Testing programmatically generated Select component").
-			//	SetColor(discord.DefaultEmbedColor).MakeResponse()
-			if err := core.State.RespondInteraction(e.ID, e.Token, res1); err != nil {
 				logger.Error(err)
 			}
 		},
