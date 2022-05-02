@@ -4,9 +4,10 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="43a90286-0bc6-4267-8a52-6493d8afd734" name="Changes" comment="style,feat(commands): changed the value for utils.DefaultColor. started working on command invocation logic">
+    <list default="true" id="43a90286-0bc6-4267-8a52-6493d8afd734" name="Changes" comment="refactor(misc): this was bugging me. made the boolean option a requirement, didnt make sense otherwise.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/misc.go" beforeDir="false" afterPath="$PROJECT_DIR$/commands/misc.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/commands/commands.go" beforeDir="false" afterPath="$PROJECT_DIR$/commands/commands.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/utils.go" beforeDir="false" afterPath="$PROJECT_DIR$/utils/utils.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -126,7 +127,8 @@
     <MESSAGE value="feat(websockets): Added websocket server. moved minecraft related commands to their own file. added *gateway.MessageCreateEvent listener for sending chat messages to the minecraft server" />
     <MESSAGE value="feat(websockets, commands): added check to see if socket connection is the mc server instance, save the connection and set IsServerConnected = true. set IsSeverConnected = false when server disconnects. added checks in server related commands" />
     <MESSAGE value="style,feat(commands): changed the value for utils.DefaultColor. started working on command invocation logic" />
-    <option name="LAST_COMMIT_MESSAGE" value="style,feat(commands): changed the value for utils.DefaultColor. started working on command invocation logic" />
+    <MESSAGE value="refactor(misc): this was bugging me. made the boolean option a requirement, didnt make sense otherwise." />
+    <option name="LAST_COMMIT_MESSAGE" value="refactor(misc): this was bugging me. made the boolean option a requirement, didnt make sense otherwise." />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
