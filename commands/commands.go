@@ -54,7 +54,7 @@ func GetCommands(category string) ([]discord.EmbedField, discord.Color) {
 		})
 		return commandFields, utils.DiscordRed
 	} else {
-		return commandFields, utils.DiscordGreen
+		return commandFields, utils.DefaultColour
 	}
 }
 

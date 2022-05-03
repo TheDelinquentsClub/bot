@@ -24,7 +24,7 @@ func GetLogWriter() zapcore.WriteSyncer {
 
 	t := time.Now().Format("02-01-2006")
 
-	LogFile, err = os.OpenFile(fmt.Sprintf("%v/logs/logs_%v.txt", path, t), os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
+	LogFile, err = os.OpenFile(fmt.Sprintf("%v/logs/logs_%v.log", path, t), os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
 	if err != nil {
 		panic(err)
 	}

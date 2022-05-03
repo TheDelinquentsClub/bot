@@ -1,14 +1,12 @@
 package commands
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"github.com/Krognol/go-wolfram"
 	"github.com/diamondburned/arikawa/v3/api"
 	"github.com/diamondburned/arikawa/v3/discord"
 	"github.com/diamondburned/arikawa/v3/gateway"
-	"github.com/diamondburned/arikawa/v3/utils/sendpart"
 	"github.com/kingultron99/tdcbot/core"
 	"github.com/kingultron99/tdcbot/logger"
 	"github.com/kingultron99/tdcbot/utils"
@@ -88,27 +86,15 @@ func init() {
 				logger.Info(answer)
 			}
 
-			resp := api.EditInteractionResponseData{
-				Embeds: &[]discord.Embed{
-					{
-						Title: fmt.Sprintf("Question: %v", query),
-						Fields: []discord.EmbedField{
-							{
-								Name:  "Answer:",
-								Value: answer,
-							},
-						},
-						Color:     utils.DiscordGreen,
-						Timestamp: discord.NowTimestamp(),
-						Footer: &discord.EmbedFooter{
-							Text: fmt.Sprintf("Quesition submitted by %v#%v", e.Member.User.Username, e.Member.User.Discriminator),
-							Icon: e.Member.User.AvatarURL(),
-						},
-					},
-				},
-			}
+			res := utils.NewEmbed().
+				SetTitle(fmt.Sprintf("Question: %v", query)).
+				AddField("Answer", false, answer).
+				SetColor(utils.DiscordGreen).
+				SetFooter(fmt.Sprintf("Quesition submitted by %v#%v", e.Member.User.Username, e.Member.User.Discriminator), e.Member.User.AvatarURL()).
+				SetTimestamp().
+				EditInteraction()
 
-			if _, err := core.State.EditInteractionResponse(discord.AppID(utils.MustSnowflakeEnv(core.Config.APPID)), e.Token, resp); err != nil {
+			if _, err := core.State.EditInteractionResponse(discord.AppID(utils.MustSnowflakeEnv(core.Config.APPID)), e.Token, res); err != nil {
 				logger.Error(err)
 			}
 
@@ -121,10 +107,10 @@ func init() {
 		Usage:       "/randomFact",
 		Options: []discord.CommandOption{
 			{
-				Type:        discord.CommandOptionType(5),
+				Type:        discord.BooleanOption,
 				Name:        "fact_of_the_day",
 				Description: "Get the fact of the day!",
-				Required:    false,
+				Required:    true,
 			},
 		},
 		OwnerOnly: false,
@@ -152,22 +138,16 @@ func init() {
 				boolean bool
 			)
 
-			if len(data.Options) != 0 {
-				b, err := strconv.ParseBool(fmt.Sprint(data.Options[0]))
-				if err != nil {
-					logger.Error(err)
-				}
-				boolean = b
+			b, err := strconv.ParseBool(fmt.Sprint(data.Options[0]))
+			if err != nil {
+				logger.Error(err)
 			}
+			boolean = b
 
-			if len(data.Options) == 1 {
-				switch boolean {
-				case true:
-					url = "https://uselessfacts.jsph.pl/today.json?language=en"
-				case false:
-					url = "https://uselessfacts.jsph.pl/random.json?language=en"
-				}
-			} else {
+			switch boolean {
+			case true:
+				url = "https://uselessfacts.jsph.pl/today.json?language=en"
+			case false:
 				url = "https://uselessfacts.jsph.pl/random.json?language=en"
 			}
 
@@ -187,35 +167,14 @@ func init() {
 				fact.Text = strings.ReplaceAll(fact.Text, "`", "'")
 			}
 
-			res := api.EditInteractionResponseData{
-				Embeds: &[]discord.Embed{
-					{
-						Title:     fact.Text,
-						Color:     utils.DiscordBlue,
-						Timestamp: discord.NowTimestamp(),
-						Footer: &discord.EmbedFooter{
-							Text: fmt.Sprintf("Requested by %v#%v", e.Member.User.Username, e.Member.User.Discriminator),
-							Icon: e.Member.User.AvatarURL(),
-						},
-					},
-				},
-				Components: &[]discord.Component{
-					&discord.ActionRowComponent{
-						Components: []discord.Component{
-							&discord.ButtonComponent{
-								Label: "Source",
-								Style: discord.LinkButton,
-								URL:   fact.SourceURL,
-							},
-							&discord.ButtonComponent{
-								Label: "Permalink",
-								Style: discord.LinkButton,
-								URL:   fact.Permalink,
-							},
-						},
-					},
-				},
-			}
+			res := utils.NewEmbed().
+				SetTitle(fact.Text).
+				SetColor(utils.DiscordBlue).
+				SetFooter(fmt.Sprintf("Requested by %v#%v", e.Member.User.Username, e.Member.User.Discriminator), e.Member.User.AvatarURL()).
+				AddURLButton("Source", fact.SourceURL).
+				AddURLButton("Permalink", fact.Permalink).
+				SetTimestamp().
+				EditInteraction()
 
 			if _, err := core.State.EditInteractionResponse(discord.AppID(utils.MustSnowflakeEnv(core.Config.APPID)), e.Token, res); err != nil {
 				logger.Error(err)
@@ -238,223 +197,16 @@ func init() {
 				logger.Error(err)
 			}
 
-			res := api.InteractionResponse{
-				Type: api.MessageInteractionWithSource,
-				Data: &api.InteractionResponseData{
-					Embeds: &[]discord.Embed{
-						{
-							Title: "Here's the latest log file!",
-							Color: utils.DiscordGreen,
-							Footer: &discord.EmbedFooter{
-								Text: fmt.Sprintf("Requested by %v#%v", e.Member.User.Username, e.Member.User.Discriminator),
-								Icon: e.Member.User.AvatarURL(),
-							},
-						},
-					},
-					Files: []sendpart.File{
-						{
-							Name:   logger.LogFile.Name(),
-							Reader: bytes.NewReader(logfile),
-						},
-					},
-				},
-			}
+			res := utils.NewEmbed().
+				SetTitle("Here's the latest log file!").
+				SetColor(utils.DiscordGreen).
+				SetFooter(fmt.Sprintf("Requested by %v#%v", e.Member.User.Username, e.Member.User.Discriminator), e.Member.User.AvatarURL()).
+				AddFile(logger.LogFile.Name(), logfile).
+				SetTimestamp().
+				MakeResponse()
+
 			if err = core.State.RespondInteraction(e.ID, e.Token, res); err != nil {
 				logger.Error(err)
-			}
-		},
-	}
-	MapCommands["minecraft"] = Command{
-		Name:        "minecraft",
-		Description: "Gets information regarding the game or a player from the public minecraft APIs",
-		Group:       "misc",
-		Usage:       "/minecraft [option]",
-		Options: []discord.CommandOption{
-			{
-				Type:        1,
-				Name:        "user",
-				Description: "Gets information about a user, using either a valid username or UUID",
-				Options: []discord.CommandOption{
-					{
-						Type:        3,
-						Name:        "username",
-						Description: "Get user information from a username",
-					},
-					{
-						Type:        3,
-						Name:        "uuid",
-						Description: "Get user information from a UUID",
-					},
-				},
-			},
-			{
-				Type:        1,
-				Name:        "sales",
-				Description: "Gets current sales metrics of minecraft",
-			},
-		},
-		OwnerOnly: false,
-		Exclude:   false,
-		Run: func(e *gateway.InteractionCreateEvent, data *discord.CommandInteractionData) {
-			ack := api.InteractionResponse{
-				Type: api.DeferredMessageInteractionWithSource,
-			}
-
-			if err := core.State.RespondInteraction(e.ID, e.Token, ack); err != nil {
-				logger.Error(err)
-			}
-
-			switch data.Options[0].Name {
-			case "user":
-				switch data.Options[0].Options[0].Name {
-				case "username":
-					res := api.EditInteractionResponseData{
-						Embeds: &[]discord.Embed{
-							{
-								Color: utils.DiscordBlue,
-								Author: &discord.EmbedAuthor{
-									Name: strings.ReplaceAll(data.Options[0].Options[0].Value.String(), "\"", ""),
-									Icon: fmt.Sprintf("https://crafatar.com/avatars/%v?size=100", utils.GetUUID(data.Options[0].Options[0].Value.String())),
-								},
-								Title:       "Player Information",
-								Description: "Showing info for player by username",
-								Image: &discord.EmbedImage{
-									URL: fmt.Sprintf("https://crafatar.com/renders/body/%v", utils.GetUUID(data.Options[0].Options[0].Value.String())),
-								},
-								Fields: []discord.EmbedField{
-									{
-										Name:   "Username",
-										Value:  strings.ReplaceAll(data.Options[0].Options[0].Value.String(), "\"", ""),
-										Inline: true,
-									},
-									{
-										Name:   "UUID",
-										Value:  utils.GetUUID(data.Options[0].Options[0].Value.String()),
-										Inline: true,
-									},
-									{
-										Name:  "Names",
-										Value: utils.GetNamesFromUsername(data.Options[0].Options[0].Value.String()),
-									},
-								},
-								Timestamp: discord.NowTimestamp(),
-							},
-						},
-						Components: &[]discord.Component{
-							&discord.ActionRowComponent{
-								Components: []discord.Component{
-									&discord.ButtonComponent{
-										Label: "Cape",
-										URL:   fmt.Sprintf("https://crafatar.com/capes/%v", utils.GetUUID(data.Options[0].Options[0].Value.String())),
-										Style: discord.LinkButton,
-									},
-									&discord.ButtonComponent{
-										Label: "Skin",
-										URL:   fmt.Sprintf("https://crafatar.com/skins/%v", utils.GetUUID(data.Options[0].Options[0].Value.String())),
-										Style: discord.LinkButton,
-									},
-								},
-							},
-						},
-					}
-					if _, err := core.State.EditInteractionResponse(discord.AppID(utils.MustSnowflakeEnv(core.Config.APPID)), e.Token, res); err != nil {
-						logger.Error(err)
-					}
-				case "uuid":
-					res := api.EditInteractionResponseData{
-						Embeds: &[]discord.Embed{
-							{
-								Color: utils.DiscordBlue,
-								Author: &discord.EmbedAuthor{
-									Name: utils.GetUsername(data.Options[0].Options[0].Value.String()),
-									Icon: fmt.Sprintf("https://crafatar.com/avatars/%v?size=100", strings.ReplaceAll(data.Options[0].Options[0].Value.String(), "\"", "")),
-								},
-								Title:       "Player Information",
-								Description: "Showing info for player by UUID",
-								Image: &discord.EmbedImage{
-									URL: fmt.Sprintf("https://crafatar.com/renders/body/%v", strings.ReplaceAll(data.Options[0].Options[0].Value.String(), "\"", "")),
-								},
-								Fields: []discord.EmbedField{
-									{
-										Name:   "Username",
-										Value:  utils.GetUsername(data.Options[0].Options[0].Value.String()),
-										Inline: true,
-									},
-									{
-										Name:   "UUID",
-										Value:  strings.ReplaceAll(data.Options[0].Options[0].Value.String(), "\"", ""),
-										Inline: true,
-									},
-									{
-										Name:  "Names",
-										Value: utils.GetNamesFromUUID(data.Options[0].Options[0].Value.String()),
-									},
-								},
-								Timestamp: discord.NowTimestamp(),
-							},
-						},
-						Components: &[]discord.Component{
-							&discord.ActionRowComponent{
-								Components: []discord.Component{
-									&discord.ButtonComponent{
-										Label: "Cape",
-										URL:   fmt.Sprintf("https://crafatar.com/capes/%v", strings.ReplaceAll(data.Options[0].Options[0].Value.String(), "\"", "")),
-										Style: discord.LinkButton,
-									},
-									&discord.ButtonComponent{
-										Label: "Skin",
-										URL:   fmt.Sprintf("https://crafatar.com/skins/%v", strings.ReplaceAll(data.Options[0].Options[0].Value.String(), "\"", "")),
-										Style: discord.LinkButton,
-									},
-								},
-							},
-						},
-					}
-					if _, err := core.State.EditInteractionResponse(discord.AppID(utils.MustSnowflakeEnv(core.Config.APPID)), e.Token, res); err != nil {
-						logger.Error(err)
-					}
-				}
-
-			case "sales":
-				type sales struct {
-					Total                  int     `json:"total"`
-					Last24h                int     `json:"last24h"`
-					SaleVelocityPerSeconds float32 `json:"saleVelocityPerSeconds"`
-				}
-
-				jsonData := []byte(`{ "metricKeys": ["item_sold_minecraft", "prepaid_card_redeemed_minecraft"] }`)
-				data, err := http.Post("https://api.mojang.com/orders/statistics", "application/json", bytes.NewBuffer(jsonData))
-				if err != nil {
-					logger.Error(err)
-				}
-
-				body, _ := ioutil.ReadAll(data.Body)
-				currentSales := new(sales)
-				_ = json.Unmarshal(body, &currentSales)
-
-				res := api.EditInteractionResponseData{
-					Embeds: &[]discord.Embed{
-						{
-							Color: utils.DiscordBlue,
-							Title: "Current Sales Statistics for Minecraft",
-							Fields: []discord.EmbedField{
-								{
-									Name:   "Total Sales",
-									Value:  fmt.Sprintf("%v", currentSales.Total),
-									Inline: true,
-								},
-								{
-									Name:   "Sales in the last 24h",
-									Value:  fmt.Sprintf("%v", currentSales.Last24h),
-									Inline: true,
-								},
-							},
-						},
-					},
-				}
-				if _, err := core.State.EditInteractionResponse(discord.AppID(utils.MustSnowflakeEnv(core.Config.APPID)), e.Token, res); err != nil {
-					logger.Error(err)
-				}
 			}
 		},
 	}
