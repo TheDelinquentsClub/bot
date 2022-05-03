@@ -4,10 +4,21 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="43a90286-0bc6-4267-8a52-6493d8afd734" name="Changes" comment="refactor(misc): this was bugging me. made the boolean option a requirement, didnt make sense otherwise.">
+    <list default="true" id="43a90286-0bc6-4267-8a52-6493d8afd734" name="Changes" comment="style(utils): changed DefaultColour again...">
+      <change afterPath="$PROJECT_DIR$/commands/handler.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/commands.go" beforeDir="false" afterPath="$PROJECT_DIR$/commands/commands.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/utils.go" beforeDir="false" afterPath="$PROJECT_DIR$/utils/utils.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/commands/commands.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/commands/components.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/commands/debug.go" beforeDir="false" afterPath="$PROJECT_DIR$/commands/debug.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/commands/info.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/commands/minecraft.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/commands/misc.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/commands/utility.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/core.go" beforeDir="false" afterPath="$PROJECT_DIR$/core/core.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/embedBuilder.go" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -49,12 +60,9 @@
     <option name="indexEntireGoPath" value="false" />
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$PROJECT_DIR$/commands/components.go" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/commands/info.go" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/core/core.go" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/logger/logger.go" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/main.go" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/utils/utils.go" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -108,7 +116,19 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="main" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
           </value>
         </entry>
       </map>
@@ -128,7 +148,8 @@
     <MESSAGE value="feat(websockets, commands): added check to see if socket connection is the mc server instance, save the connection and set IsServerConnected = true. set IsSeverConnected = false when server disconnects. added checks in server related commands" />
     <MESSAGE value="style,feat(commands): changed the value for utils.DefaultColor. started working on command invocation logic" />
     <MESSAGE value="refactor(misc): this was bugging me. made the boolean option a requirement, didnt make sense otherwise." />
-    <option name="LAST_COMMIT_MESSAGE" value="refactor(misc): this was bugging me. made the boolean option a requirement, didnt make sense otherwise." />
+    <MESSAGE value="style(utils): changed DefaultColour again..." />
+    <option name="LAST_COMMIT_MESSAGE" value="style(utils): changed DefaultColour again..." />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />

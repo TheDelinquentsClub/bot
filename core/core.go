@@ -3,13 +3,12 @@ package core
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/diamondburned/arikawa/v3/gateway"
 	"github.com/diamondburned/arikawa/v3/state"
 	socketio "github.com/googollee/go-socket.io"
 	"github.com/kingultron99/tdcbot/logger"
-	"github.com/lukasl-dev/waterlink"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
+	"log"
 	"os"
 	"os/exec"
 	"os/signal"
@@ -34,8 +33,6 @@ var (
 	State             *state.State
 	TimeNow           time.Time
 	Logg              *zap.Logger
-	Conn              waterlink.Connection
-	Update            *gateway.VoiceServerUpdateEvent
 	WSServer          *socketio.Server
 	ServerConn        socketio.Conn
 	IsServerConnected = false
@@ -47,9 +44,12 @@ func init() {
 
 // Initialise sets up the logger and calls for "setupCloseHandler" and "initConfig"
 func Initialise() {
-	cmd := exec.Command("cmd", "/c", "cls")
+	cmd := exec.Command("cmd", "clear", "cls")
 	cmd.Stdout = os.Stdout
-	cmd.Run()
+	err := cmd.Run()
+	if err != nil {
+		log.Fatal("Failed to clear terminal!")
+	}
 
 	writerSync := logger.GetLogWriter()
 	encoder := logger.GetEncoder()
@@ -61,11 +61,12 @@ func Initialise() {
 
 	zap.ReplaceGlobals(Logg)
 
+	logger.Info("Initialised Logger!")
+
 	setupCloseHandler(Logg)
 	initConfig()
 
 	logger.Print(fmt.Sprintf(" ::::::::   ::::::::       ::::::::: ::::::::    ::::::::\n:+:    :+: :+:    :+:         :+:    :+:   :+:  :+:    :+:\n+:+    +:+ +:+    +:+   (:o   +:+    +:+    +:+ +:+\n+#+        +#+    +#+ +#+#+#+ +#+    +#+    +#+ +#+\n+#+   #+#+ +#+    +#+         +#+    +#+    +#+ +#+\n#+#    #+# #+#    #+#         #+#    #+#   #+#  #+#    #+#\n ########   ########          ###    ########    ########\n                                              %v\n", Config.Version))
-	logger.Debug("Initialised Logger!")
 }
 
 // initConfig Initialises the bots config
@@ -89,6 +90,8 @@ func setupCloseHandler(logg *zap.Logger) {
 		logger.Info("Beginning shutdown process")
 		logg.Sync()
 		logger.Debug("Flushed log buffer")
+		//WSServer.Close()
+		//logger.Info("Closed WS server")
 		logger.Info("Goodbye!")
 		os.Exit(0)
 	}()

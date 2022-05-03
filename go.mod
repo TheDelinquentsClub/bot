@@ -4,8 +4,7 @@ go 1.16
 
 require (
 	github.com/Krognol/go-wolfram v0.0.0-20180610151123-5b91101b92a8
-	github.com/diamondburned/arikawa v1.3.14 // indirect
-	github.com/diamondburned/arikawa/v3 v3.0.0-rc.2 // direct
+	github.com/diamondburned/arikawa/v3 v3.0.0-rc.6 // direct
 	github.com/gin-gonic/gin v1.7.7 // indirect
 	github.com/googollee/go-socket.io v1.6.1 // indirect
 	github.com/gorilla/mux v1.8.0 // indirect
