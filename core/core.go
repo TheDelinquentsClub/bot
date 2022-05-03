@@ -44,7 +44,7 @@ func init() {
 
 // Initialise sets up the logger and calls for "setupCloseHandler" and "initConfig"
 func Initialise() {
-	cmd := exec.Command("cmd", "clear", "cls")
+	cmd := exec.Command("cmd", "/c", "cls", "clear")
 	cmd.Stdout = os.Stdout
 	err := cmd.Run()
 	if err != nil {
