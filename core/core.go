@@ -8,10 +8,10 @@ import (
 	"github.com/kingultron99/tdcbot/logger"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
-	"log"
 	"os"
 	"os/exec"
 	"os/signal"
+	"runtime"
 	"syscall"
 	"time"
 )
@@ -36,19 +36,32 @@ var (
 	WSServer          *socketio.Server
 	ServerConn        socketio.Conn
 	IsServerConnected = false
+	clear             map[string]func() //create a map for storing clear funcs
 )
 
 func init() {
 	TimeNow = time.Now()
+
+	clear = make(map[string]func()) //Initialize it
+	clear["linux"] = func() {
+		cmd := exec.Command("clear")
+		cmd.Stdout = os.Stdout
+		cmd.Run()
+	}
+	clear["windows"] = func() {
+		cmd := exec.Command("cmd", "/c", "cls")
+		cmd.Stdout = os.Stdout
+		cmd.Run()
+	}
 }
 
 // Initialise sets up the logger and calls for "setupCloseHandler" and "initConfig"
 func Initialise() {
-	cmd := exec.Command("cmd", "/c", "cls", "clear")
-	cmd.Stdout = os.Stdout
-	err := cmd.Run()
-	if err != nil {
-		log.Fatal("Failed to clear terminal!")
+	value, ok := clear[runtime.GOOS] //runtime.GOOS -> linux, windows, darwin etc.
+	if ok {                          //if we defined a clear func for that platform:
+		value() //we execute it
+	} else { //unsupported platform
+		panic("Your platform is unsupported! I can't clear terminal screen :(")
 	}
 
 	writerSync := logger.GetLogWriter()
