@@ -22,7 +22,16 @@ type Command struct {
 	Run         func(e *gateway.InteractionCreateEvent, data *discord.CommandInteraction)
 }
 
+type Button struct {
+	Run func(e *gateway.InteractionCreateEvent, data *discord.ButtonInteraction)
+}
+type Select struct {
+	Run func(e *gateway.InteractionCreateEvent, data *discord.SelectInteraction)
+}
+
 var MapCommands = make(map[string]Command)
+var MapButtons = make(map[string]Button)
+var MapSelect = make(map[string]Select)
 
 // GetCommands returns all available commands that have been mapped for use in /help
 func GetCommands(category string) ([]discord.EmbedField, discord.Color) {
@@ -65,6 +74,14 @@ func AddHandlers() {
 				cmd.Run(e, data)
 			} else {
 				doesntExist(e, data)
+			}
+		case *discord.SelectInteraction:
+			if cmd, ok := MapSelect[string(data.CustomID)]; ok {
+				cmd.Run(e, data)
+			}
+		case *discord.ButtonInteraction:
+			if cmd, ok := MapButtons[string(data.CustomID)]; ok {
+				cmd.Run(e, data)
 			}
 		}
 	})

@@ -1,10 +1,12 @@
 package commands
 
 import (
+	"bytes"
 	"fmt"
 	"github.com/diamondburned/arikawa/v3/api"
 	"github.com/diamondburned/arikawa/v3/discord"
 	"github.com/diamondburned/arikawa/v3/gateway"
+	"github.com/diamondburned/arikawa/v3/utils/sendpart"
 	"github.com/kingultron99/tdcbot/core"
 	"github.com/kingultron99/tdcbot/logger"
 	"github.com/kingultron99/tdcbot/utils"
@@ -103,8 +105,9 @@ func init() {
 					Flags: api.EphemeralResponse,
 					Embeds: &[]discord.Embed{
 						{
-							Title:  ":wastebasket: triggered a GC cycle!",
-							Footer: &discord.EmbedFooter{Text: e.Member.User.Username, Icon: e.Member.User.AvatarURL()},
+							Title:     ":wastebasket: triggered a GC cycle!",
+							Footer:    &discord.EmbedFooter{Text: e.Member.User.Username, Icon: e.Member.User.AvatarURL()},
+							Timestamp: discord.NowTimestamp(),
 						},
 					},
 				},
@@ -136,6 +139,7 @@ func init() {
 								Text: fmt.Sprintf("Killed by %v#%v", e.Member.User.Username, e.Member.User.Discriminator),
 								Icon: e.Member.User.AvatarURL(),
 							},
+							Timestamp: discord.NowTimestamp(),
 						},
 					},
 				},
@@ -151,6 +155,50 @@ func init() {
 			logger.Info("Goodbye!")
 			os.Exit(0)
 
+		},
+	}
+	MapCommands["logs"] = Command{
+		Name:        "logs",
+		Description: "sends the latest log as a file",
+		Group:       "debug",
+		Usage:       "/logs",
+		Options:     nil,
+		Restricted:  false,
+		Run: func(e *gateway.InteractionCreateEvent, data *discord.CommandInteraction) {
+			logger.Info(fmt.Sprintf("%v#%v requested the latest log file!", e.Member.User.Username, e.Member.User.Discriminator))
+
+			logfile, err := os.ReadFile(logger.LogFile.Name())
+			if err != nil {
+				logger.Error(err)
+			}
+			reader := bytes.NewReader(logfile)
+
+			res := api.InteractionResponse{
+				Type: api.MessageInteractionWithSource,
+				Data: &api.InteractionResponseData{
+					Embeds: &[]discord.Embed{
+						{
+							Title: "Here's the latest log file!",
+							Color: utils.DiscordGreen,
+							Footer: &discord.EmbedFooter{
+								Text: fmt.Sprintf("Requested by %v#%v", e.Member.User.Username, e.Member.User.Discriminator),
+								Icon: e.Member.User.AvatarURL(),
+							},
+							Timestamp: discord.NowTimestamp(),
+						},
+					},
+					Files: []sendpart.File{
+						{
+							Name:   "Log-Latest.log",
+							Reader: reader,
+						},
+					},
+				},
+			}
+
+			if err = core.State.RespondInteraction(e.ID, e.Token, res); err != nil {
+				logger.Error(err)
+			}
 		},
 	}
 }
