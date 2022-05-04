@@ -11,6 +11,7 @@ import (
 	"github.com/kingultron99/tdcbot/core"
 	"github.com/kingultron99/tdcbot/logger"
 	"github.com/kingultron99/tdcbot/utils"
+	"github.com/kingultron99/tdcbot/websockets"
 )
 
 // Completely redoing the bot due to breaking changes in latest v3 commit github.com/diamondburned/arikawa/v3@df0fa66
@@ -58,7 +59,7 @@ func main() {
 
 	commands.AddHandlers()
 	commands.Register(discord.AppID(utils.MustSnowflakeEnv(core.Config.APPID)), discord.GuildID(utils.MustSnowflakeEnv(core.Config.GUILDID)))
-	//go websockets.InitServer()
+	go websockets.InitServer()
 
 	// Block forever
 	select {}

@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/diamondburned/arikawa/v3/discord"
+	"github.com/diamondburned/arikawa/v3/utils/sendpart"
 	socketio "github.com/googollee/go-socket.io"
 	"github.com/googollee/go-socket.io/engineio"
 	"github.com/googollee/go-socket.io/engineio/transport"
@@ -38,6 +40,15 @@ type MsgObj struct {
 	Msg      string `json:"msg"`
 }
 
+type Message struct {
+	Username   string              `json:"username,omitempty"`
+	Avatar     string              `json:"avatar_url,omitempty"`
+	Content    string              `json:"content,omitempty"`
+	Embeds     *[]discord.Embed    `json:"embeds,omitempty"`
+	Components []discord.Component `json:"components,omitempty"`
+	Files      []sendpart.File     `json:"files,omitempty"`
+}
+
 func InitServer() {
 
 	core.WSServer = socketio.NewServer(nil)
@@ -59,13 +70,15 @@ func InitServer() {
 		if err != nil {
 			logger.Error("Failed to parse JSON message")
 		}
-		embed, err := utils.NewEmbed().
-			SetText(msgObj.Msg).
-			MakeWebhookText(msgObj.Username, fmt.Sprintf("https://crafatar.com/avatars/%v", utils.GetUUID(msgObj.Username)))
+		body, err := json.Marshal(Message{
+			Username: msgObj.Username,
+			Avatar:   fmt.Sprintf("https://crafatar.com/avatars/%v", utils.GetUUID(msgObj.Username)),
+			Content:  msgObj.Msg,
+		})
 		if err != nil {
 			logger.Error(err)
 		}
-		resp := bytes.NewBuffer(embed)
+		resp := bytes.NewBuffer(body)
 
 		http.Post(
 			core.Config.Webhook,
@@ -73,15 +86,22 @@ func InitServer() {
 			resp)
 	})
 	core.WSServer.OnEvent("/", "playerjoin", func(s socketio.Conn, msg string) {
-		embed, err := utils.NewEmbed().
-			SetTitle(fmt.Sprintf("%v joined the server!", msg)).
-			SetTimestamp().
-			SetColor(utils.DiscordGreen).
-			MakeWebhookEmbed("TDC Bot", "https://cdn.discordapp.com/avatars/769753889960361994/a4876fb3b263409750a0b93feb619386.webp?size=128")
+
+		body, err := json.Marshal(Message{
+			Username: "TDC Bot",
+			Avatar:   "https://cdn.discordapp.com/avatars/769753889960361994/a4876fb3b263409750a0b93feb619386.webp?size=128",
+			Embeds: &[]discord.Embed{
+				{
+					Title:     fmt.Sprintf("%v joined the server!", msg),
+					Color:     utils.DiscordGreen,
+					Timestamp: discord.NowTimestamp(),
+				},
+			},
+		})
 		if err != nil {
 			logger.Error(err)
 		}
-		resp := bytes.NewBuffer(embed)
+		resp := bytes.NewBuffer(body)
 
 		http.Post(
 			core.Config.Webhook,
@@ -89,16 +109,28 @@ func InitServer() {
 			resp)
 	})
 	core.WSServer.OnEvent("/", "playerleft", func(s socketio.Conn, player string, reason string) {
-		embed, err := utils.NewEmbed().
-			SetTitle(fmt.Sprintf("%v left the server!", player)).
-			AddField("Reason:", false, strings.Title(strings.ToLower(reason))).
-			SetTimestamp().
-			SetColor(utils.DiscordRed).
-			MakeWebhookEmbed("TDC Bot", "https://cdn.discordapp.com/avatars/769753889960361994/a4876fb3b263409750a0b93feb619386.webp?size=128")
+		body, err := json.Marshal(Message{
+			Username: "TDC Bot",
+			Avatar:   "https://cdn.discordapp.com/avatars/769753889960361994/a4876fb3b263409750a0b93feb619386.webp?size=128",
+			Embeds: &[]discord.Embed{
+				{
+					Title: fmt.Sprintf("%v left the server!", player),
+					Fields: []discord.EmbedField{
+						{
+							Name:   "Reason:",
+							Inline: false,
+							Value:  strings.Title(strings.ToLower(reason)),
+						},
+					},
+					Color:     utils.DiscordRed,
+					Timestamp: discord.NowTimestamp(),
+				},
+			},
+		})
 		if err != nil {
 			logger.Error(err)
 		}
-		resp := bytes.NewBuffer(embed)
+		resp := bytes.NewBuffer(body)
 
 		http.Post(
 			core.Config.Webhook,

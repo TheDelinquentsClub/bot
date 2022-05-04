@@ -62,6 +62,7 @@ func init() {
 				color       discord.Color
 				res         api.EditInteractionResponseData
 			)
+
 			if len(data.Options) > 1 {
 				m := fmt.Sprint(data.Options[1])
 				switch m {
