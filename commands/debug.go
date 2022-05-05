@@ -68,6 +68,11 @@ func init() {
 									Inline: true,
 								},
 								{
+									Name:   "PID",
+									Inline: true,
+									Value:  fmt.Sprint(os.Getpid()),
+								},
+								{
 									Name: "Memory Used",
 									Value: fmt.Sprintf(
 										"using %v MB / %v MB\n%v MB garbage collected. next GC cycle at %v MB.\ncurrent number of GC Cycles: %v",
