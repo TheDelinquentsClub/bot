@@ -144,7 +144,7 @@ func GetNamesFromUUID(uuid string) string {
 			logger.Error(err)
 		}
 
-		changed := fmt.Sprintf("Changed: <t:%v:R>\n\n", time.Unix(unixTime, 0))
+		changed := fmt.Sprintf("Changed: <t:%v:R>\n\n", unixTime)
 		if playerNames.Changed == 0 {
 			changed = "Accounts first username!\n\n"
 		}
