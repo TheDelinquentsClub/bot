@@ -4,9 +4,9 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="43a90286-0bc6-4267-8a52-6493d8afd734" name="Changes" comment="feat(commands): Refactored minecraft commands, and fixed websockets.">
+    <list default="true" id="43a90286-0bc6-4267-8a52-6493d8afd734" name="Changes" comment="didn't add the file...">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/debug.go" beforeDir="false" afterPath="$PROJECT_DIR$/commands/debug.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/commands/minecraft.go" beforeDir="false" afterPath="$PROJECT_DIR$/commands/minecraft.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -143,7 +143,9 @@
     <MESSAGE value="fix: still not clearing console correctly" />
     <MESSAGE value="feat(commands): reconfigured old handler. deleted embed builder (shit broke, will attempt again later), adding old commands back and adapting." />
     <MESSAGE value="feat(commands): Refactored minecraft commands, and fixed websockets." />
-    <option name="LAST_COMMIT_MESSAGE" value="feat(commands): Refactored minecraft commands, and fixed websockets." />
+    <MESSAGE value="feat(stats): return the bots PID. may be helpful" />
+    <MESSAGE value="didn't add the file..." />
+    <option name="LAST_COMMIT_MESSAGE" value="didn't add the file..." />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />

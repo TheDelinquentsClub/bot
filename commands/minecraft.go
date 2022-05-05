@@ -551,17 +551,18 @@ func init() {
 										},
 									},
 								}
-							}
-							core.ServerConn.Emit("announce", strings.ReplaceAll(data.Options[0].Options[0].Options[1].Value.String(), "\"", ""))
-							res = api.EditInteractionResponseData{
-								Embeds: &[]discord.Embed{
-									{
-										Title:       "Making an announcement",
-										Description: "This should make them listen",
-										Color:       utils.DiscordGreen,
-										Timestamp:   discord.NowTimestamp(),
+							} else {
+								core.ServerConn.Emit("announce", strings.ReplaceAll(data.Options[0].Options[0].Options[1].Value.String(), "\"", ""))
+								res = api.EditInteractionResponseData{
+									Embeds: &[]discord.Embed{
+										{
+											Title:       "Making an announcement",
+											Description: "This should make them listen",
+											Color:       utils.DiscordGreen,
+											Timestamp:   discord.NowTimestamp(),
+										},
 									},
-								},
+								}
 							}
 							if _, err := core.State.EditInteractionResponse(discord.AppID(utils.MustSnowflakeEnv(core.Config.APPID)), e.Token, res); err != nil {
 								logger.Error(err)
@@ -582,33 +583,34 @@ func init() {
 										},
 									},
 								}
-							}
-							core.ServerConn.Emit("kill", strings.ReplaceAll(data.Options[0].Options[0].Options[1].Value.String(), "\"", ""))
-							core.WSServer.OnEvent("/", "playernotfound", func(s socketio.Conn) {
-								notfound = true
-								return
-							})
-							if notfound != true {
-								res = api.EditInteractionResponseData{
-									Embeds: &[]discord.Embed{
-										{
-											Title:       "Killing player....",
-											Description: "This shouldn't take too long",
-											Color:       utils.DiscordGreen,
-											Timestamp:   discord.NowTimestamp(),
-										},
-									},
-								}
 							} else {
-								res = api.EditInteractionResponseData{
-									Embeds: &[]discord.Embed{
-										{
-											Title:       "Player not found!!",
-											Description: fmt.Sprintf("`%v` is either offline or does not exist", strings.ReplaceAll(data.Options[0].Options[0].Options[1].Value.String(), "\"", "")),
-											Color:       utils.DiscordRed,
-											Timestamp:   discord.NowTimestamp(),
+								core.ServerConn.Emit("kill", strings.ReplaceAll(data.Options[0].Options[0].Options[1].Value.String(), "\"", ""))
+								core.WSServer.OnEvent("/", "playernotfound", func(s socketio.Conn) {
+									notfound = true
+									return
+								})
+								if notfound != true {
+									res = api.EditInteractionResponseData{
+										Embeds: &[]discord.Embed{
+											{
+												Title:       "Killing player....",
+												Description: "This shouldn't take too long",
+												Color:       utils.DiscordGreen,
+												Timestamp:   discord.NowTimestamp(),
+											},
 										},
-									},
+									}
+								} else {
+									res = api.EditInteractionResponseData{
+										Embeds: &[]discord.Embed{
+											{
+												Title:       "Player not found!!",
+												Description: fmt.Sprintf("`%v` is either offline or does not exist", strings.ReplaceAll(data.Options[0].Options[0].Options[1].Value.String(), "\"", "")),
+												Color:       utils.DiscordRed,
+												Timestamp:   discord.NowTimestamp(),
+											},
+										},
+									}
 								}
 							}
 							if _, err := core.State.EditInteractionResponse(discord.AppID(utils.MustSnowflakeEnv(core.Config.APPID)), e.Token, res); err != nil {
@@ -630,33 +632,34 @@ func init() {
 										},
 									},
 								}
-							}
-							core.ServerConn.Emit("msg", strings.ReplaceAll(data.Options[0].Options[0].Options[1].Value.String(), "\"", ""))
-							core.WSServer.OnEvent("/", "playernotfound", func(s socketio.Conn) {
-								notfound = true
-								return
-							})
-							if notfound != true {
-								res = api.EditInteractionResponseData{
-									Embeds: &[]discord.Embed{
-										{
-											Title:       "Sending message...",
-											Description: "Who sent that??",
-											Color:       utils.DiscordGreen,
-											Timestamp:   discord.NowTimestamp(),
-										},
-									},
-								}
 							} else {
-								res = api.EditInteractionResponseData{
-									Embeds: &[]discord.Embed{
-										{
-											Title:       "Player not found!!",
-											Description: fmt.Sprintf("`%v` is either offline or does not exist", strings.ReplaceAll(data.Options[0].Options[0].Options[1].Value.String(), "\"", "")),
-											Color:       utils.DiscordRed,
-											Timestamp:   discord.NowTimestamp(),
+								core.ServerConn.Emit("msg", strings.ReplaceAll(data.Options[0].Options[0].Options[1].Value.String(), "\"", ""))
+								core.WSServer.OnEvent("/", "playernotfound", func(s socketio.Conn) {
+									notfound = true
+									return
+								})
+								if notfound != true {
+									res = api.EditInteractionResponseData{
+										Embeds: &[]discord.Embed{
+											{
+												Title:       "Sending message...",
+												Description: "Who sent that??",
+												Color:       utils.DiscordGreen,
+												Timestamp:   discord.NowTimestamp(),
+											},
 										},
-									},
+									}
+								} else {
+									res = api.EditInteractionResponseData{
+										Embeds: &[]discord.Embed{
+											{
+												Title:       "Player not found!!",
+												Description: fmt.Sprintf("`%v` is either offline or does not exist", strings.ReplaceAll(data.Options[0].Options[0].Options[1].Value.String(), "\"", "")),
+												Color:       utils.DiscordRed,
+												Timestamp:   discord.NowTimestamp(),
+											},
+										},
+									}
 								}
 							}
 							if _, err := core.State.EditInteractionResponse(discord.AppID(utils.MustSnowflakeEnv(core.Config.APPID)), e.Token, res); err != nil {
