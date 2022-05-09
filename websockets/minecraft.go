@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/diamondburned/arikawa/v3/discord"
+	"github.com/diamondburned/arikawa/v3/utils/sendpart"
 	socketio "github.com/googollee/go-socket.io"
 	"github.com/kingultron99/tdcbot/core"
 	"github.com/kingultron99/tdcbot/logger"
@@ -13,7 +14,32 @@ import (
 	"strings"
 )
 
+type MsgObj struct {
+	Username string `json:"username"`
+	Msg      string `json:"msg"`
+}
+type Advancement struct {
+	Player      string
+	Type        string
+	Advancement string
+}
+
+type Message struct {
+	Username   string              `json:"username,omitempty"`
+	Avatar     string              `json:"avatar_url,omitempty"`
+	Content    string              `json:"content,omitempty"`
+	Embeds     *[]discord.Embed    `json:"embeds,omitempty"`
+	Components []discord.Component `json:"components,omitempty"`
+	Files      []sendpart.File     `json:"files,omitempty"`
+}
+
 func RegisterMinecraftHandlers() {
+
+	core.WSServer.OnEvent("/", "serverinstance", func(s socketio.Conn) {
+		core.ServerConn = s
+		core.IsServerConnected = true
+	})
+
 	core.WSServer.OnEvent("/", "playerchat", func(s socketio.Conn, msg string) {
 		var msgObj MsgObj
 		err := json.Unmarshal([]byte(msg), &msgObj)

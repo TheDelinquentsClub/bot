@@ -2,8 +2,6 @@ package websockets
 
 import (
 	"fmt"
-	"github.com/diamondburned/arikawa/v3/discord"
-	"github.com/diamondburned/arikawa/v3/utils/sendpart"
 	socketio "github.com/googollee/go-socket.io"
 	"github.com/googollee/go-socket.io/engineio"
 	"github.com/googollee/go-socket.io/engineio/transport"
@@ -31,25 +29,6 @@ var (
 	}
 )
 
-type MsgObj struct {
-	Username string `json:"username"`
-	Msg      string `json:"msg"`
-}
-type Advancement struct {
-	Player      string
-	Type        string
-	Advancement string
-}
-
-type Message struct {
-	Username   string              `json:"username,omitempty"`
-	Avatar     string              `json:"avatar_url,omitempty"`
-	Content    string              `json:"content,omitempty"`
-	Embeds     *[]discord.Embed    `json:"embeds,omitempty"`
-	Components []discord.Component `json:"components,omitempty"`
-	Files      []sendpart.File     `json:"files,omitempty"`
-}
-
 func InitServer() {
 
 	core.WSServer = Server
@@ -64,16 +43,8 @@ func InitServer() {
 		logger.Info(fmt.Sprintf("Hello from: %v", s))
 	})
 
-	core.WSServer.OnEvent("/", "serverinstance", func(s socketio.Conn) {
-		core.ServerConn = s
-		core.IsServerConnected = true
-	})
-	core.WSServer.OnEvent("/", "website", func(s socketio.Conn) {
-		core.ServerConn = s
-		core.IsWebsiteConnected = true
-	})
-
 	RegisterMinecraftHandlers()
+	RegisterWebsiteHandlers()
 
 	core.WSServer.OnError("/", func(s socketio.Conn, e error) {
 		logger.Error("meet error:", e)

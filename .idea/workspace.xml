@@ -4,14 +4,10 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="43a90286-0bc6-4267-8a52-6493d8afd734" name="Changes" comment="fix(minecraft): wasnt in unix time format">
-      <change afterPath="$PROJECT_DIR$/websockets/minecraft.go" afterDir="false" />
+    <list default="true" id="43a90286-0bc6-4267-8a52-6493d8afd734" name="Changes" comment="refactor(websockets): moved minecraft socket handlers to a separate file.">
+      <change afterPath="$PROJECT_DIR$/websockets/website.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/minecraft.go" beforeDir="false" afterPath="$PROJECT_DIR$/commands/minecraft.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/core.go" beforeDir="false" afterPath="$PROJECT_DIR$/core/core.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/utils.go" beforeDir="false" afterPath="$PROJECT_DIR$/utils/utils.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/websockets/minecraft.go" beforeDir="false" afterPath="$PROJECT_DIR$/websockets/minecraft.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/websockets/websockets.go" beforeDir="false" afterPath="$PROJECT_DIR$/websockets/websockets.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -155,7 +151,9 @@
     <MESSAGE value="fix(minecraft): Bot crashing when no args are presented (this should fix)" />
     <MESSAGE value="style(minecraft): change how dates are styled." />
     <MESSAGE value="fix(minecraft): wasnt in unix time format" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix(minecraft): wasnt in unix time format" />
+    <MESSAGE value="feat(minecraft): added permission checks and improved player information" />
+    <MESSAGE value="refactor(websockets): moved minecraft socket handlers to a separate file." />
+    <option name="LAST_COMMIT_MESSAGE" value="refactor(websockets): moved minecraft socket handlers to a separate file." />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
