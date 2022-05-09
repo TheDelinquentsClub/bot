@@ -24,19 +24,23 @@ type configStruct struct {
 	WolframID       string `json:"wolframid"`
 	Version         string `json:"version"`
 	OwnerID         string `json:"ownerid"`
+	OwnerRole       string `json:"ownerRole"`
+	BotBreakerRole  string `json:"botBreakerRole"`
 	Webhook         string `json:"webhook"`
 	BridgeChannelID string `json:"bridgeChannelId"`
 }
 
 var (
-	Config            *configStruct
-	State             *state.State
-	TimeNow           time.Time
-	Logg              *zap.Logger
-	WSServer          *socketio.Server
-	ServerConn        socketio.Conn
-	IsServerConnected = false
-	clear             map[string]func() //create a map for storing clear funcs
+	Config             *configStruct
+	State              *state.State
+	TimeNow            time.Time
+	Logg               *zap.Logger
+	WSServer           *socketio.Server
+	ServerConn         socketio.Conn
+	WebsiteConn        socketio.Conn
+	IsServerConnected  = false
+	IsWebsiteConnected = false
+	clear              map[string]func() //create a map for storing clear funcs
 )
 
 func init() {
@@ -100,6 +104,7 @@ func setupCloseHandler(logg *zap.Logger) {
 	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
 	go func() {
 		<-c
+		WSServer.BroadcastToNamespace("/", "shutdown")
 		logger.Info("Beginning shutdown process")
 		logg.Sync()
 		logger.Debug("Flushed log buffer")

@@ -8,7 +8,6 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"strconv"
 	"strings"
 	"time"
 )
@@ -135,21 +134,28 @@ func GetNamesFromUUID(uuid string) string {
 	var names = new([]PlayerNames)
 	err = json.Unmarshal(body, &names)
 
-	res := strings.Builder{}
+	var (
+		nameArray []string
+		res       string
+	)
 
 	for _, playerNames := range *names {
-		unixString := strings.TrimSuffix(fmt.Sprint(playerNames.Changed), "000")
-		unixTime, err := strconv.ParseInt(unixString, 10, 64)
-		if err != nil {
-			logger.Error(err)
-		}
-
-		changed := fmt.Sprintf("Changed: <t:%v:R>\n\n", unixTime)
+		//convert ms to s
+		changed := fmt.Sprintf("<t:%v:R>\n", playerNames.Changed/1000)
 		if playerNames.Changed == 0 {
-			changed = "Accounts first username!\n\n"
+			changed = "Accounts first username!\n"
 		}
-		res.WriteString(fmt.Sprintf("Username: %v\n%v", playerNames.Name, changed))
+		nameArray = append(nameArray, fmt.Sprintf("%v — %v", playerNames.Name, changed))
 	}
 
-	return res.String()
+	if len(nameArray) >= 6 {
+		concat := strings.Builder{}
+		concat.WriteString(strings.Join(nameArray[:2], ""))
+		concat.WriteString("...\n")
+		concat.WriteString(strings.Join(nameArray[len(nameArray)-3:len(nameArray)-1], ""))
+		res = concat.String()
+	} else {
+		res = strings.Join(nameArray, "")
+	}
+	return res
 }

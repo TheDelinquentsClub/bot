@@ -4,6 +4,12 @@ github.com/Krognol/go-wolfram v0.0.0-20180610151123-5b91101b92a8 h1:W7c6EO533k0Q
 github.com/Krognol/go-wolfram v0.0.0-20180610151123-5b91101b92a8/go.mod h1:EPNgn+n1Pgo8Us091j1G61MtU6yjVwepTin6xEwlJ6w=
 github.com/StackExchange/wmi v1.2.0 h1:noJEYkMQVlFCEAc+2ma5YyRhlfjcWfZqk5sBRYozdyM=
 github.com/StackExchange/wmi v1.2.0/go.mod h1:3eOhrUMpNV+6aFIbp5/iudMxNCF27Vw2OZgy4xEx0Fg=
+github.com/ambelovsky/go-structs v1.1.0 h1:LXj4/mHnYw0qhXQhOo96+ULGQ88H8qMcZd5SHef8boY=
+github.com/ambelovsky/go-structs v1.1.0/go.mod h1:zN3RBXQvxgjjq/Q/WZS7p5AEK+qC9mNg7ycnvoQ63Ak=
+github.com/ambelovsky/gosf v0.0.0-20201109201340-237aea4d6109 h1:Tp8GVfUOEmJftBqi4+/aXTwJzm24POo6wIHeuTqaT+Y=
+github.com/ambelovsky/gosf v0.0.0-20201109201340-237aea4d6109/go.mod h1:MUREokfMKREm1fOm2babarrkYdk/dGHWY+ITC3qHHPQ=
+github.com/ambelovsky/gosf-socketio v0.0.0-20201109193639-add9d32f8b19 h1:suVCm9PiIhz7ftTbWQNe7u2YjVfr8AEuUiNWKWApdMM=
+github.com/ambelovsky/gosf-socketio v0.0.0-20201109193639-add9d32f8b19/go.mod h1:o0+8DH+3X+FEOgSdNud0+8jJAsjtR9H3hF+O10Zcj/c=
 github.com/benbjohnson/clock v1.1.0/go.mod h1:J11/hYXuz8f4ySSvYwY0FKfm+ezbsZBKZxNJlLklBHA=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
@@ -66,6 +72,8 @@ github.com/mattn/go-colorable v0.1.11/go.mod h1:u5H1YNBxpqRaxsYJYSkiCWKzEfiAb1Gb
 github.com/mattn/go-isatty v0.0.12/go.mod h1:cbi8OIDigv2wuxKPP5vlRcQ1OAZbq2CE4Kysco4FUpU=
 github.com/mattn/go-isatty v0.0.14 h1:yVuAays6BHfxijgZPzw+3Zlu5yQgKGP2/hcQbHb7S9Y=
 github.com/mattn/go-isatty v0.0.14/go.mod h1:7GGIvUiUoEMVVmxf/4nioHXj79iQHKdU27kJ6hsGG94=
+github.com/mitchellh/mapstructure v1.5.0 h1:jeMsZIYE/09sWLaz43PL7Gy6RuMjD2eJVyuac5Z2hdY=
+github.com/mitchellh/mapstructure v1.5.0/go.mod h1:bFUtVrKA4DC2yAKiSyO/QUcy7e+RRV2QTWOzhPopBRo=
 github.com/modern-go/concurrent v0.0.0-20180228061459-e0a39a4cb421 h1:ZqeYNhU3OHLH3mGKHDcjJRFFRrJa6eAM5H+CtDdOsPc=
 github.com/modern-go/concurrent v0.0.0-20180228061459-e0a39a4cb421/go.mod h1:6dJC0mAP4ikYIbvyc7fijjWJddQyLn8Ig3JB5CqoB9Q=
 github.com/modern-go/reflect2 v0.0.0-20180701023420-4b7aa43c6742 h1:Esafd1046DLDQ0W1YjYsBW+p8U2u7vzgW2SQVmlNazg=

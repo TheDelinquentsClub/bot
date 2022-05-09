@@ -48,105 +48,138 @@ func init() {
 
 			switch data.Options[0].Name {
 			case "user":
-				switch data.Options[0].Options[0].Name {
-				case "username":
+				if len(data.Options[0].Options) != 1 {
 					res := api.EditInteractionResponseData{
 						Embeds: &[]discord.Embed{
 							{
-								Author: &discord.EmbedAuthor{
-									Name: strings.ReplaceAll(data.Options[0].Options[0].Value.String(), "\"", ""),
-									Icon: fmt.Sprintf("https://crafatar.com/avatars/%v?size=100", utils.GetUUID(data.Options[0].Options[0].Value.String())),
-								},
+								Title:       "You didnt provide a user or UUID!!",
+								Description: "Usage: `/minecraft user [username|UUID]`",
+								Color:       utils.DiscordRed,
 								Timestamp:   discord.NowTimestamp(),
-								Color:       utils.DiscordBlue,
-								Title:       "Player Information",
-								Description: "Showing info for player by username",
-								Image: &discord.EmbedImage{
-									URL: fmt.Sprintf("https://crafatar.com/renders/body/%v", utils.GetUUID(data.Options[0].Options[0].Value.String())),
-								},
-								Fields: []discord.EmbedField{
-									{
-										Name:   "Username",
-										Inline: true,
-										Value:  strings.ReplaceAll(data.Options[0].Options[0].Value.String(), "\"", ""),
-									},
-									{
-										Name:   "UUID",
-										Inline: true,
-										Value:  utils.GetUUID(data.Options[0].Options[0].Value.String()),
-									},
-									{
-										Name:   "Names",
-										Inline: false,
-										Value:  utils.GetNamesFromUsername(data.Options[0].Options[0].Value.String()),
-									},
-								},
 							},
 						},
-						Components: discord.ComponentsPtr(
-							&discord.ActionRowComponent{
-								&discord.ButtonComponent{
-									Style: discord.LinkButtonStyle(fmt.Sprintf("https://crafatar.com/capes/%v", utils.GetUUID(data.Options[0].Options[0].Value.String()))),
-									Label: "Cape",
-								},
-								&discord.ButtonComponent{
-									Style: discord.LinkButtonStyle(fmt.Sprintf("https://crafatar.com/skins/%v", utils.GetUUID(data.Options[0].Options[0].Value.String()))),
-									Label: "Skin",
-								},
-							}),
 					}
-
 					if _, err := core.State.EditInteractionResponse(discord.AppID(utils.MustSnowflakeEnv(core.Config.APPID)), e.Token, res); err != nil {
 						logger.Error(err)
 					}
-				case "uuid":
-					res := api.EditInteractionResponseData{
-						Embeds: &[]discord.Embed{
-							{
-								Author: &discord.EmbedAuthor{
-									Name: strings.ReplaceAll(data.Options[0].Options[0].Value.String(), "\"", ""),
-									Icon: fmt.Sprintf("https://crafatar.com/avatars/%v?size=100", data.Options[0].Options[0].Value.String()),
-								},
-								Timestamp:   discord.NowTimestamp(),
-								Title:       "Player Information",
-								Description: "Showing info for player by username",
-								Image: &discord.EmbedImage{
-									URL: fmt.Sprintf("https://crafatar.com/renders/body/%v", data.Options[0].Options[0].Value.String()),
-								},
-								Fields: []discord.EmbedField{
-									{
-										Name:   "Username",
-										Inline: true,
-										Value:  utils.GetUsername(data.Options[0].Options[0].Value.String()),
-									},
-									{
-										Name:   "UUID",
-										Inline: true,
-										Value:  strings.ReplaceAll(data.Options[0].Options[0].Value.String(), "\"", ""),
-									},
-									{
-										Name:   "Names",
-										Inline: false,
-										Value:  utils.GetNamesFromUUID(data.Options[0].Options[0].Value.String()),
-									},
+				} else {
+					switch utils.GetUUID(data.Options[0].Options[0].Value.String()) {
+					case "":
+						res := api.EditInteractionResponseData{
+							Embeds: &[]discord.Embed{
+								{
+									Title:       "Player does not exist!",
+									Description: "Make sure you entered the correct UUID or username",
+									Color:       utils.DiscordRed,
+									Timestamp:   discord.NowTimestamp(),
 								},
 							},
-						},
-						Components: discord.ComponentsPtr(
-							&discord.ActionRowComponent{
-								&discord.ButtonComponent{
-									Style: discord.LinkButtonStyle(fmt.Sprintf("https://crafatar.com/capes/%v", strings.ReplaceAll(data.Options[0].Options[0].Value.String(), "\"", ""))),
-									Label: "Cape",
+						}
+						if _, err := core.State.EditInteractionResponse(discord.AppID(utils.MustSnowflakeEnv(core.Config.APPID)), e.Token, res); err != nil {
+							logger.Error(err)
+						}
+					default:
+						switch data.Options[0].Options[0].Name {
+						case "username":
+							res := api.EditInteractionResponseData{
+								Embeds: &[]discord.Embed{
+									{
+										Author: &discord.EmbedAuthor{
+											Name: strings.ReplaceAll(data.Options[0].Options[0].Value.String(), "\"", ""),
+											Icon: fmt.Sprintf("https://crafatar.com/avatars/%v?size=100", utils.GetUUID(data.Options[0].Options[0].Value.String())),
+										},
+										Timestamp:   discord.NowTimestamp(),
+										Color:       utils.DiscordBlue,
+										Title:       "Player Information",
+										Description: "Showing info for player by username",
+										Image: &discord.EmbedImage{
+											URL: fmt.Sprintf("https://crafatar.com/renders/body/%v", utils.GetUUID(data.Options[0].Options[0].Value.String())),
+										},
+										Fields: []discord.EmbedField{
+											{
+												Name:   "Username",
+												Inline: true,
+												Value:  strings.ReplaceAll(data.Options[0].Options[0].Value.String(), "\"", ""),
+											},
+											{
+												Name:   "UUID",
+												Inline: true,
+												Value:  utils.GetUUID(data.Options[0].Options[0].Value.String()),
+											},
+											{
+												Name:   "Names",
+												Inline: false,
+												Value:  utils.GetNamesFromUsername(data.Options[0].Options[0].Value.String()),
+											},
+										},
+									},
 								},
-								&discord.ButtonComponent{
-									Style: discord.LinkButtonStyle(fmt.Sprintf("https://crafatar.com/skins/%v", strings.ReplaceAll(data.Options[0].Options[0].Value.String(), "\"", ""))),
-									Label: "Skin",
-								},
-							}),
-					}
+								Components: discord.ComponentsPtr(
+									&discord.ActionRowComponent{
+										&discord.ButtonComponent{
+											Style: discord.LinkButtonStyle(fmt.Sprintf("https://crafatar.com/capes/%v", utils.GetUUID(data.Options[0].Options[0].Value.String()))),
+											Label: "Cape",
+										},
+										&discord.ButtonComponent{
+											Style: discord.LinkButtonStyle(fmt.Sprintf("https://crafatar.com/skins/%v", utils.GetUUID(data.Options[0].Options[0].Value.String()))),
+											Label: "Skin",
+										},
+									}),
+							}
 
-					if _, err := core.State.EditInteractionResponse(discord.AppID(utils.MustSnowflakeEnv(core.Config.APPID)), e.Token, res); err != nil {
-						logger.Error(err)
+							if _, err := core.State.EditInteractionResponse(discord.AppID(utils.MustSnowflakeEnv(core.Config.APPID)), e.Token, res); err != nil {
+								logger.Error(err)
+							}
+						case "uuid":
+							res := api.EditInteractionResponseData{
+								Embeds: &[]discord.Embed{
+									{
+										Author: &discord.EmbedAuthor{
+											Name: strings.ReplaceAll(data.Options[0].Options[0].Value.String(), "\"", ""),
+											Icon: fmt.Sprintf("https://crafatar.com/avatars/%v?size=100", data.Options[0].Options[0].Value.String()),
+										},
+										Timestamp:   discord.NowTimestamp(),
+										Title:       "Player Information",
+										Description: "Showing info for player by username",
+										Image: &discord.EmbedImage{
+											URL: fmt.Sprintf("https://crafatar.com/renders/body/%v", data.Options[0].Options[0].Value.String()),
+										},
+										Fields: []discord.EmbedField{
+											{
+												Name:   "Username",
+												Inline: true,
+												Value:  utils.GetUsername(data.Options[0].Options[0].Value.String()),
+											},
+											{
+												Name:   "UUID",
+												Inline: true,
+												Value:  strings.ReplaceAll(data.Options[0].Options[0].Value.String(), "\"", ""),
+											},
+											{
+												Name:   "Names",
+												Inline: false,
+												Value:  utils.GetNamesFromUUID(data.Options[0].Options[0].Value.String()),
+											},
+										},
+									},
+								},
+								Components: discord.ComponentsPtr(
+									&discord.ActionRowComponent{
+										&discord.ButtonComponent{
+											Style: discord.LinkButtonStyle(fmt.Sprintf("https://crafatar.com/capes/%v", strings.ReplaceAll(data.Options[0].Options[0].Value.String(), "\"", ""))),
+											Label: "Cape",
+										},
+										&discord.ButtonComponent{
+											Style: discord.LinkButtonStyle(fmt.Sprintf("https://crafatar.com/skins/%v", strings.ReplaceAll(data.Options[0].Options[0].Value.String(), "\"", ""))),
+											Label: "Skin",
+										},
+									}),
+							}
+
+							if _, err := core.State.EditInteractionResponse(discord.AppID(utils.MustSnowflakeEnv(core.Config.APPID)), e.Token, res); err != nil {
+								logger.Error(err)
+							}
+						}
 					}
 				}
 			}
@@ -230,6 +263,15 @@ func init() {
 				if err := core.State.RespondInteraction(e.ID, e.Token, ack); err != nil {
 					logger.Error(err)
 				}
+				var hasPerms bool
+				for _, d := range e.Member.RoleIDs {
+					if d.String() == core.Config.OwnerID || d.String() == core.Config.BotBreakerRole || e.Member.User.ID.String() == core.Config.Owner {
+						hasPerms = true
+					} else {
+						hasPerms = false
+					}
+				}
+
 				switch data.Options[0].Name {
 				case "info":
 					switch data.Options[0].Options[0].Name {
@@ -540,7 +582,17 @@ func init() {
 						switch strings.ReplaceAll(data.Options[0].Options[0].Options[0].Value.String(), "\"", "") {
 						case "announce":
 							var res api.EditInteractionResponseData
-							if len(data.Options[0].Options[0].Options) != 2 {
+							if hasPerms != true {
+								res = api.EditInteractionResponseData{
+									Embeds: &[]discord.Embed{
+										{
+											Title:     "You don't have permission to execute this command!",
+											Color:     utils.DiscordRed,
+											Timestamp: discord.NowTimestamp(),
+										},
+									},
+								}
+							} else if len(data.Options[0].Options[0].Options) != 2 {
 								res = api.EditInteractionResponseData{
 									Embeds: &[]discord.Embed{
 										{
@@ -572,7 +624,17 @@ func init() {
 								notfound = false
 								res      api.EditInteractionResponseData
 							)
-							if len(data.Options[0].Options[0].Options) != 2 {
+							if hasPerms != true {
+								res = api.EditInteractionResponseData{
+									Embeds: &[]discord.Embed{
+										{
+											Title:     "You don't have permission to execute this command!",
+											Color:     utils.DiscordRed,
+											Timestamp: discord.NowTimestamp(),
+										},
+									},
+								}
+							} else if len(data.Options[0].Options[0].Options) != 2 {
 								res = api.EditInteractionResponseData{
 									Embeds: &[]discord.Embed{
 										{
@@ -666,17 +728,29 @@ func init() {
 								logger.Error(err)
 							}
 						case "restart":
-							core.ServerConn.Emit("restart")
 							var res api.EditInteractionResponseData
-							res = api.EditInteractionResponseData{
-								Embeds: &[]discord.Embed{
-									{
-										Title:       "Restarting server...",
-										Description: "This shouldn't take too long",
-										Color:       utils.DiscordGreen,
-										Timestamp:   discord.NowTimestamp(),
+							if hasPerms != true {
+								res = api.EditInteractionResponseData{
+									Embeds: &[]discord.Embed{
+										{
+											Title:     "You don't have permission to execute this command!",
+											Color:     utils.DiscordRed,
+											Timestamp: discord.NowTimestamp(),
+										},
 									},
-								},
+								}
+							} else {
+								core.ServerConn.Emit("restart")
+								res = api.EditInteractionResponseData{
+									Embeds: &[]discord.Embed{
+										{
+											Title:       "Restarting server...",
+											Description: "This shouldn't take too long",
+											Color:       utils.DiscordGreen,
+											Timestamp:   discord.NowTimestamp(),
+										},
+									},
+								}
 							}
 							if _, err := core.State.EditInteractionResponse(discord.AppID(utils.MustSnowflakeEnv(core.Config.APPID)), e.Token, res); err != nil {
 								logger.Error(err)
