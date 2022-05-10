@@ -4,10 +4,12 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="43a90286-0bc6-4267-8a52-6493d8afd734" name="Changes" comment="refactor(websockets): moved minecraft socket handlers to a separate file.">
-      <change afterPath="$PROJECT_DIR$/websockets/website.go" afterDir="false" />
+    <list default="true" id="43a90286-0bc6-4267-8a52-6493d8afd734" name="Changes" comment="refactor, feat(websockets): moved some more stuff around and handle the botinfo request from the website! (basically the same as running `/stats` in discord">
+      <change afterPath="$PROJECT_DIR$/assets/advancement.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/websockets/minecraft.go" beforeDir="false" afterPath="$PROJECT_DIR$/websockets/minecraft.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/commands/misc.go" beforeDir="false" afterPath="$PROJECT_DIR$/commands/misc.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/core.go" beforeDir="false" afterPath="$PROJECT_DIR$/core/core.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/websockets/website.go" beforeDir="false" afterPath="$PROJECT_DIR$/websockets/website.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/websockets/websockets.go" beforeDir="false" afterPath="$PROJECT_DIR$/websockets/websockets.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -128,7 +130,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="working on command response" />
     <MESSAGE value="rewrote Help command, added question and random fact commands" />
     <MESSAGE value="started Poll commands and associated components" />
     <MESSAGE value="poll kinda working. added a log dump command. reworked permissions" />
@@ -153,7 +154,8 @@
     <MESSAGE value="fix(minecraft): wasnt in unix time format" />
     <MESSAGE value="feat(minecraft): added permission checks and improved player information" />
     <MESSAGE value="refactor(websockets): moved minecraft socket handlers to a separate file." />
-    <option name="LAST_COMMIT_MESSAGE" value="refactor(websockets): moved minecraft socket handlers to a separate file." />
+    <MESSAGE value="refactor, feat(websockets): moved some more stuff around and handle the botinfo request from the website! (basically the same as running `/stats` in discord" />
+    <option name="LAST_COMMIT_MESSAGE" value="refactor, feat(websockets): moved some more stuff around and handle the botinfo request from the website! (basically the same as running `/stats` in discord" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />

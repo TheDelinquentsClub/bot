@@ -58,12 +58,6 @@ func InitServer() {
 				core.IsServerConnected = false
 			}
 		}
-		if core.WebsiteConn != nil {
-			if s.ID() == core.WebsiteConn.ID() {
-				logger.Info("Website instance disconnected.")
-				core.IsWebsiteConnected = false
-			}
-		}
 	})
 
 	go func() {

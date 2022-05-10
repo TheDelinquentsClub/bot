@@ -37,7 +37,6 @@ var (
 	Logg               *zap.Logger
 	WSServer           *socketio.Server
 	ServerConn         socketio.Conn
-	WebsiteConn        socketio.Conn
 	IsServerConnected  = false
 	IsWebsiteConnected = false
 	clear              map[string]func() //create a map for storing clear funcs

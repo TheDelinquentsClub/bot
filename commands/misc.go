@@ -18,6 +18,7 @@ import (
 )
 
 func init() {
+	// TODO: record statistics to sqlite db
 	MapCommands["question"] = Command{
 		Name:        "question",
 		Description: "Massive amounts of knowledge at your fingertips",

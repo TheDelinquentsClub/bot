@@ -15,11 +15,6 @@ import (
 
 func RegisterWebsiteHandlers() {
 
-	core.WSServer.OnEvent("/", "website", func(s socketio.Conn) {
-		core.ServerConn = s
-		core.IsWebsiteConnected = true
-	})
-
 	core.WSServer.OnEvent("", "botinfo", func(s socketio.Conn) {
 		var m runtime.MemStats
 		runtime.ReadMemStats(&m)
@@ -52,4 +47,7 @@ func RegisterWebsiteHandlers() {
 		}
 		s.Emit("botinfo", res)
 	})
+
+	// TODO: handle statistics event
+
 }
