@@ -31,15 +31,15 @@ type configStruct struct {
 }
 
 var (
-	Config             *configStruct
-	State              *state.State
-	TimeNow            time.Time
-	Logg               *zap.Logger
-	WSServer           *socketio.Server
-	ServerConn         socketio.Conn
-	IsServerConnected  = false
-	IsWebsiteConnected = false
-	clear              map[string]func() //create a map for storing clear funcs
+	Config            *configStruct
+	State             *state.State
+	TimeNow           time.Time
+	Logg              *zap.Logger
+	WSServer          *socketio.Server
+	ServerConn        socketio.Conn
+	ItemIcons         []string
+	IsServerConnected = false
+	clear             map[string]func() //create a map for storing clear funcs
 )
 
 func init() {
@@ -107,8 +107,8 @@ func setupCloseHandler(logg *zap.Logger) {
 		logger.Info("Beginning shutdown process")
 		logg.Sync()
 		logger.Debug("Flushed log buffer")
-		//WSServer.Close()
-		//logger.Info("Closed WS server")
+		WSServer.Close()
+		logger.Info("Closed WS server")
 		logger.Info("Goodbye!")
 		os.Exit(0)
 	}()

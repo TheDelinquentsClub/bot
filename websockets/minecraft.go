@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/diamondburned/arikawa/v3/api"
 	"github.com/diamondburned/arikawa/v3/discord"
 	"github.com/diamondburned/arikawa/v3/utils/sendpart"
 	socketio "github.com/googollee/go-socket.io"
@@ -11,6 +12,8 @@ import (
 	"github.com/kingultron99/tdcbot/logger"
 	"github.com/kingultron99/tdcbot/utils"
 	"net/http"
+	"os"
+	"sort"
 	"strings"
 )
 
@@ -22,6 +25,7 @@ type Advancement struct {
 	Player      string
 	Type        string
 	Advancement string
+	Icon        string
 }
 
 type Message struct {
@@ -67,33 +71,43 @@ func RegisterMinecraftHandlers() {
 		if err != nil {
 			logger.Error("Failed to parse JSON message")
 		}
-		body, err := json.Marshal(Message{
-			Username: msgObj.Player,
-			Avatar:   fmt.Sprintf("https://crafatar.com/avatars/%v", utils.GetUUID(msgObj.Player)),
-			Embeds: &[]discord.Embed{
-				{
-					Title: "Advancement Made!",
-					Fields: []discord.EmbedField{
-						{
-							Name:   msgObj.Advancement,
-							Inline: true,
-							Value:  "type: " + strings.Title(strings.ToLower(msgObj.Type)),
-						},
-					},
-					Timestamp: discord.NowTimestamp(),
-					Color:     utils.DefaultColour,
-				},
-			},
-		})
+
+		index := sort.StringSlice.Search(core.ItemIcons, strings.ToLower(msgObj.Icon))
+
+		utils.GenerateAdvancement(utils.BasePath+core.ItemIcons[index], msgObj.Type, msgObj.Advancement)
+
+		wd, _ := os.Getwd()
+
+		image, err := os.ReadFile(wd + "/assets/generated/advancement.png")
 		if err != nil {
 			logger.Error(err)
 		}
-		resp := bytes.NewBuffer(body)
+		reader := bytes.NewReader(image)
 
-		http.Post(
-			core.Config.Webhook,
-			"application/json",
-			resp)
+		body := api.SendMessageData{
+			Embeds: []discord.Embed{
+				{
+					Author: &discord.EmbedAuthor{
+						Name: msgObj.Player,
+						Icon: fmt.Sprintf("https://crafatar.com/avatars/%v", utils.GetUUID(msgObj.Player)),
+					},
+					Color:     utils.DefaultColour,
+					Title:     fmt.Sprint(msgObj.Player + " Did a thing!"),
+					Timestamp: discord.NowTimestamp(),
+				},
+			},
+			Files: []sendpart.File{
+				{
+					Name:   fmt.Sprintf("%v.png", msgObj.Type),
+					Reader: reader,
+				},
+			},
+		}
+
+		_, err = core.State.SendMessageComplex(discord.ChannelID(utils.MustSnowflakeEnv(core.Config.BridgeChannelID)), body)
+		if err != nil {
+			logger.Error("Failed to send advancement message: ", err)
+		}
 	})
 	core.WSServer.OnEvent("/", "playerjoin", func(s socketio.Conn, msg string) {
 

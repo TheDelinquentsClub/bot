@@ -157,6 +157,8 @@ func init() {
 			logger.Info(fmt.Sprintf("User %v#%v triggered bot shutdown", e.Member.User.Username, e.Member.User.Discriminator))
 			core.Logg.Sync()
 			logger.Debug("Flushed log buffer")
+			core.WSServer.Close()
+			logger.Info("Closed WS server")
 			logger.Info("Goodbye!")
 			os.Exit(0)
 

@@ -57,6 +57,10 @@ func main() {
 
 	})
 
+	utils.MapIcons()
+
+	logger.Info(logger.LogFile.Name())
+
 	commands.AddHandlers()
 	commands.Register(discord.AppID(utils.MustSnowflakeEnv(core.Config.APPID)), discord.GuildID(utils.MustSnowflakeEnv(core.Config.GUILDID)))
 	go websockets.InitServer()
