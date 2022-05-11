@@ -1,12 +1,12 @@
 package utils
 
 import (
-	"github.com/disintegration/imaging"
 	"github.com/fogleman/gg"
 	"github.com/kingultron99/tdcbot/core"
 	"github.com/kingultron99/tdcbot/logger"
 	color2 "image/color"
 	"io/ioutil"
+	"os"
 	"path/filepath"
 	"sort"
 	"strings"
@@ -26,6 +26,10 @@ func MapIcons() {
 }
 
 func GenerateAdvancement(icon string, advType string, advancement string) {
+	_, err := os.Stat("./assets/generated")
+	if os.IsNotExist(err) {
+		_ = os.Mkdir("./assets/generated", os.ModePerm)
+	}
 	var (
 		title string
 		color color2.RGBA
@@ -65,10 +69,8 @@ func GenerateAdvancement(icon string, advType string, advancement string) {
 	x2 := 24.0 + 48
 	y2 := 64.0 - 4
 
-	newIc := imaging.Resize(ic, 42, 42, imaging.Box)
-
 	dc.DrawImage(bg, 0, 0)
-	dc.DrawImage(newIc, 16, 16)
+	dc.DrawImage(ic, 16, 16)
 
 	dc.SetColor(color)
 	dc.DrawString(title, x1, y1)
