@@ -3,6 +3,9 @@ package commands
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
+	"time"
+
 	"github.com/diamondburned/arikawa/v3/api"
 	"github.com/diamondburned/arikawa/v3/discord"
 	"github.com/diamondburned/arikawa/v3/gateway"
@@ -10,8 +13,6 @@ import (
 	"github.com/kingultron99/tdcbot/core"
 	"github.com/kingultron99/tdcbot/logger"
 	"github.com/kingultron99/tdcbot/utils"
-	"strings"
-	"time"
 )
 
 func init() {
@@ -265,7 +266,7 @@ func init() {
 				}
 				var hasPerms bool
 				for _, d := range e.Member.RoleIDs {
-					if d.String() == core.Config.OwnerID || d.String() == core.Config.BotBreakerRole || e.Member.User.ID.String() == core.Config.Owner {
+					if d.String() == core.Config.CreatorID || d.String() == core.Config.BotBreakerRole {
 						hasPerms = true
 					} else {
 						hasPerms = false

@@ -2,17 +2,19 @@ package commands
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/diamondburned/arikawa/v3/api"
 	"github.com/diamondburned/arikawa/v3/discord"
 	"github.com/diamondburned/arikawa/v3/gateway"
 	"github.com/kingultron99/tdcbot/core"
 	"github.com/kingultron99/tdcbot/logger"
 	"github.com/kingultron99/tdcbot/utils"
-	"strings"
 )
 
 // Command defines the basic structure of commands.
 type Command struct {
+	Type        discord.CommandType
 	Name        string
 	Description string
 	Group       string
@@ -67,7 +69,7 @@ func AddHandlers() {
 		switch data := e.Data.(type) {
 		case *discord.CommandInteraction:
 			if cmd, ok := MapCommands[data.Name]; ok {
-				if cmd.Restricted == true && e.Member.User.ID != discord.UserID(utils.MustSnowflakeEnv(core.Config.OwnerID)) {
+				if cmd.Restricted == true && e.Member.User.ID != discord.UserID(utils.MustSnowflakeEnv(core.Config.CreatorID)) {
 					NoPerms(e, data, cmd)
 					return
 				}
@@ -92,8 +94,11 @@ func Register(appID discord.AppID, guildID discord.GuildID) {
 	var commands []api.CreateCommandData
 
 	for _, command := range MapCommands {
+		if command.Type == 0 {
+			command.Type = 1
+		}
 		commands = append(commands, api.CreateCommandData{
-			Type:                discord.CommandType(1),
+			Type:                command.Type,
 			Name:                command.Name,
 			Description:         command.Description,
 			Options:             command.Options,

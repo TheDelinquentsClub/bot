@@ -3,27 +3,27 @@ package core
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/diamondburned/arikawa/v3/state"
-	socketio "github.com/googollee/go-socket.io"
-	"github.com/kingultron99/tdcbot/logger"
-	"go.uber.org/zap"
-	"go.uber.org/zap/zapcore"
 	"os"
 	"os/exec"
 	"os/signal"
 	"runtime"
 	"syscall"
 	"time"
+
+	"github.com/diamondburned/arikawa/v3/state"
+	socketio "github.com/googollee/go-socket.io"
+	"github.com/kingultron99/tdcbot/logger"
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 )
 
 type configStruct struct {
 	Token           string `json:"token"`
-	Owner           string `json:"owner"`
 	APPID           string `json:"appid"`
 	GUILDID         string `json:"guildid"`
 	WolframID       string `json:"wolframid"`
 	Version         string `json:"version"`
-	OwnerID         string `json:"ownerid"`
+	CreatorID       string `json:"creatorid"`
 	OwnerRole       string `json:"ownerRole"`
 	BotBreakerRole  string `json:"botBreakerRole"`
 	Webhook         string `json:"webhook"`
@@ -82,20 +82,43 @@ func Initialise() {
 	setupCloseHandler(Logg)
 	initConfig()
 
-	logger.Print(fmt.Sprintf(" ::::::::   ::::::::       ::::::::: ::::::::    ::::::::\n:+:    :+: :+:    :+:         :+:    :+:   :+:  :+:    :+:\n+:+    +:+ +:+    +:+   (:o   +:+    +:+    +:+ +:+\n+#+        +#+    +#+ +#+#+#+ +#+    +#+    +#+ +#+\n+#+   #+#+ +#+    +#+         +#+    +#+    +#+ +#+\n#+#    #+# #+#    #+#         #+#    #+#   #+#  #+#    #+#\n ########   ########          ###    ########    ########\n                                              v%v\n", Config.Version))
 }
 
 // initConfig Initialises the bots config
 func initConfig() {
 
 	data, err := os.Open("config.json")
-	if err != nil {
+
+	if os.IsNotExist(err) {
+		logger.Error("No config was found!")
+		byte, err := json.Marshal(configStruct{
+			APPID:           "",
+			BridgeChannelID: "",
+			BotBreakerRole:  "",
+			GUILDID:         "",
+			CreatorID:       "",
+			OwnerRole:       "",
+			Token:           "",
+			Version:         "",
+			Webhook:         "",
+			WolframID:       "",
+		})
+		if err != nil {
+			logger.Error("Failed to marshal Config")
+		}
+		os.WriteFile("./config.json", byte, os.ModePerm)
+		logger.Info("Generated Config.json template in root project root directory")
+		logger.Info("Please fill Config with required fields.")
+		os.Exit(1)
+	} else if err != nil {
 		logger.Error(fmt.Sprintf("Error loading config: %v", err))
+		os.Exit(1)
 	} else {
+		logger.Print(fmt.Sprintf(" ::::::::   ::::::::       ::::::::: ::::::::    ::::::::\n:+:    :+: :+:    :+:         :+:    :+:   :+:  :+:    :+:\n+:+    +:+ +:+    +:+   (:o   +:+    +:+    +:+ +:+\n+#+        +#+    +#+ +#+#+#+ +#+    +#+    +#+ +#+\n+#+   #+#+ +#+    +#+         +#+    +#+    +#+ +#+\n#+#    #+# #+#    #+#         #+#    #+#   #+#  #+#    #+#\n ########   ########          ###    ########    ########\n                                              v%v\n", Config.Version))
 		logger.Info("Successfully loaded config!")
 	}
 
-	err = json.NewDecoder(data).Decode(&Config)
+	_ = json.NewDecoder(data).Decode(&Config)
 }
 
 func setupCloseHandler(logg *zap.Logger) {
