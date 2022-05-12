@@ -14,8 +14,6 @@ import (
 	"github.com/kingultron99/tdcbot/websockets"
 )
 
-// Completely redoing the bot due to breaking changes in latest v3 commit github.com/diamondburned/arikawa/v3@df0fa66
-
 func main() {
 	core.Initialise()
 	newShard := state.NewShardFunc(func(m *shard.Manager, s *state.State) {
@@ -58,8 +56,6 @@ func main() {
 	})
 
 	utils.MapIcons()
-
-	logger.Info(logger.LogFile.Name())
 
 	commands.AddHandlers()
 	commands.Register(discord.AppID(utils.MustSnowflakeEnv(core.Config.APPID)), discord.GuildID(utils.MustSnowflakeEnv(core.Config.GUILDID)))
