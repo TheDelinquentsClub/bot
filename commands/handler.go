@@ -31,7 +31,12 @@ type Select struct {
 	Run func(e *gateway.InteractionCreateEvent, data *discord.SelectInteraction)
 }
 
+type Modal struct {
+	Run func(e *gateway.InteractionCreateEvent, data *discord.ModalInteraction)
+}
+
 var MapCommands = make(map[string]Command)
+var MapModals = make(map[string]Modal)
 var MapButtons = make(map[string]Button)
 var MapSelect = make(map[string]Select)
 
@@ -85,7 +90,12 @@ func AddHandlers() {
 			if cmd, ok := MapButtons[string(data.CustomID)]; ok {
 				cmd.Run(e, data)
 			}
+		case *discord.ModalInteraction:
+			if cmd, ok := MapModals[string(data.CustomID)]; ok {
+				cmd.Run(e, data)
+			}
 		}
+
 	})
 }
 

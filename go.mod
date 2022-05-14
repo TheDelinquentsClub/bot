@@ -13,11 +13,12 @@ require (
 	github.com/gofrs/uuid v4.2.0+incompatible // indirect
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0 // indirect
 	github.com/gomodule/redigo v1.8.8 // indirect
-	github.com/googollee/go-socket.io v1.6.1
+	github.com/googollee/go-socket.io v1.6.2
 	github.com/gorilla/mux v1.8.0 // indirect
 	github.com/gorilla/websocket v1.5.0 // indirect
 	github.com/lukasl-dev/waterlink v1.1.3 // indirect
 	github.com/mattn/go-colorable v0.1.11 // indirect
+	github.com/mattn/go-sqlite3 v1.14.13
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/op/go-logging v0.0.0-20160315200505-970db520ece7 // indirect
 	github.com/socketio/socket.io v0.0.0-20220423224557-8ecfcba5c14c // indirect

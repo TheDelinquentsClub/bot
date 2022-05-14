@@ -48,7 +48,7 @@ func main() {
 		if core.IsServerConnected {
 			if c.Message.ChannelID.String() == core.Config.BridgeChannelID {
 				if c.Author.Bot == false {
-					core.WSServer.BroadcastToNamespace("/", "discordmessage", c.Message.Content, c.Member.User.Username)
+					core.ServerConn.Emit("discordmessage", c.Message.Content, c.Member.User.Username)
 				}
 			}
 		}

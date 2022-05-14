@@ -110,13 +110,49 @@ func RegisterMinecraftHandlers() {
 		}
 	})
 	core.WSServer.OnEvent("/", "playerjoin", func(s socketio.Conn, msg string) {
+		type Player struct {
+			Uuid     string `json:"uuid"`
+			Username string `json:"username"`
+		}
+
+		var (
+			DBRes  string
+			status string
+			ID     string
+			rand   = utils.RandString(10)
+			player Player
+		)
+
+		err := json.Unmarshal([]byte(msg), &player)
+		if err != nil {
+			logger.Error("Failed to parse JSON message")
+		}
+
+		query, _ := core.DB.Query("SELECT MC_UUID, status, ID FROM players WHERE MC_UUID = ?", player.Uuid)
+		for query.Next() {
+			query.Scan(&DBRes, &status, &ID)
+		}
+		query.Close()
+
+		if DBRes == "" && status != "PENDING" {
+			stmt, _ := core.DB.Prepare("INSERT INTO players (MC_UUID, ID) VALUES (?, ?)")
+			stmt.Exec(player.Uuid, rand)
+			core.ServerConn.Emit("msg", "<gradient:#D8B4FE:#9333EA>TDC</gradient>", fmt.Sprintf("%v Hey there!", player.Username))
+			core.ServerConn.Emit("msg", "<gradient:#D8B4FE:#9333EA>TDC</gradient>", fmt.Sprintf("%v We noticed you're new here!", player.Username))
+			core.ServerConn.Emit("msg", "<gradient:#D8B4FE:#9333EA>TDC</gradient>", fmt.Sprintf("%v I've added your player ID to my database.", player.Username))
+			core.ServerConn.Emit("msg", "<gradient:#D8B4FE:#9333EA>TDC</gradient>", fmt.Sprintf("%v jump onto our discord and type /server verify and enter your code: <hover:show_text:'Click to copy to clipboard!'><color:gold><click:copy_to_clipboard:'%v'>%v</click></color></hover> to verify this account with your discord", player.Username, rand, rand))
+			core.ServerConn.Emit("msg", "<gradient:#D8B4FE:#9333EA>TDC</gradient>", fmt.Sprintf("%v This will give you and other players have access to some tools on discord that wont work otherwise!", player.Username))
+		} else if status == "PENDING" {
+			core.ServerConn.Emit("msg", "<gradient:#D8B4FE:#9333EA>TDC</gradient>", fmt.Sprintf("%v Just a friendly reminder to verify your account!", player.Username))
+			core.ServerConn.Emit("msg", "<gradient:#D8B4FE:#9333EA>TDC</gradient>", fmt.Sprintf("%v jump onto our discord and type /server verify and enter your code: <hover:show_text:'Click to copy to clipboard!'><color:gold><click:copy_to_clipboard:'%v'>%v</click></color></hover> to verify this account with your discord", player.Username, ID, ID))
+		}
 
 		body, err := json.Marshal(Message{
 			Username: "TDC Bot",
 			Avatar:   "https://cdn.discordapp.com/avatars/769753889960361994/a4876fb3b263409750a0b93feb619386.webp?size=128",
 			Embeds: &[]discord.Embed{
 				{
-					Title:     fmt.Sprintf("%v joined the server!", msg),
+					Title:     fmt.Sprintf("%v joined the server!", player.Username),
 					Color:     utils.DiscordGreen,
 					Timestamp: discord.NowTimestamp(),
 				},

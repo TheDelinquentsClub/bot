@@ -7,6 +7,7 @@ import (
 	"github.com/kingultron99/tdcbot/logger"
 	"io/ioutil"
 	"log"
+	"math/rand"
 	"net/http"
 	"strings"
 	"time"
@@ -158,4 +159,21 @@ func GetNamesFromUUID(uuid string) string {
 		res = strings.Join(nameArray, "")
 	}
 	return res
+}
+
+const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+
+var seededRand = rand.New(
+	rand.NewSource(time.Now().UnixNano()))
+
+func StringWithCharset(length int, charset string) string {
+	b := make([]byte, length)
+	for i := range b {
+		b[i] = charset[seededRand.Intn(len(charset))]
+	}
+	return string(b)
+}
+
+func RandString(length int) string {
+	return StringWithCharset(length, charset)
 }

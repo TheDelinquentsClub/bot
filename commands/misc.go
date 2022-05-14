@@ -10,6 +10,7 @@ import (
 	"github.com/kingultron99/tdcbot/core"
 	"github.com/kingultron99/tdcbot/logger"
 	"github.com/kingultron99/tdcbot/utils"
+	_ "github.com/mattn/go-sqlite3"
 	"io/ioutil"
 	"net/http"
 	"strconv"
@@ -104,6 +105,14 @@ func init() {
 					color = utils.DiscordRed
 				}
 
+				stmt, err := core.DB.Prepare("UPDATE stats SET questions = questions + 1")
+				if err != nil {
+					logger.Error("failed to update Questions stat")
+				}
+
+				stmt.Exec()
+				stmt.Close()
+
 				res = api.EditInteractionResponseData{
 					Embeds: &[]discord.Embed{
 						{
@@ -146,6 +155,14 @@ func init() {
 		},
 		Restricted: false,
 		Run: func(e *gateway.InteractionCreateEvent, data *discord.CommandInteraction) {
+
+			stmt, err := core.DB.Prepare("UPDATE stats SET facts = facts + 1")
+			if err != nil {
+				logger.Error("failed to update facts stat")
+			}
+			stmt.Exec()
+			stmt.Close()
+
 			ack := api.InteractionResponse{
 				Type: api.DeferredMessageInteractionWithSource,
 			}

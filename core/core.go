@@ -1,6 +1,7 @@
 package core
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -40,6 +41,7 @@ var (
 	ItemIcons         []string
 	IsServerConnected = false
 	clear             map[string]func() //create a map for storing clear funcs
+	DB                *sql.DB
 )
 
 func init() {
@@ -117,8 +119,27 @@ func initConfig() {
 		_ = json.NewDecoder(data).Decode(&Config)
 		logger.Info("Successfully loaded config!")
 		logger.Print(fmt.Sprintf(" ::::::::   ::::::::       ::::::::: ::::::::    ::::::::\n:+:    :+: :+:    :+:         :+:    :+:   :+:  :+:    :+:\n+:+    +:+ +:+    +:+   (:o   +:+    +:+    +:+ +:+\n+#+        +#+    +#+ +#+#+#+ +#+    +#+    +#+ +#+\n+#+   #+#+ +#+    +#+         +#+    +#+    +#+ +#+\n#+#    #+# #+#    #+#         #+#    #+#   #+#  #+#    #+#\n ########   ########          ###    ########    ########\n                                              v%v\n", Config.Version))
+		loadDB()
 	}
+}
 
+func loadDB() {
+	var err error
+	DB, err = sql.Open("sqlite3", "./db/stats.db")
+	if err != nil {
+		logger.Error("Failed to open stats db! ", err)
+	}
+	stmt, err := DB.Prepare("CREATE TABLE IF NOT EXISTS stats(questions int DEFAULT 0, facts int DEFAULT 0)")
+	if err != nil {
+		logger.Error("failed to generate DB table!")
+	}
+	stmt.Exec()
+	stmt, err = DB.Prepare("CREATE TABLE IF NOT EXISTS players(MC_UUID text UNIQUE NOT NULL , status text DEFAULT OFFLINE, Discord_UUID text UNIQUE NOT NULL)")
+	if err != nil {
+		logger.Error("failed to generate DB table!")
+	}
+	stmt.Exec()
+	logger.Info("loaded DB!")
 }
 
 func setupCloseHandler(logg *zap.Logger) {
