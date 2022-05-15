@@ -14,8 +14,11 @@ import (
 )
 
 func RegisterWebsiteHandlers() {
+	core.WSServer.OnEvent("/", "websiteinstance", func(s socketio.Conn) {
+		core.Websites = append(core.Websites, s.ID())
+	})
 
-	core.WSServer.OnEvent("", "botinfo", func(s socketio.Conn) {
+	core.WSServer.OnEvent("/", "botinfo", func(s socketio.Conn) {
 		var m runtime.MemStats
 		runtime.ReadMemStats(&m)
 		type info struct {
@@ -48,6 +51,24 @@ func RegisterWebsiteHandlers() {
 		s.Emit("botinfo", res)
 	})
 
-	// TODO: handle statistics event
+	core.WSServer.OnEvent("/", "stats", func(s socketio.Conn) {
+		type info struct {
+			Facts     string `json:"facts"`
+			Questions string `json:"questions"`
+		}
+		var createRes info
+		query, _ := core.DB.Query("SELECT facts, questions from stats")
+
+		for query.Next() {
+			query.Scan(&createRes.Facts, &createRes.Questions)
+		}
+		query.Close()
+
+		res, err := json.Marshal(createRes)
+		if err != nil {
+			logger.Error("Failed to marshal stats json: ", err)
+		}
+		s.Emit("stats", res)
+	})
 
 }

@@ -58,6 +58,11 @@ func InitServer() {
 				core.IsServerConnected = false
 			}
 		}
+		for i, website := range core.Websites {
+			if s.ID() == website {
+				core.Websites = append(core.Websites[:i], core.Websites[i+1:]...)
+			}
+		}
 	})
 
 	go func() {
