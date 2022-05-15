@@ -4,21 +4,18 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="43a90286-0bc6-4267-8a52-6493d8afd734" name="Changes" comment="fix(core): crash on launch">
-      <change afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/sqldialects.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/commands/modals.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/db/stats.db" afterDir="false" />
+    <list default="true" id="43a90286-0bc6-4267-8a52-6493d8afd734" name="Changes" comment="fix,feat(imagery): changed how images are created, added translations from minecraft">
+      <change afterPath="$PROJECT_DIR$/assets/mc_en_US.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/handler.go" beforeDir="false" afterPath="$PROJECT_DIR$/commands/handler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/minecraft.go" beforeDir="false" afterPath="$PROJECT_DIR$/commands/minecraft.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/misc.go" beforeDir="false" afterPath="$PROJECT_DIR$/commands/misc.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/advancement.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/advancement.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/core/core.go" beforeDir="false" afterPath="$PROJECT_DIR$/core/core.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/db/stats.db" beforeDir="false" afterPath="$PROJECT_DIR$/db/stats.db" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/imagery.go" beforeDir="false" afterPath="$PROJECT_DIR$/utils/imagery.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/utils/utils.go" beforeDir="false" afterPath="$PROJECT_DIR$/utils/utils.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/websockets/minecraft.go" beforeDir="false" afterPath="$PROJECT_DIR$/websockets/minecraft.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/websockets/website.go" beforeDir="false" afterPath="$PROJECT_DIR$/websockets/website.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/websockets/websockets.go" beforeDir="false" afterPath="$PROJECT_DIR$/websockets/websockets.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -75,31 +72,31 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "DefaultGoTemplateProperty": "Go File",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.go.format.on.save.advertiser.fired": "true",
-    "RunOnceActivity.go.formatter.settings.were.checked": "true",
-    "RunOnceActivity.go.migrated.go.modules.settings": "true",
-    "RunOnceActivity.go.modules.go.list.on.any.changes.was.set": "true",
-    "RunOnceActivity.go.watchers.conflict.with.on.save.actions.check.performed": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "full.screen.before.presentation.mode": "false",
-    "go.import.settings.migrated": "true",
-    "go.sdk.automatically.set": "true",
-    "last_opened_file_path": "C:/Users/lochy/Documents/GitHub/TDC-Bot/db/stats.db",
-    "settings.editor.selected.configurable": "editor.preferences.fonts.default",
-    "typescript.add.unambiguous.imports.on.the.fly": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;DefaultGoTemplateProperty&quot;: &quot;Go File&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.format.on.save.advertiser.fired&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.formatter.settings.were.checked&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.migrated.go.modules.settings&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.modules.go.list.on.any.changes.was.set&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.watchers.conflict.with.on.save.actions.check.performed&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;full.screen.before.presentation.mode&quot;: &quot;false&quot;,
+    &quot;go.import.settings.migrated&quot;: &quot;true&quot;,
+    &quot;go.sdk.automatically.set&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/lochy/Documents/GitHub/TDC-Bot/db/stats.db&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;editor.preferences.fonts.default&quot;,
+    &quot;typescript.add.unambiguous.imports.on.the.fly&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "DatabaseDriversLRU": [
-      "sqlite"
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;sqlite&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="ReaderModeSettings">
     <option name="showLigatures" value="true" />
   </component>
@@ -111,6 +108,17 @@
       <recent name="C:\Users\king_ultron99\GitHub\TDC-Bot\commands\categories" />
       <recent name="C:\Users\Lenovo\GitHub\TDC-Bot" />
     </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="go build github.com/kingultron99/tdcbot" type="GoApplicationRunConfiguration" factoryName="Go Application" nameIsGenerated="true">
+      <module name="TDC-Bot" />
+      <working_directory value="$PROJECT_DIR$" />
+      <kind value="PACKAGE" />
+      <package value="github.com/kingultron99/tdcbot" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <method v="2" />
+    </configuration>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TypeScriptGeneratedFilesManager">
@@ -144,8 +152,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="refactor,feat(util): Updated components, added UpdateResponse method to utils.Embed to allow for changing message content using the embed builder, also added RemoveComponents method to allow for the removal of all components on a message when updating content" />
-    <MESSAGE value="feat(websockets): Added websocket server. moved minecraft related commands to their own file. added *gateway.MessageCreateEvent listener for sending chat messages to the minecraft server" />
     <MESSAGE value="feat(websockets, commands): added check to see if socket connection is the mc server instance, save the connection and set IsServerConnected = true. set IsSeverConnected = false when server disconnects. added checks in server related commands" />
     <MESSAGE value="style,feat(commands): changed the value for utils.DefaultColor. started working on command invocation logic" />
     <MESSAGE value="refactor(misc): this was bugging me. made the boolean option a requirement, didnt make sense otherwise." />
@@ -169,7 +175,9 @@
     <MESSAGE value="refactor(imagery): removed icon resize and create &quot;./assets/generated&quot; folder if not exist" />
     <MESSAGE value="chore(git):updated gitignore" />
     <MESSAGE value="fix(core): crash on launch" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix(core): crash on launch" />
+    <MESSAGE value="feat: added player verification and bot stats db recordings" />
+    <MESSAGE value="fix,feat(imagery): changed how images are created, added translations from minecraft" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix,feat(imagery): changed how images are created, added translations from minecraft" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />

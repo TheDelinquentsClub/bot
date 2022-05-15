@@ -56,6 +56,7 @@ func main() {
 	})
 
 	utils.MapIcons()
+	utils.LoadLocale()
 
 	commands.AddHandlers()
 	commands.Register(discord.AppID(utils.MustSnowflakeEnv(core.Config.APPID)), discord.GuildID(utils.MustSnowflakeEnv(core.Config.GUILDID)))

@@ -39,6 +39,7 @@ var (
 	WSServer          *socketio.Server
 	ServerConn        socketio.Conn
 	ItemIcons         []string
+	Websites          []string
 	IsServerConnected = false
 	clear             map[string]func() //create a map for storing clear funcs
 	DB                *sql.DB

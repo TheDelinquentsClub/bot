@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"fmt"
 	"github.com/fogleman/gg"
 	"github.com/kingultron99/tdcbot/core"
 	"github.com/kingultron99/tdcbot/logger"
@@ -9,7 +10,6 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
-	"strings"
 )
 
 var (
@@ -25,16 +25,22 @@ func MapIcons() {
 	logger.Info("grabbed and sorted item images!")
 }
 
-func GenerateAdvancement(icon string, advType string, advancement string) {
+func GenerateAdvancement(icon string, advType string, advancement string, player string) {
 	_, err := os.Stat("./assets/generated")
 	if os.IsNotExist(err) {
 		_ = os.Mkdir("./assets/generated", os.ModePerm)
 	}
+	_, err = os.Stat(fmt.Sprintf("./assets/generated/%v", player))
+	if os.IsNotExist(err) {
+		_ = os.Mkdir(fmt.Sprintf("./assets/generated/%v", player), os.ModePerm)
+	}
 	var (
 		title string
 		color color2.RGBA
+		gray  = color2.RGBA{R: 170, G: 170, B: 170, A: 255}
+		W     = 400
+		H     = 110
 	)
-
 	switch advType {
 	case "CHALLENGE":
 		title = "Challenge Complete!"
@@ -44,13 +50,13 @@ func GenerateAdvancement(icon string, advType string, advancement string) {
 		title = "Goal Reached!"
 		color = color2.RGBA{R: 255, G: 255, B: 85, A: 255}
 		break
-	case "ADVANCEMENT":
+	case "TASK":
 		title = "Advancement Made!"
 		color = color2.RGBA{R: 255, G: 255, B: 85, A: 255}
 		break
 	}
 
-	dc := gg.NewContext(400, 80)
+	dc := gg.NewContext(W, H)
 	bg, err := gg.LoadImage("./assets/advancement.png")
 	if err != nil {
 		logger.Error("Failed to load Advancement image! Is it missing?\n", err)
@@ -75,8 +81,23 @@ func GenerateAdvancement(icon string, advType string, advancement string) {
 	dc.SetColor(color)
 	dc.DrawString(title, x1, y1)
 	dc.SetColor(color2.White)
-	dc.DrawString(strings.Split(advancement, "/")[1], x2, y2)
-	if err := dc.SavePNG("./assets/generated/advancement.png"); err != nil {
+	dc.DrawString(advancement, x2, y2)
+
+	if err := dc.LoadFontFace(fontPath, 20); err != nil {
+		logger.Error("Failed to load font!", err)
+	}
+
+	completew, _ := dc.MeasureString("completed by:")
+	_, playerh := dc.MeasureString(player)
+
+	x4 := 24.0
+	y4 := float64(H) - playerh - 8
+	x5 := x4 + completew + 4
+	y5 := y4
+	dc.DrawString(player, x5, y5)
+	dc.SetColor(gray)
+	dc.DrawString("completed by", x4, y4)
+	if err := dc.SavePNG(fmt.Sprintf("./assets/generated/%v/%v_advancement.png", player, player)); err != nil {
 		logger.Error("Failed to save image!\n", err)
 	}
 }

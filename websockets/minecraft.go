@@ -71,31 +71,20 @@ func RegisterMinecraftHandlers() {
 		if err != nil {
 			logger.Error("Failed to parse JSON message")
 		}
+		msgObj.Advancement = strings.ReplaceAll(strings.ReplaceAll(msgObj.Advancement, ".title", ""), ".", "_")
 
 		index := sort.StringSlice.Search(core.ItemIcons, strings.ToLower(msgObj.Icon))
-
-		utils.GenerateAdvancement(utils.BasePath+core.ItemIcons[index], msgObj.Type, msgObj.Advancement)
+		utils.GenerateAdvancement(utils.BasePath+core.ItemIcons[index], msgObj.Type, utils.GetLocale(msgObj.Advancement, "title"), msgObj.Player)
 
 		wd, _ := os.Getwd()
 
-		image, err := os.ReadFile(wd + "/assets/generated/advancement.png")
+		image, err := os.ReadFile(wd + fmt.Sprintf("/assets/generated/%v/%v_advancement.png", msgObj.Player, msgObj.Player))
 		if err != nil {
 			logger.Error(err)
 		}
 		reader := bytes.NewReader(image)
 
 		body := api.SendMessageData{
-			Embeds: []discord.Embed{
-				{
-					Author: &discord.EmbedAuthor{
-						Name: msgObj.Player,
-						Icon: fmt.Sprintf("https://crafatar.com/avatars/%v", utils.GetUUID(msgObj.Player)),
-					},
-					Color:     utils.DefaultColour,
-					Title:     fmt.Sprint(msgObj.Player + " Did a thing!"),
-					Timestamp: discord.NowTimestamp(),
-				},
-			},
 			Files: []sendpart.File{
 				{
 					Name:   fmt.Sprintf("%v.png", msgObj.Type),
