@@ -16,6 +16,41 @@ import (
 	"github.com/kingultron99/tdcbot/utils"
 )
 
+type ServerInfo struct {
+	MOTD            string  `json:"motd"`
+	Version         string  `json:"version"`
+	Tps             float32 `json:"tps"`
+	AverageTickTime float32 `json:"averageTickTime"`
+	OnlinePlayers   int     `json:"onlinePlayers"`
+	AllPlayers      int     `json:"allPlayers"`
+	BannedPlayers   int     `json:"bannedPlayers"`
+	MaxPlayers      int     `json:"maxPlayers"`
+}
+
+type PlayerInfo struct {
+	Error        string  `json:"error,omitempty"`
+	DisplayName  string  `json:"displayName,omitempty"`
+	UUID         string  `json:"UUID,omitempty"`
+	GameMode     string  `json:"gameMode,omitempty"`
+	FirstPlayed  int64   `json:"firstPlayed,omitempty"`
+	LastSeen     int64   `json:"lastSeen,omitempty"`
+	MaxHealth    float32 `json:"maxHealth,omitempty"`
+	Health       float32 `json:"health,omitempty"`
+	MobsKilled   int     `json:"mobsKilled,omitempty"`
+	ItemsDropped int     `json:"itemsDropped,omitempty"`
+	AnimalsBred  int     `json:"animalsBred,omitempty"`
+	Deaths       int     `json:"deaths,omitempty"`
+	GamesQuit    int     `json:"gamesQuit,omitempty"`
+	TimePlayed   int     `json:"timePlayed,omitempty"`
+	IsFlying     bool    `json:"isFlying,omitempty"`
+	IsSleeping   bool    `json:"isSleeping,omitempty"`
+	IsSneaking   bool    `json:"isSneaking,omitempty"`
+	IsSprinting  bool    `json:"isSprinting,omitempty"`
+	IsOp         bool    `json:"isOp,omitempty"`
+	Online       bool    `json:"online,omitempty"`
+	IsBanned     bool    `json:"isBanned,omitempty"`
+}
+
 func init() {
 	MapCommands["minecraft"] = Command{
 		Name:        "minecraft",
@@ -283,17 +318,7 @@ func init() {
 					}
 					switch data.Options[0].Options[0].Name {
 					case "server":
-						type Info struct {
-							Tps             float32 `json:"tps"`
-							AverageTickTime float32 `json:"averageTickTime"`
-							OnlinePlayers   int     `json:"onlinePlayers"`
-							AllPlayers      int     `json:"allPlayers"`
-							BannedPlayers   int     `json:"bannedPlayers"`
-							MOTD            string  `json:"motd"`
-							Version         string  `json:"version"`
-							MaxPlayers      int     `json:"maxPlayers"`
-						}
-						var msg Info
+						var msg ServerInfo
 
 						core.ServerConn.Emit("getserverinfo")
 						core.WSServer.OnEvent("/", "getserverinfo", func(s socketio.Conn, obj string) {
@@ -358,35 +383,12 @@ func init() {
 
 						})
 					case "player":
-						type Info struct {
-							Error        string  `json:"error,omitempty"`
-							DisplayName  string  `json:"displayName,omitempty"`
-							MaxHealth    float32 `json:"maxHealth,omitempty"`
-							Health       float32 `json:"health,omitempty"`
-							IsFlying     bool    `json:"isFlying,omitempty"`
-							IsSleeping   bool    `json:"isSleeping,omitempty"`
-							IsSneaking   bool    `json:"isSneaking,omitempty"`
-							IsSprinting  bool    `json:"isSprinting,omitempty"`
-							FirstPlayed  int64   `json:"firstPlayed,omitempty"`
-							GameMode     string  `json:"gameMode,omitempty"`
-							IsOp         bool    `json:"isOp,omitempty"`
-							Online       bool    `json:"online,omitempty"`
-							UUID         string  `json:"UUID,omitempty"`
-							MobsKilled   int     `json:"mobsKilled,omitempty"`
-							ItemsDropped int     `json:"itemsDropped,omitempty"`
-							AnimalsBred  int     `json:"animalsBred,omitempty"`
-							Deaths       int     `json:"deaths,omitempty"`
-							GamesQuit    int     `json:"gamesQuit,omitempty"`
-							TimePlayed   int     `json:"timePlayed,omitempty"`
-							LastSeen     int64   `json:"lastSeen,omitempty"`
-							IsBanned     bool    `json:"isBanned,omitempty"`
-						}
 
 						core.ServerConn.Emit("getplayerinfo", data.Options[0].Options[0].Options[0].Value)
 						core.WSServer.OnEvent("/", "getplayerinfo", func(s socketio.Conn, obj string) {
 							var (
 								res api.EditInteractionResponseData
-								msg Info
+								msg PlayerInfo
 							)
 							err := json.Unmarshal([]byte(obj), &msg)
 							if err != nil {
@@ -872,29 +874,7 @@ func init() {
 		Type:        discord.UserCommand,
 		Restricted:  false,
 		Run: func(e *gateway.InteractionCreateEvent, data *discord.CommandInteraction) {
-			type Info struct {
-				Error        string  `json:"error,omitempty"`
-				DisplayName  string  `json:"displayName,omitempty"`
-				MaxHealth    float32 `json:"maxHealth,omitempty"`
-				Health       float32 `json:"health,omitempty"`
-				IsFlying     bool    `json:"isFlying,omitempty"`
-				IsSleeping   bool    `json:"isSleeping,omitempty"`
-				IsSneaking   bool    `json:"isSneaking,omitempty"`
-				IsSprinting  bool    `json:"isSprinting,omitempty"`
-				FirstPlayed  int64   `json:"firstPlayed,omitempty"`
-				GameMode     string  `json:"gameMode,omitempty"`
-				IsOp         bool    `json:"isOp,omitempty"`
-				Online       bool    `json:"online,omitempty"`
-				UUID         string  `json:"UUID,omitempty"`
-				MobsKilled   int     `json:"mobsKilled,omitempty"`
-				ItemsDropped int     `json:"itemsDropped,omitempty"`
-				AnimalsBred  int     `json:"animalsBred,omitempty"`
-				Deaths       int     `json:"deaths,omitempty"`
-				GamesQuit    int     `json:"gamesQuit,omitempty"`
-				TimePlayed   int     `json:"timePlayed,omitempty"`
-				LastSeen     int64   `json:"lastSeen,omitempty"`
-				IsBanned     bool    `json:"isBanned,omitempty"`
-			}
+
 			me, _ := core.State.Me()
 			for id, _ := range data.Resolved.Users {
 				if id == me.ID {
@@ -959,7 +939,7 @@ func init() {
 					core.WSServer.OnEvent("/", "getplayerinfo", func(s socketio.Conn, obj string) {
 						var (
 							res api.EditInteractionResponseData
-							msg *Info
+							msg PlayerInfo
 						)
 
 						err := json.Unmarshal([]byte(obj), &msg)
