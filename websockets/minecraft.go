@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/diamondburned/arikawa/v3/api"
 	"github.com/diamondburned/arikawa/v3/discord"
 	"github.com/diamondburned/arikawa/v3/utils/sendpart"
 	socketio "github.com/googollee/go-socket.io"
@@ -84,24 +83,27 @@ func RegisterMinecraftHandlers() {
 		}
 		reader := bytes.NewReader(image)
 
-		body := api.SendMessageData{
+		body, _ := json.Marshal(Message{
 			Files: []sendpart.File{
 				{
 					Name:   fmt.Sprintf("%v.png", msgObj.Type),
 					Reader: reader,
 				},
 			},
-		}
+		})
+		resp := bytes.NewBuffer(body)
 
-		_, err = core.State.SendMessageComplex(discord.ChannelID(utils.MustSnowflakeEnv(core.Config.BridgeChannelID)), body)
-		if err != nil {
-			logger.Error("Failed to send advancement message: ", err)
-		}
+		http.Post(
+			core.Config.Webhook,
+			"application/json",
+			resp)
+
 	})
 	core.WSServer.OnEvent("/", "playerjoin", func(s socketio.Conn, msg string) {
 		type Player struct {
-			Uuid     string `json:"uuid"`
-			Username string `json:"username"`
+			Uuid         string `json:"uuid"`
+			Username     string `json:"username"`
+			Playedbefore bool   `json:"playedbefore"`
 		}
 
 		var (
@@ -135,15 +137,20 @@ func RegisterMinecraftHandlers() {
 			core.ServerConn.Emit("msg", "<gradient:#D8B4FE:#9333EA>TDC</gradient>", fmt.Sprintf("%v Just a friendly reminder to verify your account!", player.Username))
 			core.ServerConn.Emit("msg", "<gradient:#D8B4FE:#9333EA>TDC</gradient>", fmt.Sprintf("%v jump onto our discord and type /server verify and enter your code: <hover:show_text:'Click to copy to clipboard!'><color:gold><click:copy_to_clipboard:'%v'>%v</click></color></hover> to verify this account with your discord", player.Username, ID, ID))
 		}
+		var desc = "Nice to have you back!"
+		if player.Playedbefore != true {
+			desc = "This is their fist time playing here! Please give them a warm welcome!"
+		}
 
 		body, err := json.Marshal(Message{
 			Username: "TDC Bot",
 			Avatar:   "https://cdn.discordapp.com/avatars/769753889960361994/a4876fb3b263409750a0b93feb619386.webp?size=128",
 			Embeds: &[]discord.Embed{
 				{
-					Title:     fmt.Sprintf("%v joined the server!", player.Username),
-					Color:     utils.DiscordGreen,
-					Timestamp: discord.NowTimestamp(),
+					Title:       fmt.Sprintf("%v joined the server!", player.Username),
+					Color:       utils.DiscordGreen,
+					Description: desc,
+					Timestamp:   discord.NowTimestamp(),
 				},
 			},
 		})

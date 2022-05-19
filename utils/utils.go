@@ -212,6 +212,8 @@ type LocaleTypes struct {
 	Advancements_adventure_ol_betsy_description                               string `json:"advancements.adventure.ol_betsy.description"`
 	Advancements_adventure_play_jukebox_in_meadows_title                      string `json:"advancements.adventure.play_jukebox_in_meadows.title"`
 	Advancements_adventure_play_jukebox_in_meadows_description                string `json:"advancements.adventure.play_jukebox_in_meadows.description"`
+	Advancements_adventure_root_title                                         string `json:"advancements.adventure.root.title"`
+	Advancements_adventure_root_description                                   string `json:"advancements.adventure.root.description"`
 	Advancements_adventure_shoot_arrow_title                                  string `json:"advancements.adventure.shoot_arrow.title"`
 	Advancements_adventure_shoot_arrow_description                            string `json:"advancements.adventure.shoot_arrow.description"`
 	Advancements_adventure_sleep_in_bed_title                                 string `json:"advancements.adventure.sleep_in_bed.title"`
@@ -236,6 +238,8 @@ type LocaleTypes struct {
 	Advancements_adventure_voluntary_exile_description                        string `json:"advancements.adventure.voluntary_exile.description"`
 	Advancements_adventure_whos_the_pillager_now_title                        string `json:"advancements.adventure.whos_the_pillager_now.title"`
 	Advancements_adventure_whos_the_pillager_now_description                  string `json:"advancements.adventure.whos_he_pillager_now.description"`
+	Advancements_husbandry_root_title                                         string `json:"advancements.husbandry.root.title"`
+	Advancements_husbandry_root_description                                   string `json:"advancements.husbandry.root.description"`
 	Advancements_husbandry_breed_an_animal_title                              string `json:"advancements.husbandry.breed_an_animal.title"`
 	Advancements_husbandry_breed_an_animal_description                        string `json:"advancements.husbandry.breed_an_animal.description"`
 	Advancements_husbandry_fishy_business_title                               string `json:"advancements.husbandry.fishy_business.title"`
@@ -270,6 +274,8 @@ type LocaleTypes struct {
 	Advancements_husbandry_wax_on_description                                 string `json:"advancements.husbandry.wax_on.description"`
 	Advancements_husbandry_wax_off_title                                      string `json:"advancements.husbandry.wax_off.title"`
 	Advancements_husbandry_wax_off_description                                string `json:"advancements.husbandry.wax_off.description"`
+	Advancements_end_root_title                                               string `json:"advancements.end.root.title"`
+	Advancements_end_root_description                                         string `json:"advancements.end.root.description"`
 	Advancements_end_dragon_breath_title                                      string `json:"advancements.end.dragon_breath.title"`
 	Advancements_end_dragon_breath_description                                string `json:"advancements.end.dragon_breath.description"`
 	Advancements_end_dragon_egg_title                                         string `json:"advancements.end.dragon_egg.title"`
@@ -303,6 +309,8 @@ type LocaleTypes struct {
 	Advancements_nether_obtain_blaze_rod_description                          string `json:"advancements.nether.obtain_blaze_rod.description"`
 	Advancements_nether_return_to_sender_title                                string `json:"advancements.nether.return_to_sender.title"`
 	Advancements_nether_return_to_sender_description                          string `json:"advancements.nether.return_to_sender.description"`
+	Advancements_nether_root_title                                            string `json:"advancements.nether.root.title"`
+	Advancements_nether_root_description                                      string `json:"advancements>nether.root.description"`
 	Advancements_nether_summon_wither_description                             string `json:"advancements.nether.summon_wither.description"`
 	Advancements_nether_fast_travel_title                                     string `json:"advancements.nether.fast_travel.title"`
 	Advancements_nether_fast_travel_description                               string `json:"advancements.nether.fast_travel.description"`
@@ -330,6 +338,8 @@ type LocaleTypes struct {
 	Advancements_nether_loot_bastion_description                              string `json:"advancements.nether.loot_bastion.description"`
 	Advancements_nether_distract_piglin_title                                 string `json:"advancements.nether.distract_piglin.title"`
 	Advancements_nether_distract_piglin_description                           string `json:"advancements.nether.distract_piglin.description"`
+	Advancements_story_root_title                                             string `json:"advancements.story.root.title"`
+	Advancements_story_root_description                                       string `json:"advancements.story.root.description"`
 	Advancements_story_cure_zombie_villager_title                             string `json:"advancements.story.cure_zombie_villager.title"`
 	Advancements_story_cure_zombie_villager_description                       string `json:"advancements.story.cure_zombie_villager.description"`
 	Advancements_story_deflect_arrow_title                                    string `json:"advancements.story.deflect_arrow.title"`

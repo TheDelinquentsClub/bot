@@ -4,18 +4,13 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="43a90286-0bc6-4267-8a52-6493d8afd734" name="Changes" comment="fix,feat(imagery): changed how images are created, added translations from minecraft">
-      <change afterPath="$PROJECT_DIR$/assets/mc_en_US.json" afterDir="false" />
+    <list default="true" id="43a90286-0bc6-4267-8a52-6493d8afd734" name="Changes" comment="fix(advancement.png): tweaks">
+      <change afterPath="$PROJECT_DIR$/commands/voice.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/voice/voice.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/advancement.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/advancement.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/core.go" beforeDir="false" afterPath="$PROJECT_DIR$/core/core.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/db/stats.db" beforeDir="false" afterPath="$PROJECT_DIR$/db/stats.db" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/imagery.go" beforeDir="false" afterPath="$PROJECT_DIR$/utils/imagery.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/mc_en_US.json" beforeDir="false" afterPath="$PROJECT_DIR$/assets/mc_en_US.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/utils/utils.go" beforeDir="false" afterPath="$PROJECT_DIR$/utils/utils.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/websockets/minecraft.go" beforeDir="false" afterPath="$PROJECT_DIR$/websockets/minecraft.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/websockets/website.go" beforeDir="false" afterPath="$PROJECT_DIR$/websockets/website.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/websockets/websockets.go" beforeDir="false" afterPath="$PROJECT_DIR$/websockets/websockets.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -102,11 +97,11 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\lochy\Documents\GitHub\TDC-Bot\voice" />
       <recent name="C:\Users\king_ultron99\GitHub\TDC-Bot\Maps" />
       <recent name="C:\Users\king_ultron99\GitHub\TDC-Bot\componentInteractions" />
       <recent name="C:\Users\king_ultron99\GitHub\TDC-Bot\commands" />
       <recent name="C:\Users\king_ultron99\GitHub\TDC-Bot\commands\categories" />
-      <recent name="C:\Users\Lenovo\GitHub\TDC-Bot" />
     </key>
   </component>
   <component name="RunManager">
@@ -152,7 +147,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="feat(websockets, commands): added check to see if socket connection is the mc server instance, save the connection and set IsServerConnected = true. set IsSeverConnected = false when server disconnects. added checks in server related commands" />
     <MESSAGE value="style,feat(commands): changed the value for utils.DefaultColor. started working on command invocation logic" />
     <MESSAGE value="refactor(misc): this was bugging me. made the boolean option a requirement, didnt make sense otherwise." />
     <MESSAGE value="style(utils): changed DefaultColour again..." />
@@ -177,7 +171,8 @@
     <MESSAGE value="fix(core): crash on launch" />
     <MESSAGE value="feat: added player verification and bot stats db recordings" />
     <MESSAGE value="fix,feat(imagery): changed how images are created, added translations from minecraft" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix,feat(imagery): changed how images are created, added translations from minecraft" />
+    <MESSAGE value="feat(websockets/website): store all website connection ID's to array. may be useful in the future" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat(websockets/website): store all website connection ID's to array. may be useful in the future" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
