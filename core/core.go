@@ -19,17 +19,16 @@ import (
 )
 
 type configStruct struct {
-	Token              string `json:"token"`
-	APPID              string `json:"appid"`
-	GUILDID            string `json:"guildid"`
-	WolframID          string `json:"wolframid"`
-	Version            string `json:"version"`
-	CreatorID          string `json:"creatorid"`
-	OwnerRole          string `json:"ownerRole"`
-	BotBreakerRole     string `json:"botBreakerRole"`
-	Webhook            string `json:"webhook"`
-	BridgeChannelID    string `json:"bridgeChannelId"`
-	DevBridgeChannelID string `json:"devbridgeChannelId"`
+	Token           string `json:"token"`
+	APPID           string `json:"appid"`
+	GUILDID         string `json:"guildid"`
+	WolframID       string `json:"wolframid"`
+	Version         string `json:"version"`
+	CreatorID       string `json:"creatorid"`
+	OwnerRole       string `json:"ownerRole"`
+	BotBreakerRole  string `json:"botBreakerRole"`
+	Webhook         string `json:"webhook"`
+	BridgeChannelID string `json:"bridgeChannelId"`
 }
 
 var (
@@ -42,7 +41,7 @@ var (
 	ItemIcons         []string
 	Websites          []string
 	IsServerConnected = false
-	clear             map[string]OS //create a map for storing clear funcs
+	clear             map[string]func() //create a map for storing clear funcs
 	DB                *sql.DB
 )
 
@@ -54,22 +53,16 @@ type OS struct {
 func init() {
 	TimeNow = time.Now()
 
-	clear = make(map[string]OS) //Initialize it
-	clear["linux"] = OS{
-		Dev: false,
-		Run: func() {
-			cmd := exec.Command("clear")
-			cmd.Stdout = os.Stdout
-			cmd.Run()
-		},
+	clear = make(map[string]func()) //Initialize it
+	clear["linux"] = func() {
+		cmd := exec.Command("clear")
+		cmd.Stdout = os.Stdout
+		cmd.Run()
 	}
-	clear["windows"] = OS{
-		Dev: true,
-		Run: func() {
-			cmd := exec.Command("cmd", "/c", "cls")
-			cmd.Stdout = os.Stdout
-			cmd.Run()
-		},
+	clear["windows"] = func() {
+		cmd := exec.Command("cmd", "/c", "cls")
+		cmd.Stdout = os.Stdout
+		cmd.Run()
 	}
 }
 
@@ -77,7 +70,7 @@ func init() {
 func Initialise() {
 	value, ok := clear[runtime.GOOS] //runtime.GOOS -> linux, windows, darwin etc.
 	if ok {                          //if we defined a clear func for that platform:
-		value.Run() //we execute it
+		value() //we execute it
 	} else { //unsupported platform
 		panic("Your platform is unsupported! I can't clear terminal screen :(")
 	}
@@ -96,11 +89,6 @@ func Initialise() {
 
 	setupCloseHandler(Logg)
 	initConfig()
-
-	value, ok = clear[runtime.GOOS]
-	if ok && value.Dev == true {
-		Config.BridgeChannelID = Config.DevBridgeChannelID
-	}
 
 }
 
