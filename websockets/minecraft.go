@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/diamondburned/arikawa/v3/api"
 	"github.com/diamondburned/arikawa/v3/discord"
 	"github.com/diamondburned/arikawa/v3/utils/sendpart"
 	socketio "github.com/googollee/go-socket.io"
@@ -83,20 +84,19 @@ func RegisterMinecraftHandlers() {
 		}
 		reader := bytes.NewReader(image)
 
-		body, _ := json.Marshal(Message{
+		body := api.SendMessageData{
 			Files: []sendpart.File{
 				{
 					Name:   fmt.Sprintf("%v.png", msgObj.Type),
 					Reader: reader,
 				},
 			},
-		})
-		resp := bytes.NewBuffer(body)
+		}
 
-		http.Post(
-			core.Config.Webhook,
-			"application/json",
-			resp)
+		_, err = core.State.SendMessageComplex(discord.ChannelID(utils.MustSnowflakeEnv(core.Config.BridgeChannelID)), body)
+		if err != nil {
+			logger.Error("Failed to send advancement message: ", err)
+		}
 
 	})
 	core.WSServer.OnEvent("/", "playerjoin", func(s socketio.Conn, msg string) {
