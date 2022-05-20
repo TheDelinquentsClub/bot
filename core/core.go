@@ -45,11 +45,6 @@ var (
 	DB                *sql.DB
 )
 
-type OS struct {
-	Dev bool
-	Run func()
-}
-
 func init() {
 	TimeNow = time.Now()
 
@@ -89,7 +84,6 @@ func Initialise() {
 
 	setupCloseHandler(Logg)
 	initConfig()
-
 }
 
 // initConfig Initialises the bots config
@@ -122,10 +116,14 @@ func initConfig() {
 		logger.Error(fmt.Sprintf("Error loading config: %v", err))
 		os.Exit(1)
 	} else {
-		_ = json.NewDecoder(data).Decode(&Config)
-		logger.Info("Successfully loaded config!")
-		logger.Print(fmt.Sprintf(" ::::::::   ::::::::       ::::::::: ::::::::    ::::::::\n:+:    :+: :+:    :+:         :+:    :+:   :+:  :+:    :+:\n+:+    +:+ +:+    +:+   (:o   +:+    +:+    +:+ +:+\n+#+        +#+    +#+ +#+#+#+ +#+    +#+    +#+ +#+\n+#+   #+#+ +#+    +#+         +#+    +#+    +#+ +#+\n#+#    #+# #+#    #+#         #+#    #+#   #+#  #+#    #+#\n ########   ########          ###    ########    ########\n                                              v%v\n", Config.Version))
-		loadDB()
+		err = json.NewDecoder(data).Decode(&Config)
+		if err != nil {
+			logger.Fatal(err)
+		} else {
+			logger.Info("Successfully loaded config!")
+			logger.Print(fmt.Sprintf(" ::::::::   ::::::::       ::::::::: ::::::::    ::::::::\n:+:    :+: :+:    :+:         :+:    :+:   :+:  :+:    :+:\n+:+    +:+ +:+    +:+   (:o   +:+    +:+    +:+ +:+\n+#+        +#+    +#+ +#+#+#+ +#+    +#+    +#+ +#+\n+#+   #+#+ +#+    +#+         +#+    +#+    +#+ +#+\n#+#    #+# #+#    #+#         #+#    #+#   #+#  #+#    #+#\n ########   ########          ###    ########    ########\n                                              v%v\n", Config.Version))
+			loadDB()
+		}
 	}
 }
 
