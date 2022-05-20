@@ -19,16 +19,17 @@ import (
 )
 
 type configStruct struct {
-	Token           string `json:"token"`
-	APPID           string `json:"appid"`
-	GUILDID         string `json:"guildid"`
-	WolframID       string `json:"wolframid"`
-	Version         string `json:"version"`
-	CreatorID       string `json:"creatorid"`
-	OwnerRole       string `json:"ownerRole"`
-	BotBreakerRole  string `json:"botBreakerRole"`
-	Webhook         string `json:"webhook"`
-	BridgeChannelID string `json:"bridgeChannelId"`
+	Token              string `json:"token"`
+	APPID              string `json:"appid"`
+	GUILDID            string `json:"guildid"`
+	WolframID          string `json:"wolframid"`
+	Version            string `json:"version"`
+	CreatorID          string `json:"creatorid"`
+	OwnerRole          string `json:"ownerRole"`
+	BotBreakerRole     string `json:"botBreakerRole"`
+	Webhook            string `json:"webhook"`
+	BridgeChannelID    string `json:"bridgeChannelId"`
+	DevBridgeChannelID string `json:"devbridgeChannelId"`
 }
 
 var (
@@ -68,6 +69,10 @@ func Initialise() {
 		value() //we execute it
 	} else { //unsupported platform
 		panic("Your platform is unsupported! I can't clear terminal screen :(")
+	}
+
+	if runtime.GOOS == "windows" {
+		Config.BridgeChannelID = Config.DevBridgeChannelID
 	}
 
 	writerSync := logger.GetLogWriter()

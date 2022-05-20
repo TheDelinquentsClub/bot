@@ -10,6 +10,7 @@ import (
 	"github.com/kingultron99/tdcbot/core"
 	"github.com/kingultron99/tdcbot/logger"
 	"github.com/kingultron99/tdcbot/utils"
+	"github.com/pbnjay/memory"
 	"os"
 	"runtime"
 	"strings"
@@ -82,6 +83,16 @@ func init() {
 										utils.BToMb(m.NextGC),
 										m.NumGC),
 									Inline: false,
+								},
+								{
+									Name:   "System memory",
+									Inline: true,
+									Value:  fmt.Sprintf("%v / %v", memory.FreeMemory(), memory.TotalMemory()),
+								},
+								{
+									Name:   "Cores",
+									Inline: true,
+									Value:  fmt.Sprint(runtime.NumCPU()),
 								},
 							},
 						},
