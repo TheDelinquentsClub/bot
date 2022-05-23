@@ -1,2 +1,6 @@
-/logs/
-config.json
+# Build Files
+**/build
+
+# Runtime Files
+**/logs
+**/config.json
