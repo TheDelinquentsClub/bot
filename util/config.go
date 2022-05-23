@@ -6,10 +6,12 @@ import (
 	"github.com/pkg/errors"
 	"os"
 	"path/filepath"
+	"time"
 )
 
 // Config holds configuration values for the bot.
 type Config struct {
+	LastUpdated            time.Time         `json:"-"`
 	Path                   string            `json:"-"`
 	Token                  string            `json:"token,omitempty"`
 	Version                string            `json:"version,omitempty"`
@@ -69,7 +71,7 @@ func (c *Config) Update() (err error) {
 	} else if err = temp.validate(); err != nil {
 		return
 	}
-	*c, _ = temp, file.Close()
+	*c, c.LastUpdated, _ = temp, time.Now(), file.Close()
 	return nil
 }
 
