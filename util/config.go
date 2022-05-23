@@ -10,13 +10,14 @@ import (
 
 // Config holds configuration values for the bot.
 type Config struct {
-	Path               string            `json:"-"`
-	Token              string            `json:"token"`
-	Version            string            `json:"version"`
-	WolframID          string            `json:"wolfram_id"`
-	OwnerID            discord.UserID    `json:"owner_id"`
-	GuildID            discord.GuildID   `json:"guild_id"`
-	MinecraftChannelID discord.ChannelID `json:"minecraft_channel_id"` // We fetch the appropriate discord.Webhook at runtime.
+	Path                   string            `json:"-"`
+	Token                  string            `json:"token,omitempty"`
+	Version                string            `json:"version,omitempty"`
+	WolframID              string            `json:"wolfram_id,omitempty"`
+	MinecraftServerAddress string            `json:"minecraft_server_address,omitempty"`
+	OwnerID                discord.UserID    `json:"owner_id,omitempty"`
+	GuildID                discord.GuildID   `json:"guild_id,omitempty"`
+	MinecraftChannelID     discord.ChannelID `json:"minecraft_channel_id,omitempty"` // We fetch the appropriate discord.Webhook at runtime.
 }
 
 // NewConfig returns a new Config, reading from the provided file.
@@ -72,10 +73,10 @@ func (c *Config) Update() (err error) {
 	return nil
 }
 
-func (c *Config) validate() error {
+func (c *Config) validate() (err error) {
 	switch {
 	case c.Token == "" || len(c.Token) < 5:
-		return errors.New("(*Config).Token cannot be empty or smaller than 5 characters")
+		err = errors.New("(*Config).Token cannot be empty or smaller than 5 characters")
 	case c.Token[:5] != "Bot ":
 		if c.Token[:4] == "Bot" {
 			c.Token = "Bot " + c.Token[4:]
@@ -85,13 +86,15 @@ func (c *Config) validate() error {
 	case c.Version == "":
 		c.Version = "Unknown"
 	case c.WolframID == "":
-		return errors.New("(*Config).WolframID cannot be empty")
+		err = errors.New("(*Config).WolframID cannot be empty")
+	case c.MinecraftServerAddress == "":
+		err = errors.New("(*Config).MinecraftServerAddress cannot be empty")
 	case !c.OwnerID.IsValid():
-		return errors.New("(*Config).OwnerID must be valid")
+		err = errors.New("(*Config).OwnerID must be valid")
 	case !c.GuildID.IsValid():
-		return errors.New("(*Config).GuildID must be valid")
+		err = errors.New("(*Config).GuildID must be valid")
 	case !c.MinecraftChannelID.IsValid():
-		return errors.New("(*Config).MinecraftChannelID must be valid")
+		err = errors.New("(*Config).MinecraftChannelID must be valid")
 	}
-	return nil
+	return
 }
